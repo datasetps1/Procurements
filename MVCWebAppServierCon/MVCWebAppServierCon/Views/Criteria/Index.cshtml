@@ -1,0 +1,67 @@
+﻿@model MVCWebAppServierCon.Models.Criteria
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Criterias</h2>
+
+<p>
+    Create New Criteria
+</p>
+
+<div class="form_container">
+    <form asp-action="Create" class="form_style">
+        <div class="form-group input_group_style">
+            <label asp-for="Name" class="control-label"></label>
+            <input asp-for="Name" class="form-control"/>
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <div class="form-group row input_group_style">
+            <label asp-for="Criteria_Rank" class="control-label"></label>
+            <select asp-for="Criteria_Rank" class="form-control">
+                <option selected></option>
+
+                <option value="0">less</option>
+                <option value="1">more</option>
+
+            </select>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Create" class="btn btn-primary form_submit_btn" />
+        </div>
+    </form>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Criteria_Rank)
+            </th>
+            <th>
+                Actions
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in ViewBag.criteriaList) {
+        <tr>
+            <td>
+                @item.Name
+            </td>
+            <td>
+                @item.Criteria_Rank
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>

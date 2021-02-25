@@ -1,0 +1,371 @@
+@model MVCWebAppServierCon.ViewModels.OrderViewModel
+@{
+    ViewData["Title"] = "Edit";
+    OrderViewModel viewModel = ViewBag.orderView;
+}
+
+<h1>Edit</h1>
+<br />
+<p>
+    <a asp-action="Create">Create New</a>
+</p><div class="row">
+    <div class="col-md-12">
+
+        <form asp-action="CreateOderView">
+
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <input type="hidden" asp-for="headerClass.OrderHeaderCode" id="id1" />
+           
+            <div class="row">
+                <input value="@viewModel.headerClass.OrderHeaderCode" type ="hidden" id="hi">  
+
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group col-md-4">
+                    <label class="control-label">Department Name</label>
+                    <br />
+                    <select name="headerLst">
+                        <option value="@viewModel.headerClass.OrderHeaderdepartmentCode"> @viewModel.departmentName </option>
+
+                        @* asp-items="" *@
+                        @foreach (DepartmentClass dep in ViewBag.DepartmentName)
+                        {
+                            <option value="@dep.departmentCode">@dep.departmentName</option>
+                        }
+                    </select>
+                    <span class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4">
+                    <label class="control-label">Project Name</label>
+                    <br />
+
+                    <select name="headerLst">
+                        @* asp-items="" *@
+                        <option value="@viewModel.headerClass.OrderHeaderProjectCode">@viewModel.projectName</option>
+
+                        @foreach (CostsViewModel costs in ViewBag.ProjectName)
+                        {
+                            <option value="@costs.costCode">@costs.costName</option>
+                        }
+                    </select>
+                    <span class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4">
+                    <label class="control-label">order date</label>
+                    <input class="form-control" name="headerLst" value="@viewModel.headerClass.OrderHeaderdate" type="date" id="datePicker" />
+                    <span class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-4">
+                    <label class="control-label">order type</label>
+                    <br />
+                    <select name="headerLst">
+                        <option value="@viewModel.headerClass.OrderHeaderOrderTypeCode">@viewModel.orderType</option>
+
+                        @* asp-items="" *@
+                        @foreach (OrderTypeClass ord in ViewBag.OrderType)
+                        {
+                            <option value="@ord.orderTypeCode">@ord.orderTypeName</option>
+                        }
+                        @*@foreach (String item in ViewBag.uType)
+                    {
+                        <option> @Html.DisplayFor(modelItem => item)</option>
+                    }*@
+                    </select>
+                    <span class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4">
+                    <label class="control-label">Budget Line</label>
+                    <br />
+                    <select name="headerLst">
+                        @* asp-items="" *@
+                        <option value="@viewModel.headerClass.OrderHeaderBudgetLineCode">@viewModel.budgetName</option>
+
+                        @foreach (CostsViewModel costs in ViewBag.BudgetLine)
+                        {
+                            <option value="@costs.costCode">@costs.costName</option>
+                        }
+                        @*@foreach (String item in ViewBag.uType)
+                    {
+                        <option> @Html.DisplayFor(modelItem => item)</option>
+                    }*@
+                    </select>
+                </div>
+                <div class="form-group col-md-4">
+                    <label class="control-label">currency</label>
+                    <select name="headerLst" class="form-control">
+                        <option value="@viewModel.headerClass.OrderHeaderCurrencey">@viewModel.headerClass.OrderHeaderCurrencey</option>
+
+                        @foreach (CurrencyViewModel item in ViewBag.Currency)
+                        {
+                            <option value="@item.currencyCode" onclick="getRate(@item.currencyCode)">@item.currencyName</option>
+                        }
+                    </select>
+                    <span class="text-danger"></span>
+                </div>
+
+            </div>
+            <br />
+            <br />
+            <div class="row">
+                <div class="form-group col-md-3">
+                    <label class="control-label">Rate</label>
+                    <input type="text" class="form-control" name="headerLst" value="@viewModel.headerClass.OrderHeaderRate" id="rateText" />
+                    <span class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-3">
+                    <label class="control-label">Total</label>
+                    <input type="text" class="form-control" name="headerLst" value="@viewModel.headerClass.OrderHeaderRealTotal" id="realTot" />
+                    <span class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-3">
+                    <label class="control-label">Note</label>
+                    <input type="text" class="form-control" name="headerLst" value="@viewModel.headerClass.OrderHeaderNote" />
+                    <span class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-3">
+                    <label class="control-label">Add Atachment</label>
+                    <div class="custom-file">
+                        <input type="file" class="form-control custom-file-input" id="ufile" value="@viewModel.attachName" />
+                        <label class="custom-file-label">@ViewBag.Attach</label>
+
+                    </div>
+                </div>
+
+            </div>
+            <br />
+            <br />
+            <br />
+            <div class="row">
+                <div class="form-group col-md-2">
+                    <label class="control-label">Item Name</label>
+                    <br />
+                    <select name="transLst" id="itemName">
+                        @* asp-items="" *@
+                        @foreach (ItemClass itm in ViewBag.ItemName)
+                        {
+                            <option value="@itm.itemCode">@itm.itemName</option>
+                        }
+                        <option>Orange</option>
+
+                    </select>
+                </div>
+                <div class="form-group col-md-3">
+                    <label class="control-label">Quantity</label>
+                    <input type="text" class="form-control" name="transLst" id="qty" />
+                    <span class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-3">
+                    <label class="control-label">Price</label>
+                    <input type="text" class="form-control" name="transLst" id="price" />
+                    <span class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-3">
+                    <label class="control-label">Note</label>
+                    <input type="text" class="form-control" name="transLst" id="note" />
+                    <span class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-1">
+                    <label class="control-label"> </label>
+                    <input type="button" class="form-control btn-primary" value="+" onclick="getRows()" />
+                </div>
+            </div>
+            <div style="width:100%;" id="itemRowTbl">
+                <table width="100%">
+                    <thead>
+                        <tr class="row">
+                            <td class="col-md-2">
+                                Item Name
+                            </td>
+                            <td class="col-md-2">
+                                Quantity
+                            </td>
+                            <td class="col-md-2">
+                                Price
+                            </td>
+                            <td class="col-md-2">
+                                Total
+                            </td>
+                            <td class="col-md-3">
+                                Note
+                            </td>
+                        </tr>
+                    </thead>
+                    @* this body used to display the item for the user when add an item *@
+                    <tbody id="myTable">
+                        @foreach (TransactionViewModel item in viewModel.transViewModel)
+                        {
+                            <tr class="row">
+                                <td class="col-md-2">
+                                    @item.ItemName
+                                </td>
+                                <td class="col-md-2">
+                                    @item.TransactionQty
+                                </td>
+                                <td class="col-md-2">
+                                    @item.TransactionPrice
+                                </td>
+                                <td class="col-md-2">
+                                    @{var x = @item.TransactionPrice * item.TransactionQty; } @x
+                                </td>
+                                <td class="col-md-3">
+                                    @item.TransactionNote
+                                </td>
+                                <td class="col-md-1">
+                                    <a asp-action="">Edit</a> | <a asp-action="">Delete</a>
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+            <br />
+
+            <div class="form-group">
+                <input value="Edit" class="btn btn-primary cursor" onclick="GetOrder()" />
+            </div>
+            @ViewBag.message
+            @section Scripts{
+                <script>
+                    $('.custom-file-input').on("change", function () {
+                        var fileName = $(this).val().split("\\").pop();
+                        $(this).next('.custom-file-label').html(fileName);
+                    });
+                </script>
+            }
+        </form>
+    </div>
+</div>
+
+<script>
+    function GetOrder() {
+        var HeaderList = new Array();
+        var TransList = new Array();
+         var id = document.getElementById("hi").value;
+        $("[name='headerLst']").each(function (index, data) {
+            HeaderList.push(data.value);
+        });
+        $("[name='transLst']").each(function (index, data) {
+            TransList.push(data.value);
+        });
+
+        /*console.log(HeaderList);
+         console.log(TransList);
+         console.log(transArr);*/
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: "../RepushOrder",
+            data: {
+                headerLst: HeaderList,
+                TransLst: transArr,
+                id: id
+            },
+            success: function (message, length) {
+                console.log("handle response :" + message);
+                console.log(length);
+                document.location = '/Home/Index';
+            },
+            error: function (message) {
+
+                console.log("just die... please" + "  " + message);
+            },
+        });
+        addPic();
+        transArr = [];
+    }
+    function addPic() {
+        var formData = new FormData();
+        formData.append('file', $('#ufile')[0].files[0]);
+
+        $.ajax(
+            {
+                url: "../OrderView/UploadFile",
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    console.log("File Uploaded Successfully");
+                },
+                error: function (message) {
+                    console.log("Error In Uploading");
+                }
+            });
+    }
+    function getRate(id) {
+        $.ajax(
+            {
+                url: "../getRate",
+                data: { rateId: id },
+                dataType: "json",
+                type: "POST",
+                success: function (data) {
+                    document.getElementById("rateText").value = data.data;
+                    console.log("success rate  == " + data.data);
+                },
+                error: function (message) {
+                    console.log("Error In Uploading");
+                    console.log(message);
+                },
+
+            });
+
+    }
+
+    /*
+     function Create2DArray(rows,columns) {
+       var x = new Array(rows);
+       for (var i = 0; i < rows; i++) {
+           x[i] = new Array(columns);
+       }
+       return x;
+    }
+    ---------------------------------------------------
+    */
+    var transArr = [];
+    function getRows() {
+        document.getElementById("itemRowTbl").style.visibility = "visible";
+        var item = document.getElementById('itemName').value;
+        var qty = document.getElementById('qty').value;
+        var price = document.getElementById('price').value;
+        var note = document.getElementById('note').value;
+
+        var table = document.getElementById("myTable");
+        var row = table.insertRow(0);
+        row.className = "row";
+        var cell1 = row.insertCell(0); cell1.className = "col-md-2";
+        var cell2 = row.insertCell(1); cell2.className = "col-md-2";
+        var cell3 = row.insertCell(2); cell3.className = "col-md-2";
+        var cell4 = row.insertCell(3); cell4.className = "col-md-2";
+        var cell5 = row.insertCell(4); cell4.className = "col-md-3";
+
+        cell1.innerHTML = item;
+        cell2.innerHTML = qty;
+        cell3.innerHTML = price;
+        cell4.innerHTML = qty * price;
+        cell5.innerHTML = note;
+
+        var TransactionClass = function (itemName, Quantity, Price, Note) {
+            this.TransactionItemCode = itemName;
+            this.TransactionQty = Quantity;
+            this.TransactionPrice = Price;
+            this.TransactionNote = Note;
+
+        };
+
+        transArr.push((new TransactionClass(item, qty, price, note)));
+
+        document.getElementById('qty').innerHTML = "";
+        document.getElementById('price').innerHTML = "";
+        document.getElementById('note').innerHTML = "";
+
+        var realTotal = parseInt(document.getElementById("realTot").value) + (qty * price);
+        document.getElementById("realTot").value = realTotal;
+    }
+
+</script>

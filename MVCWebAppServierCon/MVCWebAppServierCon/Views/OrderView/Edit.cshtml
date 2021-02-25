@@ -1,0 +1,1131 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Globalization;
+@inject IViewLocalizer Localizer
+
+@model MVCWebAppServierCon.ViewModels.OrderViewModel
+@{
+
+    OrderViewModel viewModel = ViewBag.orderView;
+    ViewData["Title"] = "Edit";
+
+}
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<br />
+<br />
+<br />
+<br />
+
+
+
+<div class="row">
+    <div class="col-md-12">
+        <input type="hidden" id="NumberOfDayesBefore" />
+        <input type="hidden" id="NumberOfDayesAfter" />
+
+        @{
+
+            var NextOrdercode = @viewModel.headerClass.OrderHeaderCode + 1;
+            var PrevOrdercode = @viewModel.headerClass.OrderHeaderCode - 1;
+        }  
+
+        <form onkeydown="return event.key != 'Enter';">
+
+            <div class="container card" style=" box-shadow: 0 0 10px 0 rgba(0, 0, 0, .1);">
+                <div class="form-row" style="margin-top:15px ; ">
+                    <div class="form-group col-md-10">
+                        @if (ViewBag.IsPreview == false)
+                        {<h4 style="">Edit order /  @viewModel.headerClass.OrderHeaderCode</h4>}
+                        @if (ViewBag.IsPreview == true)
+                        {<h4 style="">Preview /  @viewModel.headerClass.OrderHeaderCode</h4>}
+                    </div>
+                    @if (ViewBag.userTypeCode == 1 || ViewBag.userTypeCode == 2 || ViewBag.userTypeCode == 3)
+                    {
+                    <div class="form-group col-md-2">
+                        <div style="margin-top:15px ;">
+                            <a asp-action="Edit" asp-controller="OrderView" asp-route-id="@PrevOrdercode" asp-route-IsPreview="true"> Prev</a> |
+                            <a asp-action="Edit" asp-controller="OrderView" asp-route-id="@NextOrdercode" asp-route-IsPreview="true"> Next</a>
+                        </div>
+                        </div>
+                    }
+                    </div>
+                    <div style="margin-top:-8px ; ">
+                        <hr />
+                    </div>
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <input type="hidden" asp-for="headerClass.OrderHeaderCode" id="id1" />
+
+                    <div class="row">
+                        <input value="@viewModel.headerClass.OrderHeaderCode" type="hidden" id="hi">
+
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group col-md-3">
+                            <label class="control-label">order type</label>
+                            <br />
+                            <select name="headerLst" class="form-control" id="orderType">
+                                <option value="@viewModel.headerClass.OrderHeaderOrderTypeCode">@viewModel.orderType</option>
+
+                                @* asp-items="" *@
+                                @foreach (OrderTypeClass ord in ViewBag.OrderType)
+                                {
+                                    <option value="@ord.orderTypeCode" onclick="getOrderType(@ord.orderTypeCode)">@ord.orderTypeName</option>
+                                }
+                                @*@foreach (String item in ViewBag.uType)
+                    {
+                        <option> @Html.DisplayFor(modelItem => item)</option>
+                    }*@
+                            </select>
+                            <span class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group col-md-3">
+                            <label class="control-label">Department Name</label>
+                            <br />
+                            <select name="headerLst" class="form-control" disabled>
+                                <option value="@viewModel.headerClass.OrderHeaderdepartmentCode"> @viewModel.departmentName </option>
+
+                                @* asp-items="" *@
+                                @foreach (DepartmentClass dep in ViewBag.DepartmentName)
+                                {
+                                    <option value="@dep.departmentCode">@dep.departmentName</option>
+                                }
+                            </select>
+                            <span class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group col-md-3">
+                            <label class="control-label">currency</label>
+                            <select name="headerLst" class="form-control" id="cmbCurrency">
+                                <option value="@viewModel.headerClass.OrderHeaderCurrencey">@viewModel.headerClass.Currency</option>
+
+                                @foreach (CurrencyViewModel item in ViewBag.Currency)
+                                {
+                                    <option value="@item.currencyCode" onclick="getRate(@item.currencyCode)">@item.currencyName</option>
+                                }
+                            </select>
+                            <span class="text-danger"></span>
+                        </div>
+
+
+                        <div class="form-group col-md-3">
+                            <label class="control-label">order date</label>
+                            <input class="form-control" id="date" disabled name="headerLst" value="@viewModel.headerClass.OrderHeaderdate.ToString("yyyy-MM-dd")" maxlength="10" type="date" id="datePicker" />
+                            <span class="text-danger"></span>
+                        </div>
+
+
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-3">
+                            <label class="control-label">Project Name</label>
+                            <br />
+
+                            <select name="headerLst" class="form-control" id="project"  onchange = "SelectedIndexChanged()" >
+                                @* asp-items="" *@
+                                <option value="@viewModel.headerClass.OrderHeaderProjectCode">@viewModel.projectName</option>
+
+                                @foreach (CostsViewModel costs in ViewBag.ProjectName)
+                                {
+                                    <option value="@costs.costCode">@costs.costName</option>
+                                }
+                            </select>
+                            <span class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group col-md-3">
+                            <label class="control-label">Budget Line</label>
+                            <br />
+                            <select name="headerLst" class="form-control" id="cmbBudgetLine" onchange = "CmbBudgeLineSelectedIndexChanged()">
+                                @* asp-items="" *@
+                                <option value="@viewModel.headerClass.OrderHeaderBudgetLineCode">@viewModel.budgetName</option>
+
+                                @foreach (CodeNameModel costs in ViewBag.BudgetLine)
+                                {
+                                    <option value="@costs.Code">@costs.Name</option>
+                                }
+                                @*@foreach (String item in ViewBag.uType)
+            {
+                <option> @Html.DisplayFor(modelItem => item)</option>
+            }*@
+                            </select>
+                            <div style="margin-top:5px">
+                                <label id="LblTotalBudget" for="" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Total Budget:"]</label>
+                                <label id="TxtTotalBudget" for="" style="@Localizer["text-align: left  ;direction: ltr"]">@ViewBag.Budget</label>
+                            </div>
+                        </div>
+                      
+                        <div class="form-group col-md-3">
+                            <label class="control-label">Rate</label>
+                            <input type="number" step="any" class="form-control" name="headerLst" value="@viewModel.headerClass.OrderHeaderRate" id="rateText" />
+                            <span class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label class="control-label">Expected Date</label>
+                            <input class="form-control" id="txtExpectedDate" name="headerLst" value="@viewModel.headerClass.ExpectedDate?.ToString("yyyy-MM-dd")" maxlength="10" type="date" id="datePicker" />
+                            <span class="text-danger"></span>
+                        </div>
+                    </div>
+
+
+
+                    <div class="row " style=" box-shadow: 0 0 10px 0 rgba(0, 0, 0, .1); margin-right:1px; margin-left:1px;margin-bottom:4px;margin-top:-4px">
+
+                        <div class="form-group col-md-4">
+
+                            <label style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Item"]</label>
+                            <select id="itemName" class="form-control">
+                                <option selected></option>
+                                @* asp-items="" *@
+                                @foreach (ItemClass itm in ViewBag.ItemName)
+                                {
+                                    <option value="@itm.itemCode">@itm.itemName</option>
+
+                                }
+
+
+                            </select>
+                        </div>
+                        <div class="form-group col-md-1">
+                            <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Quantity"]</label>
+                            <input type="number" step="any" class="form-control" name="transLst" id="qty" style="width:80px ;" />
+                            <span class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-1">
+                            <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Price"]</label>
+                            <input type="number" step="any" class="form-control" name="transLst" id="price" style="width:80px ;" />
+                            <span class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Item Note"]</label>
+                            <input type="text" class="form-control" name="transLst" id="note" />
+                            <span class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-2">
+
+                            <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer[" date"]</label>
+                            <input id="TransDate" type="date" class="form-control" name="headerLst" style="width:162px ;" />
+                            <span class="text-danger"></span>
+
+
+                        </div>
+                        <div class="form-group col-md-1">
+                            <br />
+                            <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]"> </label>
+                            <input type="button" class="form-control btn-primary" value="+" onclick="getRows()" />
+                        </div>
+                    </div>
+
+                    <div style="width:100%;height:200px ;border-style: solid; border-color: #f1f0f0;border-width: thin;overflow-y:scroll" id="itemRowTbl">
+                        <table class="table">
+                            <thead style="background-color:#46688a;">
+                                <tr>
+                                    <th scope="col" style="color:#fff;">@Localizer["Item Name"]</th>
+                                    <th scope="col" style="color:#fff;">@Localizer["Quantity"]</th>
+                                    <th scope="col" style="color:#fff;">@Localizer["Price"]</th>
+                                    <th scope="col" style="color:#fff;">@Localizer["Total"]</th>
+                                    <th scope="col" style="color:#fff;">@Localizer["Item Note"]</th>
+                                    <th scope="col" style="color:#fff;">@Localizer["Date"]</th>
+                                    <th scope="col" style="color:#fff;">@Localizer["Edit"]/ @Localizer["Remove"]</th>
+                                </tr>
+                            </thead>
+                            @* this body used to display the item for the user when add an item *@
+                            <tbody id="myTable">
+                                @foreach (TransactionViewModel item in viewModel.transViewModel)
+                                {
+                                    <tr>
+                                        @*<td style="display:none;">
+                                @item.TransactionCode
+                            </td>*@
+                                        <td style="display:none;">
+                                            @item.TransactionItemCode
+                                        </td>
+                                        <td>
+                                            @item.ItemName
+                                        </td>
+                                        <td>
+                                            @item.TransactionQty
+                                        </td>
+                                        <td>
+                                            @item.TransactionPrice
+                                        </td>
+                                        <td>
+                                            @{var x = @item.TransactionPrice * item.TransactionQty; } @x
+                                        </td>
+                                        <td>
+                                            @item.TransactionNote
+                                        </td>
+                                        <td>
+                                            @{ if (@item.TransactionDate.ToString("yyyy-MM-dd") != "0001-01-01")
+                                                {
+                                                    @item.TransactionDate.ToString("yyyy-MM-dd")
+                                                }
+                                            }
+
+                                        </td>
+                                        <td>
+                                            <a class="Editbtn" href="#">
+                                                <span class="Editbtn fa fa-pen"></span>
+                                            </a>
+                                            <a href="#" onclick="Remove(this ,  @x )">
+                                                <span class=" fa fa-trash"></span>
+                                            </a>
+
+
+
+                                        </td>
+
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+
+                    </div>
+                    <br />
+
+                    <div class="row">
+
+                        <div class="form-group col-md-2">
+                            <label class="control-label">Total</label>
+                            <input type="number" step="any" class="form-control" name="headerLst" value="@viewModel.headerClass.OrderHeaderRealTotal" id="realTot" />
+                            <span class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["TotalInBasic"]</label>
+                            <input type="number" step="any" class="form-control" name="realBasicTot" value="@viewModel.TotalInbasic" id="realBasicTot" value="0" />
+                            <span class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label class="control-label">Actual Amount</label>
+                            <input type="number" step="any" class="form-control" name="headerLst" value="@viewModel.headerClass.ActualTotalAmount" id="ActualTotalAmount" disabled />
+                            <span class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label class="control-label">General Note</label>
+                            <input type="text" class="form-control" name="headerLst" value="@viewModel.headerClass.OrderHeaderNote" id="txtNote" />
+                            <span class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label class="control-label">Sending Note</label>
+                            <input type="text" class="form-control" name="headerLst" value="" id="txtStatusNote" />
+                            <span class="text-danger"></span>
+                        </div>
+
+
+
+                    </div>
+                    <div class="row">
+                        <div class="col-md-5">
+
+                            <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]"></label>
+                            <div class="custom-file">
+                                <input type="file" class="form-control custom-file-input" id="ufile" />
+                                <label class="custom-file-label " style="@Localizer["text-align: left  ;direction: ltr"]">Choose File ...</label>
+                            </div>
+
+
+                            @*<div class="col-md-3">
+                    <button class="btn btn-primary cursor btnUploadFiles" onclick="UploadFile()"> @Localizer["Upload File"]</button>
+                </div>*@
+                        </div>
+                    </div>
+
+                    @ViewBag.message
+                    @section Scripts{
+                        <script>
+
+
+                            $('.btnDelete').on("click", function () {
+
+                                DeleteOrder()
+                            });
+                            $('.btnUploadFiles').on("click", function () {
+
+                                UploadFile()
+                            });
+
+                            $('.custom-file-input').on("change", function () {
+                                var fileName = $(this).val().split("\\").pop();
+                                $(this).next('.custom-file-label').html(fileName);
+                            });
+
+
+
+                            $('.Editbtn').on('click', function () {
+                                var total;
+                                 debugger
+                                var $row = $(this).closest('tr');
+                                var $columns = $row.find('td');
+                                $.each($columns, function (i, item) {
+
+                                    if (i == 0) {
+
+                                        $('#itemName').val(parseInt(item.innerHTML));
+
+                                    }
+                                    if (i == 2) {
+                                        $("#qty").val(parseFloat(item.innerHTML));
+                                    }
+                                    if (i == 3) {
+                                        $("#price").val(parseFloat(item.innerHTML));
+                                        //alert(item.innerHTML)
+                                    }
+                                    if (i == 4) {
+                                        total = item.innerHTML
+
+                                    }
+
+                                    if (i == 5) {
+                                        $("#note").val(item.innerHTML);
+
+                                    }
+                                    if (i == 6) {
+                                        //
+                                        var msec = Date.parse(item.innerHTML.replace(/\s+/g, '').concat("T12:00:00-06:30"));
+
+                                        var d = new Date(msec);
+
+                                        document.getElementById("TransDate").value = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+
+
+                                    }
+
+
+                                });
+                                $(this).parent().parent().remove();
+                                var realTotal = parseFloat(document.getElementById("realTot").value) - (total);
+                                if (parseFloat(realTotal) < 0) {
+                                    document.getElementById("realTot").value = 0;
+                                      document.getElementById("realBasicTot").value = 0;
+                                } else {
+                                    document.getElementById("realTot").value = realTotal;
+                                    document.getElementById("realBasicTot").value = realTotal * parseFloat(document.getElementById("rateText").value);
+                                }
+
+                            });
+                        </script>
+                    }
+
+                </div>
+        </form>
+        <div class="col-md-3">
+
+        </div>
+
+
+        <div class="row" id="btnsDiv">
+
+            @{ if (ViewBag.IsPreview == false)
+                {<div class="col-md-3 ">
+                        <button class="btn btn-primary cursor" onclick="GetOrder(1)"> @Localizer["Edit"]</button>
+                    </div>} }
+            @{ if (ViewBag.IsPreview == false)
+
+                {<div class="col-md-3">
+                        @{ if (ViewBag.ShowDelete != false)
+                            {<button class="btn btn-primary cursor btnDelete" id="btnDelete"> @Localizer["Delete"]</button>}
+                        }
+                    </div>} }
+            <div class="col-md-3">
+                <button class="btn btn-primary cursor btnUploadFiles"> @Localizer["Upload File"]</button>
+            </div>
+
+            @{ if (ViewBag.IsPreview == false)
+                { <div class="col-md-3" style="float:right;">
+                        @{ if (ViewBag.ShowDelete != false)
+                            {<button class="btn btn-primary cursor" style="float:right;" onclick="GetOrder(-1)"> @Localizer["Document"]</button>}
+                        }
+
+                    </div>} }
+
+        </div>
+
+
+
+
+        <div>
+            <partial name="_GetAttachments" model="ViewBag.FilesLst" />
+
+        </div>
+
+    </div>
+</div>
+
+<script>
+
+    function CheckExpectedDate() {
+if ($('#NumberOfDayesAfter').val() == '0' || $('#NumberOfDayesAfter').val() == '') {
+    return true
+}
+var excepteddate = new Date($('#txtExpectedDate').val());
+var now = new Date(Date.now());
+var diffTime = Math.abs(excepteddate - now);
+var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+if (diffDays < $('#NumberOfDayesAfter').val()) {
+    var now3 = new Date();
+    now3.setDate(now3.getDate() - 4);
+
+    Swal.fire({
+        icon: 'error',
+    title: 'خطأ',
+    text: ' يجب ان يكون التاريخ المتوقع للنشاط بعد  ' + $('#NumberOfDayesAfter').val() + ' ايام ',
+    footer: 'PostOrderStatus'
+})
+return false
+}
+return true
+
+}
+
+
+
+    function CheckOrderDate() {
+     if ($('#txtExpectedDate').val() == '') {
+             Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                     text: ' يجب ادخال التاريخ المتوقع للنشاط   '  ,
+                    footer: 'PostOrder'
+                 })
+            return false
+        }
+if ($('#NumberOfDayesBefore').val() == '0' || $('#NumberOfDayesBefore').val() == '') {
+    return true
+}
+var orderddate = new Date($('#date').val());
+var now = new Date(Date.now());
+var diffTime = Math.abs(now - orderddate);
+var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+if (diffDays > $('#NumberOfDayesBefore').val()) {
+    var now3 = new Date();
+    now3.setDate(now3.getDate() - 4);
+
+    Swal.fire({
+        icon: 'error',
+    title: 'خطأ',
+    text: ' يجب ان يكون تاريخ الطلبيه اقل من ' + $('#NumberOfDayesBefore').val() + ' ايام ',
+    footer: 'PostOrderStatus'
+})
+return false
+}
+return true
+
+  }
+
+
+  
+     function CheckData(val, msg) {
+       
+        var IsError=true;
+         if (val == 0 || val == '' || val==undefined) {
+            Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                     text: msg,
+                    footer: 'PostOrderStatus'
+            })
+            IsError = false;
+        }
+         return IsError
+    }
+     function CheckForm() {
+        var IsError=true;
+        if($("#rateText").val() == 0 || $("#rateText").val() == '') {
+            Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                     text: 'يجب ادخال سعر الصرف',
+                    footer: 'PostOrderStatus'
+            })
+            IsError = false;
+        }
+
+         if ($("#realTot").val() == 0 || $("#realTot").val() == '') {
+            Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                     text: 'يجب ادخال  المبلغ',
+                    footer: 'PostOrderStatus'
+            })
+            IsError = false;
+        }
+
+          if ($("#realTot").val() == 0 || $("#realTot").val() == '') {
+            Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                     text: 'يجب ادخال  المبلغ',
+                    footer: 'PostOrderStatus'
+            })
+            IsError = false;
+        }
+        
+          if ($("#txtNote").val() == 0 || $("#txtNote").val() == '') {
+            Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                     text: 'يجب ادخال  الملاحظات العامه',
+                    footer: 'PostOrder'
+            })
+            IsError = false;
+        }
+        
+
+        return IsError
+    }
+
+function GetOrder(status) {
+debugger
+
+
+    //check ExpectaionDate and dayes before
+
+    if (CheckExpectedDate() == false) {
+    return ;
+}
+if (CheckOrderDate() == false) {
+    return ;
+    }
+    if (CheckForm() == false) {
+            return;
+        }
+
+var HeaderList = new Array();
+var TransList = new Array();
+var id = document.getElementById("hi").value;
+//$("[name='headerLst']").each(function (index, data) {
+//    HeaderList.push(data.value);
+//});
+
+
+
+
+var OrderHeaderProjectCode = "0";
+
+    var ProjectCode = document.getElementById('project');
+if (ProjectCode != null) {
+
+        OrderHeaderProjectCode = ProjectCode.value;
+    }
+
+   if (document.getElementById("project").style.visibility  == "visible") {
+            if (CheckData(OrderHeaderProjectCode,"يجب ادخال المشروع") == false) { return;}
+        }
+    var OrderTypeCode = document.getElementById('orderType');
+    var OrderHeaderOrderTypeCode = OrderTypeCode.value;
+    var BudgetLineCode = document.getElementById('cmbBudgetLine');
+    // BudgetLineCode != 'undefined' ||
+if (BudgetLineCode != null) {
+    var OrderHeaderBudgetLineCode = BudgetLineCode.value;
+}
+
+ if (document.getElementById("cmbBudgetLine").hidden == false && document.getElementById("project").style.visibility  == "visible") {
+
+            if (CheckData(OrderHeaderBudgetLineCode, "يجب ادخال بند الموازنه") == false) { return; }
+        }
+var currencey = document.getElementById('cmbCurrency');
+var OrderHeaderCurrencey = currencey.value;
+
+     if (CheckData(OrderHeaderCurrencey,"يجب ادخال العمله") == false) { return;}
+           if (CheckData(OrderHeaderOrderTypeCode, "يجب ادخال نوع الطلبيه ") == false) { return;}
+
+var headerModel = {
+
+        //  OrderHeaderdepartmentCode: OrderHeaderdepartmentCode,
+        OrderHeaderProjectCode: OrderHeaderProjectCode,
+    OrderHeaderdate: $('#date').val(),
+    OrderHeaderOrderTypeCode: OrderHeaderOrderTypeCode,
+    OrderHeaderBudgetLineCode: OrderHeaderBudgetLineCode,
+    OrderHeaderCurrencey: OrderHeaderCurrencey,
+    OrderHeaderRate: $("#rateText").val(),
+    OrderHeaderNote: $("#txtNote").val(),
+    OrderHeaderRealTotal: $('#realTot').val(),
+    ExpectedDate: $('#txtExpectedDate').val(),
+};
+
+
+
+
+var TableData = new Array();
+
+
+$('#myTable tr').each(function (row, tr) {
+        TableData[row] = {
+            "TransactionItemCode": $(tr).find('td:eq(0)').text()
+            , "TransactionQty": $(tr).find('td:eq(2)').text()
+            , "TransactionPrice": $(tr).find('td:eq(3)').text()
+            , "TransactionNote": $(tr).find('td:eq(5)').text()
+            , "TransactionDate": $(tr).find('td:eq(6)').text()
+            //, "TransactionCreationDate": new Date();
+        }
+    });
+      if (TableData.length == 0) {
+            ShowMessage("يجب ادخال اصناف ")
+            return;
+    }
+
+$.ajax({
+        type: "POST",
+    dataType: "json",
+    url: "../RepushOrder",
+    data: {
+        headerLst: headerModel,
+    TransLst: TableData,
+    id: id
+},
+    success: function (message) {
+        console.log("handle response :" + message.message);
+    if (message.message = "ok") {
+        //console.log(length);
+        PostOrderStatus(id, status);
+      addPic(id);
+
+}
+
+//  document.location = '/Home/Index';
+
+
+},
+    error: function (message) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'خطأ في التخزين !',
+            footer: ''
+        })
+        console.log("just die... GetOrder" + "  " + message);
+},
+});
+// addPic();
+// transArr = [];
+}
+
+function addPic(orderHeaderCode) {//add the file to its table using formdata
+if (orderHeaderCode != 0) {
+    debugger
+    var x = "../OrderView/UploadFile";
+    // alert(orderHeaderCode)
+    var formData = new FormData();
+    formData.append('file', $('#ufile')[0].files[0]);
+    formData.append('OrderHeaderCode', orderHeaderCode);
+    $.ajax(
+        {
+        url: "/OrderView/UploadFile",
+    data: formData,
+    processData: false,
+    contentType: false,
+    type: "POST",
+    enctype: "multipart/form-data",
+            success: function (data) {
+        console.log("File Uploaded Successfully");
+
+    Swal.fire('Good job!',
+        'تم حفظ الطلبيه',
+        'success'
+    )
+
+
+},
+            error: function (message) {
+        console.log("Error In Uploading");
+    Swal.fire({
+        icon: 'error',
+    title: 'Oops...',
+    text: 'خطأ في التخزين !',
+    footer: 'File Uploaded'
+})
+
+//document.location = '/Home/Index';
+}
+});
+// document.location = '/Home/Index';
+}
+}
+
+function PostOrderStatus(approvalHeaderCode, approvalIsApproved) {
+
+    var Note = $("#txtStatusNote").val();
+if (approvalIsApproved == 1) {
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: "/Home/CreateOrderStatus",
+            data: {
+                ApprovalHeaderCode: approvalHeaderCode, ApprovalIsApproved: approvalIsApproved, Notes: Note
+
+            },
+            success: function (response) {
+                // console.log("handle response :" + response.data);
+
+
+
+            },
+            error: function (response) {
+                //Swal.fire({
+                //    icon: 'error',
+                //    title: 'Oops...',
+                //    text: ' خطأ في التخزين !',
+                //    footer: ''
+                //})
+                //loader.style.display = "none";
+                console.log("error in PostOrderStatus function in edit view" + "  " + response.data);
+            },
+        });
+    } else {
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: "/Home/CreateOrderStatusAsDocuments",
+            data: {
+                ApprovalHeaderCode: approvalHeaderCode, ApprovalIsApproved: approvalIsApproved, Notes: ''
+
+            },
+            success: function (response) {
+                // console.log("handle response :" + response.data);
+
+
+
+            },
+            error: function (response) {
+                //Swal.fire({
+                //    icon: 'error',
+                //    title: 'Oops...',
+                //    text: ' خطأ في التخزين !',
+                //    footer: ''
+                //})
+                //loader.style.display = "none";
+                console.log("error in PostOrderStatus function in edit view" + "  " + response.data);
+            },
+        });
+    }
+
+
+}
+function getRate(id) {
+        $.ajax(
+            {
+                url: "../getRate",
+                data: { rateId: id },
+                dataType: "json",
+                type: "POST",
+                success: function (data) {
+                    document.getElementById("rateText").value = data.data;
+                    console.log("success rate  == " + data.data);
+                },
+                error: function (message) {
+                    console.log("Error In Uploading");
+                    console.log(message);
+                },
+
+            });
+
+    }
+function DeleteOrder() {
+debugger
+    var id = document.getElementById("hi").value;
+
+    $.ajax(
+    {
+        url: "/OrderView/DeleteOrder",
+        data: {id: id },
+    type: "POST",
+    dataType: "json",
+        success: function (data) {
+
+
+        Swal.fire('Good job!',
+            'تم حذف الطلبيه',
+            'success'
+        )
+            document.location = '/Home/Index';
+
+},
+        error: function (message) {
+        console.log("Error In delete order");
+    Swal.fire({
+        icon: 'error',
+    title: 'Oops...',
+    text: 'خطأ في التخزين !',
+    footer: 'delete order '
+})
+
+//document.location = '/Home/Index';
+}
+});
+
+    }
+
+
+/*
+function Create2DArray(rows,columns) {
+var x = new Array(rows);
+for (var i = 0; i < rows; i++) {
+        x[i] = new Array(columns);
+    }
+    return x;
+ }
+ ---------------------------------------------------
+ */
+ var transArr = [];
+    function getRows() {
+     if (CheckData(document.getElementById('itemName').value, "يجب ادخال  الصنف") == false) { return; }
+       
+        if (CheckData(document.getElementById('qty').value, "يجب ادخال الكميه") == false) { return; }
+        if (CheckData(document.getElementById('price').value, "يجب ادخال السعر") == false) { return; }
+
+        document.getElementById("itemRowTbl").style.visibility = "visible";
+    var itemcode = document.getElementById('itemName').value;
+    var itemName = $("#itemName option:selected").text();
+    var qty = document.getElementById('qty').value;
+    var price = document.getElementById('price').value;
+    var note = document.getElementById('note').value;
+    var TransDate = document.getElementById('TransDate').value;
+
+    var table = document.getElementById("myTable");
+    var row = table.insertRow(0);
+    //row.className = "row";
+    var cell0 = row.insertCell(0); cell0.style.display = 'none';
+    var cell1 = row.insertCell(1); cell1.className = "col-md-3";
+    var cell2 = row.insertCell(2); cell2.className = "col-md-1";
+    var cell3 = row.insertCell(3); cell3.className = "col-md-1";
+    var cell4 = row.insertCell(4); cell4.className = "col-md-1";
+    var cell5 = row.insertCell(5); cell5.className = "col-md-4";
+    var cell6 = row.insertCell(6); cell6.className = "col-md-2";
+
+    var cell7 = row.insertCell(7); cell7.className = "col-md-1";
+
+    cell0.innerHTML = itemcode;
+    cell1.innerHTML = itemName;
+
+    cell2.innerHTML = qty;
+    cell3.innerHTML = price;
+    cell4.innerHTML = qty * price;
+    cell5.innerHTML = note;
+    cell6.innerHTML = TransDate;
+    var x = qty * price;
+
+
+    /**/
+// cell6.innerHTML = '<a class="Editbtn" href="#" ><span class="Editbtn fa fa-pen" ></span> </a>   ';
+    /**/
+
+cell7.innerHTML = ' <a href="#"><span class=" fa fa-pen" onclick="Edit(this , ' + x + ' )"></span> </a> <a href="#"> <span class=" fa fa-trash" onclick="Remove2(this , ' + x + ' )"></span></a>';
+    /**/
+var TransactionClass = function (itemcode, itemName, Quantity, Price, Note, TransDate) {
+        this.TransactionItemCode = itemcode;
+    this.itemName = itemName;
+    this.TransactionQty = Quantity;
+    this.TransactionPrice = Price;
+    this.TransactionNote = Note;
+    this.TransDate = TransDate;
+
+};
+
+transArr.push((new TransactionClass(itemcode, itemName, qty, price, note, TransDate)));
+
+document.getElementById('qty').innerHTML = "";
+document.getElementById('price').innerHTML = "";
+document.getElementById('note').innerHTML = "";
+
+var realTotal = parseInt(document.getElementById("realTot").value) + (qty * price);
+document.getElementById("realTot").value = realTotal;
+var realBasicTot = parseInt(document.getElementById("realBasicTot").value) + (qty * price * parseFloat(document.getElementById("rateText").value));
+document.getElementById("realBasicTot").value = realBasicTot;
+
+}
+function Remove(td, amount) {
+
+        row = td.parentElement.parentElement;
+    $(row).remove();
+    //document.getElementById("myTable").deleteRow(row.rowIndex -1 );
+    var realTotal = parseFloat(document.getElementById("realTot").value) - (amount);
+    var realBasicTotal = parseFloat(document.getElementById("realBasicTot").value) - (amount * parseFloat(document.getElementById("rateText").value));
+
+if (parseFloat(realTotal) < 0) {
+        document.getElementById("realTot").value = 0;
+    document.getElementById("realBasicTot").value = 0;
+} else {
+        document.getElementById("realTot").value = realTotal;
+    document.getElementById("realBasicTot").value = realBasicTotal;
+}
+
+}
+
+function Edit(td, amount) {
+
+        row = td.parentElement.parentElement.parentElement;
+    // row.children(':nth-child(2)').text();
+    for (i = 0; i < row.childNodes.length; i++) {
+
+
+    if (i == 0) {
+
+        $('#itemName').val(parseInt(row.childNodes[i].innerHTML));
+
+    }
+    if (i == 2) {
+        $("#qty").val(row.childNodes[i].innerHTML);
+    }
+    if (i == 3) {
+        $("#price").val(row.childNodes[i].innerHTML);
+
+    }
+    if (i == 4) {
+
+
+    }
+
+    if (i == 5) {
+        $("#note").val(row.childNodes[i].innerHTML);
+
+    }
+    if (i == 6) {
+
+        $("#TransDate").val(row.childNodes[i].innerHTML);
+
+    }
+}
+
+
+        debugger
+    $(row).remove();
+
+//document.getElementById("myTable").deleteRow(row.rowIndex -1 );
+var realTotal = parseFloat(document.getElementById("realTot").value) - (amount);
+if (parseFloat(realTotal) < 0) {
+    document.getElementById("realTot").value = 0;
+    document.getElementById("realBasicTot").value = 0;
+    } else {
+    document.getElementById("realTot").value = realTotal;
+    document.getElementById("realBasicTot").value = realTotal * parseFloat(document.getElementById("rateText").value);
+    }
+
+}
+function Remove2(td, amount) {
+    debugger
+        row = td.parentElement.parentElement.parentElement;
+
+
+
+    $(row).remove();
+    //document.getElementById("myTable").deleteRow(row.rowIndex -1 );
+    var realTotal = parseFloat(document.getElementById("realTot").value) - (amount);
+if (parseFloat(realTotal) < 0) {
+    document.getElementById("realTot").value = 0;
+       document.getElementById("realBasicTot").value = 0;
+    } else {
+    document.getElementById("realTot").value = realTotal;
+       document.getElementById("realBasicTot").value = realTotal * parseFloat(document.getElementById("rateText").value);
+    }
+
+}
+
+function UploadFile() {
+debugger
+    var id = document.getElementById("hi").value;
+    addPic(id);
+  
+   // document.getElementById("btnsDiv").style.display = "none";
+window.location.reload(true);
+}
+function getOrderType(id) {
+debugger
+    $.ajax(
+    {
+        url: "/OrderView/GetOrderType",
+        data: {ordertype: id },
+    dataType: "json",
+    type: "POST",
+        success: function (data) {
+
+            var NumberOfDayesBefore = document.getElementById("NumberOfDayesBefore");
+    NumberOfDayesBefore.setAttribute('value', data.numberOfDayesBefore);
+    var NumberOfDayesAfter = document.getElementById("NumberOfDayesAfter");
+    NumberOfDayesAfter.setAttribute('value', data.numberOfDayesAfter);
+
+
+},
+        error: function (message) {
+        // console.log("Error In Uploading");
+        console.log(message);
+    },
+
+});
+        }
+
+       //$('#project')
+       // .editableSelect()
+       // .on('select.editable-select', function (e, li) {
+
+       //     GetBudgetLineByFunder(li.val())
+       //     var txt = document.getElementById('project');
+       //     txt.text = li.val();
+       //     // txt.vlaue = li.text();
+
+       // });
+    function CmbBudgeLineSelectedIndexChanged(){
+        debugger
+        let OrderHeaderProjectCode = 0;
+        let OrderHeaderBudgetlineCode = 0;
+              var ProjectCode = document.getElementById('project');
+if (ProjectCode != null) {
+
+        OrderHeaderProjectCode = ProjectCode.value;
+        }
+                   var budgetLine = document.getElementById('cmbBudgetLine');
+if (budgetLine != null) {
+
+        OrderHeaderBudgetlineCode = budgetLine.value;
+        }
+
+        debugger
+         
+        $.ajax(
+            {
+                    url: '@Url.Action("getBudget")',
+              
+                data: { ProjectCode:OrderHeaderProjectCode,BudgetLineName: OrderHeaderBudgetlineCode ,byName:false},
+                dataType: "json",
+                type: "POST",
+                success: function (data) {
+                    document.getElementById("TxtTotalBudget").innerHTML = data.data;
+                   //alert("success buf  == " + data.data);
+                },
+                error: function (message) {
+                    console.log("Error In Calculate budget");
+                    console.log(message);
+                },
+
+            });
+
+    
+    }
+      function SelectedIndexChanged() {
+        debugger
+         let OrderHeaderProjectCode=0
+              var ProjectCode = document.getElementById('project');
+if (ProjectCode != null) {
+
+        OrderHeaderProjectCode = ProjectCode.value;
+          }
+    
+            $("#cmbBudgetLine").html(""); 
+        $.ajax({
+              url: '@Url.Action("GetBudgetLineByFunderData")',
+            type: 'POST',
+            data: { "Fundercode": OrderHeaderProjectCode }
+        }).done(function (data) {
+            var s = '<option value="-1">Please Select a BudgetLine</option>';  
+            for (var i = 0; i < data.data.length; i++) {  
+                  s += '<option value="' + data.data[i].code + '">' + data.data[i].name + '</option>';  
+               }  
+            $("#cmbBudgetLine").append(s);  
+         //   alert(s)
+        });
+
+    }
+
+</script>

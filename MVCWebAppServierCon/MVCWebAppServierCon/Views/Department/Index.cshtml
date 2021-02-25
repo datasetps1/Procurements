@@ -1,0 +1,96 @@
+﻿@model IEnumerable<MVCWebAppServierCon.Models.DepartmentClass>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="rowPage">
+    <h1>Index</h1>
+</div>
+
+<div class="rowPage">
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+</div>
+    <div class="rowPage">
+        <table class="table">
+            <thead>
+                <tr>
+                    @*<th>
+                            @Html.DisplayNameFor(model => model.departmentCode)
+                        </th>*@
+                    <th>
+                        @Html.DisplayNameFor(model => model.departmentName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.departmentManagerCode)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.departmentGeneralManagerCode)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.departmentHeadCode)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.departmentFinancialCode)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.departmentProcurementSectionCode)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.departmentUserId)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.departmentCreationDate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.departmentNote)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+    </div>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                @*<td>
+                        @Html.DisplayFor(modelItem => item.departmentCode)
+                    </td>*@
+                <td>
+                    @Html.DisplayFor(modelItem => item.departmentName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.departmentManagerCode)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.departmentGeneralManagerCode)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.departmentHeadCode)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.departmentFinancialCode)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.departmentProcurementSectionCode)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.departmentUserId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.departmentCreationDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.departmentNote)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                    @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                    @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                </td>
+            </tr>
+        }
+    </tbody>
+    </table>

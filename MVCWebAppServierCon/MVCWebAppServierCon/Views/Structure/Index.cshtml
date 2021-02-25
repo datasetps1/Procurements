@@ -1,0 +1,59 @@
+﻿@model IEnumerable<MVCWebAppServierCon.Models.StructureClass>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table table-striped responsive-table text-center table-hover table-bordered">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.structureCode)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.structureName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.structureName2)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.structureRank)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.structureNote)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.structureCode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.structureName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.structureName2)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.structureRank)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.structureNote)
+            </td>
+            <td id="tdLinks">
+                @Html.ActionLink("Edit", "Edit", new { id1 = item.structureCode }) ;<span>|</span>
+                @Html.ActionLink("Details", "Details", new { id1 = item.structureCode }) ;<span>|</span>
+                @Html.ActionLink("Delete", "Delete", new { id1 = item.structureCode });
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

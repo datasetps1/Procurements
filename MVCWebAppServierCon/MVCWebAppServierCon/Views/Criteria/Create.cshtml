@@ -1,0 +1,76 @@
+﻿@model MVCWebAppServierCon.Models.Criteria
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h2>Criterias</h2>
+
+<p>
+    Create New Criteria
+</p>
+
+<div class="form_container row">
+    <form asp-action="Create" class="form_style col-md-6 col-lg-6 col-sm-8 col-12">
+        <div class="form-group input_group_style">
+            <label asp-for="Name" class="control-label"></label>
+            <input asp-for="Name" class="form-control"  placeholder="inert the name"/>
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <div class="form-group row input_group_style">
+            <label asp-for="Criteria_Rank" class="control-label"></label>
+            <select asp-for="Criteria_Rank" class="form-control">
+                @*<option selected></option>*@
+
+                <option selected value="0">less</option>
+                <option value="1">more</option>
+
+            </select>
+            <span asp-validation-for="Criteria_Rank" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Create" class="btn btn-primary form_submit_btn" />
+        </div>
+    </form>
+</div>
+<div class="table-responsive" style="margin-left:0 !important; width: 100% !important;">
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Criteria_Rank)
+                </th>
+                <th>
+                    Actions
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in ViewBag.criteriaList)
+            {
+                <tr>
+                    <td>
+                        @item.Name
+                    </td>
+                    @if (item.Criteria_Rank == 0)
+                    {
+                        <td>less</td>
+                    }
+                    else
+                    {
+                        <td>more</td>
+                    }
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,80 @@
+﻿@model MVCWebAppServierCon.Models.OrderTypeClass
+
+@using Microsoft.AspNetCore.Mvc.Localization
+
+@inject IViewLocalizer Localizer
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+<div class="rowPage" style="@Localizer["text-align: left  ;direction: ltr"]">
+    <h4>@Localizer["Order Type Class"]</h4>
+</div>
+@using (Html.BeginForm("Edit", "Order", FormMethod.Post))
+{
+
+    <hr />
+    <div class="rowPage">
+        <div class="col-md-12">
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group col-md-4">
+                    <label asp-for="orderTypeName" class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Order Type Name"]</label>
+                    <input asp-for="orderTypeName" class="form-control" />
+                    <span asp-validation-for="orderTypeName" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="orderTypeNumDays" class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["# of Days"]</label>
+                    <input asp-for="orderTypeNumDays" class="form-control" />
+                    <span asp-validation-for="orderTypeNumDays" class="text-danger"></span>
+                </div>
+
+                <div class="form-group col-md-4">
+                    <label asp-for="orderTypeNumDaysAfter" class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["# of Days After"]</label>
+                    <input asp-for="orderTypeNumDaysAfter" class="form-control" />
+                    <span asp-validation-for="orderTypeNumDaysAfter" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="orderTypeNote" class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Order Type Note"]</label>
+                    <input asp-for="orderTypeNote" class="form-control" />
+                    <span asp-validation-for="orderTypeNote" class="text-danger"></span>
+                </div>
+                <div class="row">
+                    @Html.CheckBoxFor(c => c.orderTypeShowFunder)
+                    <div class="form-check col-md-3">
+                        <label class="form-check-label" for="inlineCheckbox1">
+                            Show Funder
+                        </label>
+                    </div>
+                    @Html.CheckBoxFor(c => c.orderTypeShowBudgetLine)
+                    <div class="form-check col-md-3">
+                        <label class="form-check-label" for="inlineCheckbox1">
+                            Show Budget Line
+                        </label>
+                    </div>
+                    @Html.CheckBoxFor(c => c.orderTypeShowTransDate)
+                    <div class="form-check col-md-3">
+                        <label class="form-check-label" for="orderTypeShowTransDate">
+                            Show Transaction Date
+                        </label>
+                    </div>
+                </div>
+                <hr />
+                <div class="form-group" style="@Localizer["text-align: left  ;direction: ltr"]">
+                    <input type="submit" value="Save" class="btn btn-primary" />
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <div class="rowPage">
+        <a asp-action="Index">Back to List</a>
+    </div>
+
+    @section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    }
+}

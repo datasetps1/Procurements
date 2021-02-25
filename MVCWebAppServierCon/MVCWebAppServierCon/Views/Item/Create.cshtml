@@ -1,0 +1,102 @@
+﻿@model MVCWebAppServierCon.Models.ItemClass
+
+@using Microsoft.AspNetCore.Mvc.Localization
+
+@inject IViewLocalizer Localizer
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+<div class="rowPage">
+    <h4>@Localizer["Item Class"]</h4>
+</div>
+<hr />
+<div class="rowPage">
+    <div class="col-md-4">
+        <form asp-action="Create" style="@Localizer["text-align: left  ;direction: ltr"]">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="itemName" class="control-label">@Localizer["Item Name"]</label>
+                <input asp-for="itemName" class="form-control" />
+                <span asp-validation-for="itemName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="itemName2" class="control-label">@Localizer["Item Name2"]</label>
+                <input asp-for="itemName2" class="form-control" />
+                <span asp-validation-for="itemName2" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="itemPrice" class="control-label">@Localizer["Item Price"]</label>
+                <input asp-for="itemPrice" class="form-control" />
+                <span asp-validation-for="itemPrice" class="text-danger"></span>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-12">
+                    <label asp-for="itemNote" class="control-label">@Localizer["Item Note"]</label>
+                    <input asp-for="itemNote" class="form-control" />
+                    <span asp-validation-for="itemNote" class="text-danger"></span>
+                </div>
+            </div>
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
+        </form>
+    </div>
+</div>
+
+<div>
+
+</div>
+<div class="rowPage">
+    <table class="table table-striped responsive-table text-center table-hover table-bordered">
+        <thead>
+            <tr>
+                <th>
+                    @*@Html.DisplayNameFor(model => model.itemName)*@
+                    @Localizer["Item Name"]
+                </th>
+                <th>
+                    @*@Html.DisplayNameFor(model => model.itemName2)*@
+                    @Localizer["Item Name2"]
+                </th>
+                <th>
+                    @*@Html.DisplayNameFor(model => model.itemPrice)*@
+                    @Localizer["Item Price"]
+                </th>
+                <th>
+                    @*@Html.DisplayNameFor(model => model.itemNote)*@
+                    @Localizer["Item Note"]
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (ItemClass item in ViewBag.Items)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.itemName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.itemName2)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.itemPrice)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.itemNote)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.itemCode }) |
+                        @Html.ActionLink("Details", "Details", new { id = item.itemCode }) |
+                        @Html.ActionLink("Delete", "Delete", new { id = item.itemCode })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+    @section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    }

@@ -1,0 +1,94 @@
+﻿@model MVCWebAppServierCon.ViewModels.UserViewModel
+
+
+@using Microsoft.AspNetCore.Mvc.Localization
+
+@inject IViewLocalizer Localizer
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>@Localizer["Edit"]</h1>
+<div class="rowPage">
+    <h4>@Localizer["User Class"]</h4>
+</div>
+<hr />
+
+<div class="rowPage">
+
+    <div class="col-md-12">
+        <form asp-action="Edit">
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="row">
+                <div class="form-group col-md-3">
+                    <label asp-for="userName" class="control-label">@Localizer["User Name"]</label>
+                    <input asp-for="userName" class="form-control" disabled="disabled" />
+                    <span asp-validation-for="userName" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-3">
+                    <label asp-for="userEmail" class="control-label">@Localizer["User Email"]</label>
+                    <input asp-for="userEmail" class="form-control" />
+                    <span asp-validation-for="userEmail" class="text-danger"></span>
+                </div>
+
+
+            </div>
+            <div class="row">
+                <div class="form-group col-md-4">
+
+                    <label asp-for="userType" class="control-label">@Localizer["User Type"]</label>
+                    <br />
+                    <select class="form-control" asp-for="userType">
+                        @* asp-items="" *@
+
+                        <option>Please select user Type</option>
+                        @foreach (StructureClass item in ViewBag.uType)
+                        {
+                            <option value="@item.structureRank"> @Html.DisplayFor(modelItem => item.structureName)</option>
+                        }
+                    </select>
+                    <label asp-for="userDepartment" class="control-label">@Localizer["Department"]</label>
+                    <br />
+                    <select class="form-control" asp-for="userDepartment">
+                        @* asp-items="" *@
+
+                        <option>Please select user Type</option>
+                        @foreach (DepartmentClass item in ViewBag.DepName)
+                        {
+                            <option value="@item.departmentCode"> @Html.DisplayFor(modelItem => item.departmentName)</option>
+                        }
+                    </select>
+                    <label asp-for="userActive" class="control-label">@Localizer["User Active"]</label>
+                    @*<input asp-for="userActive" class="form-control" />*@
+                    <br />
+                    <select class="form-control" asp-for="userActive">
+                        <option value="1">@Localizer["True"]</option>
+                        <option value="0">@Localizer["False"]</option>
+                    </select>
+                    <span asp-validation-for="userActive" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-12">
+                    <label asp-for="userNote" class="control-label">@Localizer["User Note"]</label>
+                    <input asp-for="userNote" class="form-control" />
+                    <span asp-validation-for="userNote" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Edit" class="btn btn-primary" />
+            </div>
+            <p>
+                <a asp-action="Create">User Screen</a>
+            </p>
+            @ViewBag.message
+        </form>
+    </div>
+    @section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    }
+</div>
+
+
+

@@ -1,0 +1,261 @@
+﻿@model MVCWebAppServierCon.Models.AmountSittingClass
+
+@using Microsoft.AspNetCore.Mvc.Localization
+
+@inject IViewLocalizer Localizer
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>@Localizer["Create"]</h1>
+<div class="rowPage">
+    <h4>AmountSittingClass</h4>
+</div>
+<hr />
+<div id="errors" class="bg-danger"></div>
+<br />
+<div class="rowPage">
+    <div class="col-md-12">
+        <form asp-action="Create" style="@Localizer["text-align: left  ;direction: ltr"]">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="row">
+                <div class="form-group fixLftSpc">
+                    <label asp-for="amountFrom" class="control-label">@Localizer["Amount From"]</label>
+                    <input asp-for="amountFrom" class="form-control" id="amountfrom" />
+                    <span asp-validation-for="amountFrom" class="text-danger"></span>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="form-group fixLftSpc sameRow">
+                    <label asp-for="amountTo" class="control-label">@Localizer["Amount To"]</label>
+                    <input asp-for="amountTo" class="form-control" id="amountto" />
+                    <span asp-validation-for="amountTo" class="text-danger"></span>
+                    <input class="form-check-input col-md-1" type="checkbox" value="" id="chBxAmountTo" onclick="hideText()" />
+                    <label class="form-check-label" for="defaultCheck1">@Localizer["∞"]</label>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            @foreach (StructureClass st in ViewBag.Structure)
+                            {
+                                <div class="form-check form-check-inline">
+                                    <label class="form-check-label" for="inlineCheckbox1">@st.structureName</label>
+
+                                    <input name="chkListBx" class="form-check-input" type="checkbox" value=@st.structureRank.ToString() />
+                                    @*<input type="checkbox" name="chkListBx" asp-for="amountStructure" class="form-control" value="@st.structureCode" />*@
+                                    <span asp-validation-for="amountStructure" class="text-danger"></span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="row">
+                    <div class="form-group col-md-12">
+                        <label asp-for="amountNote" class="control-label">@Localizer["Amount Note"]</label>
+                        <input asp-for="amountNote" class="form-control" id="amountNote" />
+                        <span asp-validation-for="amountNote" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <button value="Create" class="btn btn-primary cursor" onclick="GetSelected()">@Localizer["Create"]</button>
+            </div>
+            @ViewBag.Message
+        </form>
+    </div>
+</div>
+
+<div>
+</div>
+<div class="rowPage">
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @*@Html.DisplayNameFor(model => model.amountFrom)*@
+                    @Localizer["Amount From"]
+                </th>
+                <th>
+                    @*@Html.DisplayNameFor(model => model.amountTo)*@
+                    @Localizer["Amount To"]
+                </th>
+                @foreach (StructureClass st in ViewBag.Structure)
+                {
+                    <th>
+                        @st.structureName  <span>&nbsp; &nbsp; &nbsp;</span>
+                    </th>
+                }
+                <th>
+                    @*@Html.DisplayNameFor(model => model.amountNote)*@
+                    @Localizer["Amount Note"]
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                var j = 0;
+                foreach (var rank in ViewBag.Ranks)
+                {
+
+                    <tr>
+
+                        @foreach (AmountSittingClass asc in rank)
+                        {
+                            <td>
+                                @asc.amountFrom
+                                <input type="hidden" value="@asc.amountFrom" id="c @j" />
+                            </td>
+                            <td>
+                                @if (asc.amountTo == 1000000000)
+                                {
+                                    <span>&infin;</span>
+                                }
+                                else
+                                {
+                                    @asc.amountTo
+                                }
+                            </td>
+
+                            break;
+                        }
+                        @*  this loop just to drow the checkboxes equals to structure's number records in the database and give eachone a unique id*@
+                        @*@for (var i = 1; i <= ViewBag.Structure; i++)*@
+                        @foreach (StructureClass str in ViewBag.Structure)
+                        {
+
+                            <td>
+
+                                <input type="checkbox" disabled id="@j@str.structureRank" />
+                            </td>
+                        }
+                        <td>
+                            @foreach (AmountSittingClass asc in rank)
+                            {
+                                @Html.DisplayFor(modelItem => asc.amountNote)
+                            }
+
+                        </td>
+                        <td>
+                            @foreach (AmountSittingClass asc in rank)
+                            {
+                                @Html.ActionLink("Edit", "Edit", new { id = asc.amountFrom }); <span>|</span>
+                                @Html.ActionLink("Details", "Details", new { id = asc.amountFrom }); <span>|</span>
+                                <a class="deleteLink" onclick="DeleteRow(@asc.amountFrom)">Delete</a>
+                                break;
+                            }
+                        </td>
+
+
+                    </tr>
+
+                    @for (var i = 1; i <= ViewBag.lop; i++)
+                    {
+
+                        @foreach (AmountSittingClass cc in rank)
+                        {
+                            @*@if (ViewBag.lop[i].amountStructure == Int32.Parse(cc.amountStructure))
+                                {*@
+                            /*if the checkbox id equals the the amountStructure entry in the DB marked as cheked*/
+                            <script>
+                                    document.getElementById("@j@cc.amountStructure").checked = true;
+                            </script>
+                            //}
+
+                        }
+
+
+                    }
+                    j++;
+                }
+            }
+        </tbody>
+    </table>
+</div>
+<script>
+    function GetSelected() {
+        var checked = new Array();
+        var fromAmount = document.getElementById('amountfrom').value;
+        var toAmount = document.getElementById('amountto').value;
+
+        if (document.getElementById("chBxAmountTo").checked) {
+            toAmount = "1000000000";//deal as max Num.
+        }
+        var amountNote = document.getElementById('amountNote').value;
+        var ContChkBx = 0;
+        $("[name='chkListBx']").each(function (index, data) {
+            if (data.checked) {
+                checked.push(data.value);//store checkedbox values in this array to forword it to the controller and store it in the DB
+                ContChkBx += 1;
+            }
+        });
+        //alert(checked);
+        if (ContChkBx > 0) {
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: "../AmountSitting/StruArray",
+                data: {
+                    strArray: checked,
+                    fromAmount: fromAmount,
+                    toAmount: toAmount,
+                    amountNote: amountNote
+                },
+                success: function () {
+                    console.log("handle response");
+                    document.location = '/AmountSitting/Create';
+                },
+                error: function () {
+                    console.log("just die... please");
+                },
+            });
+        } else {
+            document.getElementById("errors").innerHTML = "You Have To Select Your Structure";
+        }
+
+    }
+    function DeleteRow(id) {
+        if (confirm("Are you sure?")) {
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: "../AmountSitting/DeleteStrArr",
+                data: {
+                    fromAmountPrevious: id,
+                },
+                success: function (message) {
+                    console.log(message);
+                    console.log("handle response");
+                    document.location = '/AmountSitting/Create';
+                },
+                error: function (req, status, error) {
+                    console.log(error);
+                    alert(error);
+                }
+            });
+        } else {
+            document.location = '/AmountSitting/Create';
+        }
+    }
+    function hideText() {//hide amountTo text when checked infinte checkbox
+        if (document.getElementById("chBxAmountTo").checked) {
+            document.getElementById("amountTo").type = "hidden";
+        } else {
+            document.getElementById("amountTo").type = "number";
+        }
+    }
+</script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+}

@@ -1,0 +1,283 @@
+﻿@inject SignInManager<IdentityUser> signInManager;
+@using Microsoft.AspNetCore.Builder
+@using Microsoft.AspNetCore.Http.Features
+@using Microsoft.AspNetCore.Localization
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.Extensions.Options
+
+@inject IViewLocalizer Localizer
+@inject IOptions<RequestLocalizationOptions> LocOptions
+
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    var cultureItems = LocOptions.Value.SupportedUICultures
+        .Select(c => new SelectListItem { Value = c.Name, Text = c.DisplayName })
+        .ToList();
+    var returnUrl = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+
+@*<!DOCTYPE html>*@
+
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - MVCWebAppServierCon</title>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+    <environment include="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+              asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute"
+              crossorigin="anonymous"
+              integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" />
+    </environment>
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/js/all.min.js" crossorigin="anonymous"></script>
+    <link href="~/css/Common.css" rel="stylesheet" />
+</head>
+<body dir="@Localizer["ltr"]" class="sb-nav-fixed" id="bod">
+    <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark mynav">
+        <a class="navbar-brand proc" href="..">@Localizer["Procurement"]</a><button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
+            <div class="input-group">
+                <img alt="" src="@ViewBag.Base64String" style="height:50px;width:80px; margin-left: 34px;" />
+                <hr />
+                <h6 style="font-size: large; color: white; line-height: 45px; font-weight:bold">@ViewBag.CompName</h6>
+            </div>
+        </form>
+        <!-- Navbar Search-->
+        <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
+            <div class="input-group">
+                <input class="form-control" type="text" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2" />
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="button"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+        </form>
+        <!-- Navbar-->
+        <ul class="navbar-nav ml-auto ml-md-0">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                    @*<a class="dropdown-item" href="#">Settings</a><a class="dropdown-item" href="#">Activity Log</a>*@
+                    <div class="dropdown-divider"></div>
+                    @if (signInManager.IsSignedIn(User))
+                    {
+                        <a class="dropdown-item" asp-action="Login" asp-controller="Account">@Localizer["Logout"] @User.Identity.Name</a>
+                    }
+                    else
+                    {
+                        <a class="dropdown-item" asp-action="Login" asp-controller="Account">@Localizer["Login"]</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" asp-action="Register" asp-controller="Account">@Localizer["Register"] </a>
+                    }
+                </div>
+            </li>
+        </ul>
+    </nav>
+
+    <div id="layoutSidenav">
+        <div id="layoutSidenav_nav">
+            <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+                <div class="sb-sidenav-menu">
+                    <div class="nav">
+                        @*<div class="sb-sidenav-menu-heading">Core</div>*@
+
+                        <a class="nav-link" asp-controller="Home" asp-action="Index">
+                            <div class="sb-nav-link-icon"><i class="fas fa-home"></i></div>
+                            <h7>@Localizer["Home"]</h7>
+                        </a>
+
+                        <a class="nav-link" asp-controller="Home" asp-action="MyOrders">
+                            <div class="sb-nav-link-icon"><i class="fas fa-building"></i></div>
+                            <h7>@Localizer["My Orders"]</h7>
+                        </a>
+                        <a class="nav-link" asp-controller="Home" asp-action="MyFollowUp">
+                            <div class="sb-nav-link-icon"><i class="fas fa-building"></i></div>
+                            <h7>@Localizer["My Follow up"]</h7>
+                        </a>
+                        <a class="nav-link" asp-controller="OrderView" asp-action="Create">
+                            <div class="sb-nav-link-icon"><i class="fas fa-shopping-cart"></i></div>
+                            @Localizer["Create Order"]
+                        </a>
+
+                        @*@if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+        {*@
+                        <a class="nav-link" asp-controller="Home" asp-action="GetAllOrders">
+                            <div class="sb-nav-link-icon"><i class="fas fa-home"></i></div>
+                            <h7>@Localizer["All Orders"]</h7>
+                        </a>
+                        <a class="nav-link" asp-controller="Forms" asp-action="Create">
+                            <div class="sb-nav-link-icon"><i class="fas fa-building"></i></div>
+                            <h7>@Localizer["Forms"]</h7>
+                        </a>
+                        @*   }*@
+                        @if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+                        {
+                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
+                                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                                @Localizer["Settings"]
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <a class="nav-link" asp-controller="Order" asp-action="Create"> <div class="sb-nav-link-icon"><i class="fas fa-keyboard"></i></div> @Localizer["Order Type"]</a>
+                                    <a class="nav-link" asp-controller="Item" asp-action="Create"> <div class="sb-nav-link-icon"><i class="fas fa-cookie"></i></div> @Localizer["Item"]</a>
+                                    <a class="nav-link" asp-controller="Structure" asp-action="Create"> <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>@Localizer["Structure"]</a>
+                                    <a class="nav-link" asp-controller="User" asp-action="Create"> <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div> @Localizer["User"]</a>
+                                    <a class="nav-link" asp-controller="AmountSitting" asp-action="Create"> <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>@Localizer["Amount Settings"]</a>
+                                    <a class="nav-link" asp-controller="Department" asp-action="Create"> <div class="sb-nav-link-icon"><i class="fas fa-building"></i></div>@Localizer["Department"]</a>
+                                </nav>
+                            </div>
+                        }
+                        <a class="nav-link" asp-controller="Home" asp-action="Privacy">
+                            <div class="sb-nav-link-icon"><i class="fas fa-key"></i></div>
+                            @Localizer["Privacy"]
+                        </a>
+                        @*<footer class="py-4 bg-light mt-auto">*@
+
+                        <div title="@Localizer["Request culture provider:"] @requestCulture?.Provider?.GetType().Name" style="display: none">
+                            <form id="selectLanguage" asp-controller="Home"
+                                  asp-action="SetLanguage" asp-route-returnUrl="@returnUrl"
+                                  method="post" class="form-horizontal" role="form">
+                                <label asp-for="@requestCulture.RequestCulture.UICulture.Name">@Localizer["Language:"]</label> <select name="culture"
+                                                                                                                                       onchange="this.form.submit();" id="selectLanguageInput"
+                                                                                                                                       asp-for="@requestCulture.RequestCulture.UICulture.Name" asp-items="cultureItems"></select>
+
+                                <script>
+                                    $(document).ready(function () {
+                                        if ("@requestCulture.RequestCulture.UICulture.Name" == 'en-US') {
+                                            $('.EnLabel').hide("slow")
+                                            $('#enbtn').hide("slow")
+                                            $('.ArLabel').toggle("slide")
+                                            $('#arbtn').toggle("slide")
+                                        } else {
+                                            $('.EnLabel').toggle("slide");
+                                            $('#enbtn').toggle("slide")
+                                            $('.ArLabel').hide("slow")
+                                            $('#arbtn').hide("slow")
+                                        }
+                                    });
+
+                                </script>
+
+                            </form>
+                        </div>
+                        <div class="container-fluid" style="position: absolute; bottom: 10px;" id="lang">
+                            <div class="d-flex  small" id="Arbut">
+
+                                <input type="image" id="arbtn" onclick="var element = document.getElementById('selectLanguageInput'); element.value = 'ar'; var event = new Event('change'); element.dispatchEvent(event); document.getElementById('bod').style.direction = 'rtl'; document.getElementById('en-US').style.visibility = 'visible';
+                                document.getElementById('ar').style.visibility = 'visible';" style="width:25px; height:40px;display:none" img src="@Url.Content("~/Images/langlogo.jpg")"></input>
+                                <p class="ArLabel" id="arlbl" style="margin-top :12px; margin-left : 2px;display:none; font-weight:bold">Arabic</p>
+                            </div>
+                            <div class="d-flex small" id="Enbut">
+                                <input type="image" id="enbtn" onclick="var element = document.getElementById('selectLanguageInput'); element.value = 'en-US'; var event = new Event('change'); element.dispatchEvent(event);document.getElementById('bod').style.direction = 'ltr'; document.getElementById('ar').style.visibility = 'visible';
+                                    document.getElementById('en-US').style.visibility = 'visible'; " style="width:25px; height:40px;display:none" img src="@Url.Content("~/Images/langlogo.jpg")"></input>
+                                <p class="EnLabel" id="enlbl" style="margin-top :12px; margin-left : -4px;display:none; font-weight:bold">English</p>
+
+                            </div>
+
+                            @*<div class="d-flex  small" id="Ar">
+
+                <i class="fas fa-globe language" onclick="var element = document.getElementById('selectLanguageInput'); element.value = 'ar'; var event = new Event('change'); element.dispatchEvent(event); document.getElementById('bod').style.direction = 'rtl'; document.getElementById('en-US').style.visibility = 'visible';
+                    document.getElementById('ar').style.visibility = 'hidden'" style="width:25px; height:40px;" img src="~/Images/langlogo.jpg"></i>
+                <p style="margin-top :12px; margin-left : 2px;">Arabic</p>
+            </div>
+            <div class="d-flex  small" id="En">
+                <i class="fas fa-globe language" onclick="var element = document.getElementById('selectLanguageInput'); element.value = 'en-US'; var event = new Event('change'); element.dispatchEvent(event);document.getElementById('bod').style.direction = 'ltr'; document.getElementById('ar').style.visibility = 'visible';
+                    document.getElementById('en-US').style.visibility = 'hidden' " style="width:25px; height:40px; " img src="~/Images/langlogo.jpg"></i>
+                <p style="margin-top :12px; margin-left : -4px;">English</p>
+
+            </div>*@
+
+                            @*<script>
+                alert("1")
+                $(document).ready(function () {
+                    alert("2")
+                    $('#Arbut').click(function () {
+                        alert("3")
+                        $('.EnLabel').toggle("slide");
+                        $('#enbtn').toggle("slide")
+                        $('.ArLabel').hide("slow")
+                        $('#arbtn').hide("slow")
+                        document.getElementById('bod').style.direction = "rtl"
+                        alert("4")
+                    });
+                    $('#Enbut').click(function () {
+                        alert("5")
+                        $('.EnLabel').hide("slow")
+                        $('#enbtn').hide("slow")
+                        $('.ArLabel').toggle("slide")
+                        $('#arbtn').toggle("slide")
+                        document.getElementById('bod').style.direction = "ltr"
+                        alert("6")
+                    });
+                });
+
+            </script>*@
+
+                            @* <div class="d-flex  small">
+                <center>
+                    <img src="~/Images/langlogo.jpg" />
+                </center>
+            </div>*@
+
+                        </div>
+
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+    <div class="container centerMain" style="margin-top:70px;">
+        <partial name="_CookieConsentPartial" />
+        <main role="main" class="pb-md-3">
+            @RenderBody()
+        </main>
+    </div>
+    @*<footer>
+            <div class="row">
+                <div class="col-sm-6">
+                    <p>&copy; 2016 - Adding Localization</p>
+                </div>
+                <div class="col-sm-6 text-right">
+                    @await Html.PartialAsync("_SelectLanguagePartial")
+                </div>
+            </div>
+        </footer>*@
+    <environment include="Development">
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+        <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
+                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+                asp-fallback-test="window.jQuery"
+                crossorigin="anonymous"
+                integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=">
+        </script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"
+                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"
+                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
+                crossorigin="anonymous"
+                integrity="sha384-xrRywqdh3PHs8keKZN+8zzc5TX0GRTLCcmivcbNJWm2rs5C8PRhcEn3czEjhAO9o">
+        </script>
+    </environment>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+
+
+</html>

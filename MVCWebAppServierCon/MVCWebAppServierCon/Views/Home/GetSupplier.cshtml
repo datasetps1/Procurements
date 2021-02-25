@@ -1,0 +1,42 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+
+@inject IViewLocalizer Localizer
+
+<script src="~/lib/jquery/selectbox/dist/jquery-editable-select.js"></script>
+<link href="~/lib/jquery/selectbox/dist/jquery-editable-select.css" rel="stylesheet" />
+
+<div class="form-group col-md-12">
+    <label for="" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["supplier"]</label>
+    <select id="cmbSuppliers" class="form-control">
+
+        <option selected></option>
+
+        @foreach (CodeNameModel obj in ViewBag.lstsuppliers)
+        {
+            <option value="@obj.Code">@obj.Name</option>
+        }
+
+
+
+    </select>
+</div>
+
+
+<script>
+
+    $('#cmbSuppliers').editableSelect();
+     $('#cmbSuppliers')
+                                  .editableSelect()
+                                    .on('select.editable-select', function (e, li) {
+
+                                        var txt = document.getElementById('cmbSuppliers');
+                                        txt.text = li.val();
+
+
+                                    });
+
+
+    //$('#SaveSupplier').on('click', function () {
+
+    //    }
+</script>

@@ -1,0 +1,34 @@
+﻿@model List<UploadClass>
+
+<div class="container card" style=" box-shadow: 0 0 10px 0 rgba(0, 0, 0, .1);">
+    <ul style="list-style-type: none;display: flex;">
+
+        @foreach (var item in Model)
+        {
+            <li>
+
+
+
+
+                <div class="card" style="width: 15rem; height:9rem ;margin-left:1px;">
+                    <div class="card-body">
+
+                        @*// <h6 class="card-subtitle mb-2 text-muted"> file</h6>*@
+                        <p class="card-subtitle mb-2 text-muted" style="height:5rem">@item.uploadPath</p>
+                        <a class="btn btn-primary btn-sm" asp-action="Download" asp-controller="OrderView"
+                           asp-route-filename="@item.uploadPath" style="font-size:small ;float: left;">
+                            Download
+                        </a>
+
+                        <a class="btn btn-sm" asp-action="DeleteFile" asp-controller="OrderView" asp-route-orderCode="@item.uploadHeaderCode" asp-route-id="@item.uploadCode"
+                           asp-route-filename="@item.uploadPath" style="background-color:#f29445 ;font-size:small ;color:white; float: right;">
+                            Delete
+                        </a>
+
+
+                    </div>
+                </div>
+            </li>
+        }
+    </ul>
+</div>

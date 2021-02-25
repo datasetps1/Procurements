@@ -1,0 +1,86 @@
+﻿@model IEnumerable<MVCWebAppServierCon.ViewModels.UserViewModel>
+
+@{
+    ViewData["Title"] = "UserList";
+}
+
+<h1>UserList</h1>
+
+<p>
+    <a asp-action="CreateUser">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.userName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.userEmail)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.userPassword)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.userType)
+            </th>
+            @*<th>
+                @Html.DisplayNameFor(model => model.userDepartment)
+            </th>*@
+            @*<th>
+                @Html.DisplayNameFor(model => model.managmentAccesstance)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.sectionManager)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.finacnceDepartment)
+            </th>*@
+            <th>
+                @Html.DisplayNameFor(model => model.userActive)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (UserClass item in ViewBag.users) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.userCode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.userName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.userEmail)
+            </td>
+            @*<td>
+                @Html.DisplayFor(modelItem => item.userPassword)
+            </td>*@
+            <td>
+                @Html.DisplayFor(modelItem => item.userTypeCode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.userDepartmentCode)
+            </td>
+            @*<td>
+                @Html.DisplayFor(modelItem => item.managmentAccesstanceCode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.sectionManagerCode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.finacnceDepartmentCode)
+            </td>*@
+            <td>
+                @Html.DisplayFor(modelItem => item.userActive)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

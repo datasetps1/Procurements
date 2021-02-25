@@ -1,0 +1,186 @@
+﻿@model MVCWebAppServierCon.ViewModels.TestViewModel
+
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>TestClass</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form>
+            @*asp-action="Create"*@
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Test.testName" class="control-label"></label>
+                <input asp-for="Test.testName" class="form-control" id="testname" />
+                <span asp-validation-for="Test.testName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Test.name2" class="control-label"></label>
+                <input asp-for="Test.name2" class="form-control" id="name2" />
+                <span asp-validation-for="Test.name2" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Test.name3" class="control-label"></label>
+                <input asp-for="Test.name3" class="form-control" id="name3" />
+                <span asp-validation-for="Test.name3" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Test2.testName" class="control-label"></label>
+                <input asp-for="Test2.testName" class="form-control" id="testname1" />
+                <span asp-validation-for="Test2.testName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Test2.name2" class="control-label"></label>
+                <input asp-for="Test2.name2" class="form-control" id="name22" />
+                <span asp-validation-for="Test2.name2" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Test2.name3" class="control-label"></label>
+                <input asp-for="Test2.name3" class="form-control" id="name33" />
+                <span asp-validation-for="Test2.name3" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input onclick="submitForCreate()" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+@*here*@
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Test.testName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Test.name2)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Test.name3)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Test2.testName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Test2.name2)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Test2.name3)
+            </th>
+
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (TestViewModel item in ViewBag.ListView)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Test.testName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Test.name2)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Test.name3)
+                </td>
+                @if (item.Test2 != null)
+                {
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Test2.testName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Test2.name2)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Test2.name3)
+                    </td>
+                }
+                else
+                {
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Test2.name3)
+                    </td>
+                }
+
+
+                <td>
+                    @if (item.Test2 != null)
+                    {
+                        
+                        @Html.ActionLink("Edit", "Edit", new { id1 = item.Test.testCode, id2 = item.Test2.testCode }) ;<span>|</span>
+                        @Html.ActionLink("Details", "Details", new { id1 = item.Test.testCode, id2 = item.Test2.testCode }) ;<span>|</span>
+                        @Html.ActionLink("Delete", "Delete", new { id1 = item.Test.testCode, id2 = item.Test2.testCode });
+                    }
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+
+
+@section Scripts {
+    @*fcn for Create in Ajax*@
+    <script>
+        function submitForCreate() {
+            var array = new Array();
+
+            var i1 = document.getElementById("testname").value;
+            var i2 = document.getElementById("name2").value;
+            var i3 = document.getElementById("name3").value;
+            var i4 = document.getElementById("testname1").value;
+            var i5 = document.getElementById("name22").value;
+            var i6 = document.getElementById("name33").value;
+
+
+
+            array.push(i1);
+            array.push(i2);
+            array.push(i3);
+            array.push(i4);
+            array.push(i5);
+            array.push(i6);
+            //other inputs
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: "../Test/createByAjax",
+                data: {
+                    cArray: array,
+
+                },
+                success: function (message, length) {
+                    console.log("handle response :" + message);
+                    console.log(length);
+                    document.location = '/Home/Index';
+                },
+                error: function (message) {
+
+                    console.log("just die... please" + "  " + message);
+                },
+            });
+        }
+    </script>
+
+   
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+}
+

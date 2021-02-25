@@ -1,0 +1,59 @@
+﻿@model IEnumerable<MVCWebAppServierCon.Models.OrderTypeClass>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table table-striped responsive-table text-center table-hover table-bordered">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.orderTypeCode)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.orderTypeName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.orderTypeUserId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.orderTypeCreationDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.orderTypeNote)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.orderTypeCode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.orderTypeName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.orderTypeUserId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.orderTypeCreationDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.orderTypeNote)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

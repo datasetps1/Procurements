@@ -1,0 +1,117 @@
+﻿@model MVCWebAppServierCon.Models.StructureClass
+
+@using Microsoft.AspNetCore.Mvc.Localization
+
+@inject IViewLocalizer Localizer
+
+@{
+    ViewData["Title"] = "Create";
+}
+<h1>@Localizer["Create"]</h1>
+<div class="rowPage">
+    <h4>@Localizer["Structure Class"]</h4>
+</div>
+<hr />
+<div class="rowPage">
+    <div class="col-md-12">
+        <form asp-action="Create" style="@Localizer["text-align: left  ;direction: ltr"]">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            @*<div class="form-group">
+                    <label asp-for="structureCode" class="control-label"></label>
+                    <input asp-for="structureCode" class="form-control" />
+                    <span asp-validation-for="structureCode" class="text-danger"></span>
+                </div>*@
+            <div class="row">
+                <div class="form-group col-md-4">
+                    <label asp-for="structureName" class="control-label">@Localizer["Structure Name"]</label>
+                    <input asp-for="structureName" class="form-control" />
+                    <span asp-validation-for="structureName" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="structureName2" class="control-label">@Localizer["Structure Name2"]</label>
+                    <input asp-for="structureName2" class="form-control" />
+                    <span asp-validation-for="structureName2" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="structureRank" class="control-label">@Localizer["Structure Rank"]</label>
+                    <input asp-for="structureRank" class="form-control" />
+                    <span asp-validation-for="structureRank" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-12">
+                    <label asp-for="structureNote" class="control-label">@Localizer["Structure Note"]</label>
+                    <input asp-for="structureNote" class="form-control" />
+                    <span asp-validation-for="structureNote" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+            @ViewBag.Message
+        </form>
+    </div>
+</div>
+
+<div class="rowPage">
+    <a asp-action="Index">Back to List</a>
+</div>
+<div class="rowPage">
+    <table class="table table-striped responsive-table text-center table-hover table-bordered">
+        <thead>
+            <tr>
+                <th>
+                    @*@Html.DisplayNameFor(model => model.structureCode)*@
+                    @Localizer["Structure Code"]
+                </th>
+                <th>
+                    @*@Html.DisplayNameFor(model => model.structureName)*@
+                    @Localizer["Structure Name"]
+                </th>
+                <th>
+                    @*@Html.DisplayNameFor(model => model.structureName2)*@
+                    @Localizer["Structure Name2"]
+                </th>
+                <th>
+                    @*@Html.DisplayNameFor(model => model.structureRank)*@
+                    @Localizer["Structure Rank"]
+                </th>
+                <th>
+                    @*@Html.DisplayNameFor(model => model.structureNote)*@
+                    @Localizer["Structure Note"]
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (StructureClass item in ViewBag.structure)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.structureCode)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.structureName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.structureName2)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.structureRank)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.structureNote)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.structureCode }) |
+                        @Html.ActionLink("Details", "Details", new { id = item.structureCode }) |
+                        @Html.ActionLink("Delete", "Delete", new { id = item.structureRank })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

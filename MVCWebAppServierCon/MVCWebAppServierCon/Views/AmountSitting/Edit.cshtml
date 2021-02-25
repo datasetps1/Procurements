@@ -1,0 +1,123 @@
+﻿@model MVCWebAppServierCon.Models.AmountSittingClass
+
+@{
+    ViewData["Title"] = "Edit";
+}
+<div class="container card" style=" box-shadow: 0 0 10px 0 rgba(0, 0, 0, .1);">
+    <h1>Edit</h1>
+
+    <h4>AmountSittingClass</h4>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-5">
+            <form asp-action="">
+                <div asp-validation-summary="ModelOnly" class="text-danger row"></div>
+                <div class="form-group row">
+                    <label asp-for="amountFrom" class="control-label"></label>
+                    <input asp-for="amountFrom" class="form-control" id="fromAmountNew" />
+                    <input type="hidden" asp-for="amountFrom" id="amountfromPrevious" />
+                    <span asp-validation-for="amountFrom" class="text-danger"></span>
+                </div>
+                <h4 id="ttt"></h4>
+                <div class="form-group sameRow row">
+                    <label asp-for="amountTo" class="control-label"></label>
+                    <input asp-for="amountTo" class="form-control" id="amountTo" />
+                    <div>
+                        <label>infinity</label>
+                        <input type="checkbox" class="" id="chBxAmountTo" onclick="hideText()" />
+                    </div>
+                    <span asp-validation-for="amountTo" class="text-danger"></span>
+                </div>
+                <div class="row">
+                    <table>
+                        <tbody>
+                            <tr>
+                                @* give the checkbox a unique id that maches the structure code to fill it if founded in the amount table *@
+                                @{ var j = 1;
+                                    foreach (StructureClass st in ViewBag.Structure)
+                                    {
+                                        <td>
+                                            <label class="form-check-label" style="margin-left:10px ;">@st.structureName</label>
+                                            <input type="checkbox" name="chkListBx" class="form-check-input" style="margin-left:5px  ;     margin-top: 0px ;" value="@st.structureRank" id="@st.structureRank" />
+                                            <span asp-validation-for="amountStructure" class="text-danger"></span>
+                                        </td>
+                                        <td><span>&nbsp;&nbsp;&nbsp;&nbsp;</span></td>
+                                        j++;
+
+                                    }
+                                }
+                            </tr>
+
+                        </tbody>
+                    </table>
+                    @* mark the checkboxes as checked if their id matches the amountStruture that stored in the DB *@
+                    @foreach (AmountSittingClass ams in ViewBag.amountRowLst)
+                    {
+                        <script>document.getElementById(@ams.amountStructure).checked = true; </script>
+                    }
+
+                </div>
+                <div class="form-group row">
+                    <label asp-for="amountNote" class="control-label"></label>
+                    <input asp-for="amountNote" class="form-control" id="amountNote" />
+                    <span asp-validation-for="amountNote" class="text-danger"></span>
+                </div>
+                <div class="form-group row">
+                    <input value="Save" class="btn btn-primary" type="button" onclick="GetSelected()" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+<script>
+
+    function GetSelected() {
+        var checked = new Array();
+        var amountfromPrevious = document.getElementById('amountfromPrevious').value;//use this value to aggragate the database rows and make editable
+        var fromAmount = document.getElementById('fromAmountNew').value;
+        var toAmount = document.getElementById('amountTo').value;
+        if (document.getElementById("chBxAmountTo").checked) {
+            toAmount = "1000000000"; // use it as maximum number
+        }
+        var amountNote = document.getElementById('amountNote').value;
+        $("[name='chkListBx']").each(function (index, data) {
+            if (data.checked) {
+                checked.push(data.value);
+            }
+        });
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: "../EditAmSit",
+            data: {
+                strArray: checked,
+                fromAmountPrevious: amountfromPrevious,
+                fromAmount: fromAmount,
+                toAmount: toAmount,
+                amountNote: amountNote
+            },
+            success: function () {
+                console.log("handle response");
+                document.location = '../Create';
+            },
+            error: function (req, status, error) {
+                alert(error);
+            },
+
+        });
+    }
+    function hideText() {//hide or show the ToAmount text when select the infinity checkbox
+        if (document.getElementById("chBxAmountTo").checked) {
+            document.getElementById("amountTo").type = "hidden";
+        } else {
+            document.getElementById("amountTo").type = "number";
+        }
+    }
+
+</script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,302 @@
+﻿
+@using Microsoft.AspNetCore.Mvc.Localization
+
+
+
+@inject IViewLocalizer Localizer
+<script src="~/lib/jquery/selectbox/dist/jquery-editable-select.js"></script>
+<link href="~/lib/jquery/selectbox/dist/jquery-editable-select.css" rel="stylesheet" />
+
+<style>
+
+
+    a:hover {
+        text-decoration: underline;
+        background-color: navajowhite;
+        cursor: pointer;
+    }
+
+    .loader {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        margin-top: -50px;
+        margin-left: -100px;
+        height: 120px;
+        width: 120px;
+    }
+</style>
+<br />
+<br />
+<br />
+<br />
+<div class="container ">
+    <div class="row" style="margin-top:10px ;">
+    </div>
+    <div class="row">
+        <div class="form-group col-md-2" style="margin-top:10px ;">
+            <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["From date"]</label>
+            <input id="fromdate" type="date" class="form-control" style="width:170px ; " />
+
+        </div>
+        <div class="form-group col-md-2" style="margin-top:10px ;">
+            <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["To date"]</label>
+            <input id="todate" type="date" class="form-control" style="width:170px ;margin-left:10px" />
+
+        </div>
+
+        <div class="form-group col-md-2" style="margin-top:10px ;margin-left:5px">
+            @{ string disabled = @ViewBag.UserDepartmentCodeEnabled == false ? "disabled" : ""; }
+            <label for="inputState" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Department"]</label>
+            <select id="cmbDepartment" class="form-control" name="headerLst" @disabled>
+                <option value="0" selected></option>
+                <option value="@ViewBag.UserDepartmentCode" selected>@ViewBag.UserDepartmentName</option>
+                @foreach (DepartmentClass dep in ViewBag.DepartmentName)
+                {
+                    <option value="@dep.departmentCode">@dep.departmentName</option>
+                }
+
+
+            </select>
+
+
+        </div>
+
+        <div class="form-group col-md-3 ">
+            <br />
+            <br />
+            <input id="ShowStuckOrdersOnly" type="radio" name="radio" />
+            <label class="form-check-label" for="ShowStuckOrdersOnly" style="width:auto">@Localizer["Show Stuck Orders Only"]</label>
+
+            <br />
+
+
+            <input id="ShowExecutedOrdersOnly" type="radio" name="radio" />
+            <label class="form-check-label" for="ShowExecutedOrdersOnly" style="width:auto">@Localizer["Show Executed Only"]</label>
+            <br />
+            <input id="ShowUnderExecutedOrdersOnly" type="radio" name="radio" />
+            <label class="form-check-label" for="ShowUnderExecutedOrdersOnly" style="width:auto">@Localizer["Show Under Executed Only"]</label>
+            <br />
+            <input id="ShowRejectedOnly" type="radio" name="radio" />
+            <label class="form-check-label" for="ShowRejectedOnly" style="width:auto">@Localizer["Show Rejected Only "]</label>
+            <br />
+            <input id="None" type="radio" name="radio" />
+            <label class="form-check-label" for="None" style="width:auto">@Localizer["None"]</label>
+
+
+        </div>
+        <div class="form-group col-md-1 ">
+
+        </div>
+    </div>
+
+    <div class="row" style="margin-top:-5px ;">
+        <div class="form-group col-md-2" style="margin-top:-5px ;">
+            <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["From Amount"]</label>
+            <input id="FromAmount" type="number" class="form-control" style="width:90px ;margin-left:2px" />
+
+        </div>
+
+        <div class="form-group col-md-2" style="margin-top:-5px ;">
+            <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["To Amount"]</label>
+            <input id="ToAmount" type="number" class="form-control" style="width:90px " />
+
+        </div>
+        <div class="form-group col-md-2" style="margin-top:-5px ;">
+            <label id="lblEmployee" for="Employee" style="@Localizer["text-align: left "]">@Localizer["Employee"]</label>
+            <select id="cmbEmp" class="form-control" style="width:130px">
+                <option selected></option>
+
+                @foreach (UserClass emp in ViewBag.Employee)
+                {
+                    <option value="@emp.userCode">@emp.userName</option>
+                }
+            </select>
+
+        </div>
+        <div class="form-group col-md-3" style="margin-top:-5px ;">
+
+            <label id="LblSupplier" for="Supplier" style="@Localizer["text-align: left "]">@Localizer["Supplier"]</label>
+            <select id="cmbSupplier" class="form-control" name="cmbSupplier" style="width:160px">
+                <option selected></option>
+
+                @foreach (CodeNameModel Account in ViewBag.Supplier)
+                {
+                    <option value="@Account.Code">@Account.Name</option>
+                }
+            </select>
+
+        </div>
+    </div>
+    <div class="row" style="margin-top:-5px ;">
+
+        <div class="form-group col-md-3">
+
+            <label id="LblProject" for="project" style="@Localizer["text-align: left "]">@Localizer["Project"]</label>
+            <select id="cmbProject" class="form-control" name="cmbProject" style="width:auto">
+                <option selected></option>
+
+                @foreach (CodeNameModel costs in ViewBag.Project)
+                {
+                    <option value="@costs.Code">@costs.Name</option>
+                }
+            </select>
+
+        </div>
+        <div class="form-group col-md-3" id="div1">
+            @* BudgetLine*@
+        </div>
+
+        <div class="form-group col-md-3">
+            <input id="search" type="button" class="form-control btn-primary" value="Execute" style="margin-top:22px ; margin-left:55px" />
+        </div>
+
+    </div>
+
+
+
+
+
+    @* <partial name="_AllOrders" model="ViewBag.Orders" />*@
+</div>
+<div id="loader" class="spinner-border text-warning loader" role="status" style="display:none;">
+    <span class="sr-only">Loading...</span>
+</div>
+<div id="searchResults">
+
+</div>
+<script>
+
+    $('#cmbProject')
+        .editableSelect()
+        .on('select.editable-select', function (e, li) {
+            // alert(li.val())
+            debugger
+            var txt = document.getElementById('cmbProject');
+            txt.text = li.val();
+
+            //getshowhidefunder(li.val());
+            GetBudgetLineByFunder(li.val());
+
+            // getOrderType(li.val());
+
+        });
+
+
+        $('#select')
+    .editableSelect()
+    .on('select.editable-select', function (e, li) {
+        $('#last-selected').html(
+            li.val() + '. ' + li.text()
+        );
+    });
+  $('#cmbEmp').editableSelect();
+     $('#cmbEmp')
+                                  .editableSelect()
+                                    .on('select.editable-select', function (e, li) {
+
+                                        var txt = document.getElementById('cmbEmp');
+                                        txt.text = li.val();
+
+
+                                    });
+         $('#cmbSupplier').editableSelect();
+     $('#cmbSupplier')
+                                  .editableSelect()
+                                    .on('select.editable-select', function (e, li) {
+
+                                        var txt = document.getElementById('cmbSupplier');
+                                        txt.text = li.val();
+
+
+                                    });
+
+
+    var url = '@Url.Action("GetAllOrdersBydate", "Home")';
+
+    $('#search').click(function () {
+        debugger
+
+      // var x= $('#cmbProject').siblings('.es-list').find('li.selected').data('value')
+     //  var y= $('#cmbProject').siblings('.es-list').find('li.selected').text()
+        var y= $('#cmbProject').text()
+     var loader = document.getElementById("loader");
+        loader.style.display = "block";
+        var ShowStuckOrdersOnly = document.getElementById('ShowStuckOrdersOnly');
+        var ShowUnderExecutedOnly = document.getElementById('ShowUnderExecutedOrdersOnly');
+        var ShowExecutedOnly = document.getElementById('ShowExecutedOrdersOnly');
+        var ShowRejectedOnly = document.getElementById('ShowRejectedOnly');
+        var dep = document.getElementById('cmbDepartment');
+
+         var OrderHeaderProjectCode = "0";
+        var OrderHeaderBudgetLineCode = "0";
+        var employeeCode = "0";
+        var ProjectCode = document.getElementById('cmbProject');
+
+         if (  ProjectCode.value!=undefined ) {
+
+          OrderHeaderProjectCode  = ProjectCode.value;
+        }
+
+        if ($('#cmbProject').value == "") {
+            OrderHeaderProjectCode = "0";
+        }
+
+        var BudgetLineCode = document.getElementById('cmbBudgetLine');
+       // BudgetLineCode != 'undefined' ||
+        if (BudgetLineCode != null) {
+            if (BudgetLineCode.text != undefined) {
+                OrderHeaderBudgetLineCode = BudgetLineCode.text;
+            }
+        }
+
+          var Employee = document.getElementById('cmbEmp');
+        var employeeCode = Employee.value; // this return emp Name
+
+
+        if ($('#cmbProject').text() != "" ) {
+           OrderHeaderProjectCode  = ProjectCode.value;
+        }
+         if ($('#cmbBudgetLine').text() != "") {
+            OrderHeaderBudgetLineCode = BudgetLineCode.value;
+        }
+
+        debugger
+        var Supplier = document.getElementById('cmbSupplier');
+        var SupplierCode = Supplier.value; // this return supp name
+        var FromAmount = 0
+        if ($('#FromAmount').val() != "") {
+              FromAmount= parseFloat($('#FromAmount').val());
+        }
+
+        var ToAmount = 0
+        if ($('#ToAmount').val() != "") {
+              ToAmount=  parseFloat($('#ToAmount').val());
+        }
+
+        $('#searchResults').load(url, {
+            FromDate: $('#fromdate').val(), ToDate: $('#todate').val(),
+            Project: OrderHeaderProjectCode, BudgetLine: OrderHeaderBudgetLineCode, Department: dep.value, ShowStuckOrdersOnly: ShowStuckOrdersOnly.checked,
+            Employee: employeeCode,Supplier:SupplierCode
+            , ShowExecutedOnly: ShowExecutedOnly.checked, ShowUnderExecutedOnly: ShowUnderExecutedOnly.checked, ShowRejectedOnly:ShowRejectedOnly.checked,
+            FromAmount, ToAmount
+        });
+
+    });
+
+     function GetBudgetLineByFunder(id) {
+        //debugger
+
+        $.ajax({
+            // url: '@Url.Action("GetBudgetLineByFunder")',
+           url: "../OrderView/GetBudgetLineByFunder",
+            type: 'POST',
+            data: { "Fundercode": id }
+        }).done(function (data) {
+            $("#div1").html(data);
+        });
+
+    }
+</script>
+
+

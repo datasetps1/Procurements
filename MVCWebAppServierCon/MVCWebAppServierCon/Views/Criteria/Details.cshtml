@@ -1,0 +1,39 @@
+﻿@model MVCWebAppServierCon.Models.Criteria
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h3>Criteria Details</h3>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+    </dl>
+    <dl class="row">
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Criteria_Rank)
+        </dt>
+        @if (Model.Criteria_Rank == 0)
+        {
+            <dd class="col-sm-9">
+                less
+            </dd>
+        }
+        else
+        {
+            <dd class="col-sm-9">
+                more
+            </dd>
+        }
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Create">Back to List</a>
+</div>

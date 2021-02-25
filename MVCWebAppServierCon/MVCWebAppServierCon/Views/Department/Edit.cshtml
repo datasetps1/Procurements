@@ -1,0 +1,130 @@
+﻿@model MVCWebAppServierCon.Models.DepartmentClass
+
+@using Microsoft.AspNetCore.Mvc.Localization
+
+@inject IViewLocalizer Localizer
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+<div class="rowPage">
+    <h4>DepartmentClass</h4>
+    <hr />
+</div>
+<div class="rowPage">
+    <div class="col-md-12">
+        <form asp-action="Edit" style="@Localizer["text-align: left  ;direction: ltr"]">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            @*<div class="form-group">
+                    <label asp-for="departmentCode" class="control-label"></label>
+                    <input asp-for="departmentCode" class="form-control" />
+                    <span asp-validation-for="departmentCode" class="text-danger"></span>
+                </div>*@
+
+            <div class="row">
+                <div class="form-group col-md-4">
+                    <label asp-for="departmentName" class="control-label">@Localizer["Section Name"]</label>
+                    <input asp-for="departmentName" class="form-control" />
+                    <span asp-validation-for="departmentName" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="departmentGeneralManagerCode" class="control-label">@Localizer["Department General Manager Code"]</label>
+                    <br />
+                    <select class="form-control" asp-for="departmentGeneralManagerCode">
+                        <option>Please Select User Name</option>
+                        @foreach (UserClass item in ViewBag.Users)
+                        {
+                            <option value="@item.userCode"> @Html.DisplayFor(modelItem => item.userName)</option>
+                        }
+                    </select>
+                    <span asp-validation-for="departmentGeneralManagerCode" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="departmentManagerCode" class="control-label">@Localizer["Department Manager Code"]</label>
+                    <br />
+                    <select class="form-control" asp-for="departmentManagerCode">
+                        <option>Please Select User Name</option>
+                        @foreach (UserClass item in ViewBag.Users)
+                        {
+                            <option value="@item.userCode"> @Html.DisplayFor(modelItem => item.userName)</option>
+                        }
+                    </select>
+                    <span asp-validation-for="departmentManagerCode" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-4">
+                    <label asp-for="departmentHeadCode" class="control-label">@Localizer["Department Head Code"]</label>
+                    <br />
+                    <select class="form-control" asp-for="departmentHeadCode">
+                        <option>Please Select User Name</option>
+                        @foreach (UserClass item in ViewBag.Users)
+                        {
+                            <option value="@item.userCode"> @Html.DisplayFor(modelItem => item.userName)</option>
+                        }
+                    </select>
+
+                    <span asp-validation-for="departmentHeadCode" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="departmentFinancialCode" class="control-label">@Localizer["Department Financial Code"]</label>
+                    <br />
+                    <select class="form-control" asp-for="departmentFinancialCode">
+                        <option>Please Select User Name</option>
+                        @foreach (UserClass item in ViewBag.Users)
+                        {
+                            <option value="@item.userCode"> @Html.DisplayFor(modelItem => item.userName)</option>
+                        }
+                    </select>
+
+                    <span asp-validation-for="departmentFinancialCode" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="departmentProcurementSectionCode" class="control-label">@Localizer["Department Procurement Section Code"]</label>
+                    <br />
+                    <select class="form-control" asp-for="departmentProcurementSectionCode">
+                        <option>Please Select User Name</option>
+                        @foreach (UserClass item in ViewBag.Users)
+                        {
+                            <option value="@item.userCode"> @Html.DisplayFor(modelItem => item.userName)</option>
+                        }
+                    </select>
+
+                    <span asp-validation-for="departmentProcurementSectionCode" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-12">
+                    <label asp-for="departmentNote" class="control-label">@Localizer["Department Note"]</label>
+                    <input asp-for="departmentNote" class="form-control" />
+                    <span asp-validation-for="departmentNote" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+            @*<div>
+                    @{
+                        List<String> lst = ViewBag.ProjectName;
+                        for (var i = 0; i < lst.Count; i++)
+                        {
+                            <h6>@lst[i]</h6>
+                        }
+                    }
+
+                </div>*@
+        </form>
+    </div>
+</div>
+
+<div class="rowPage">
+    <a asp-action="Index">Back to List</a>
+</div>
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

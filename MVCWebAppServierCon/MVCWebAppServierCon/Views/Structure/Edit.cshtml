@@ -1,0 +1,65 @@
+﻿@model MVCWebAppServierCon.Models.StructureClass
+
+@using Microsoft.AspNetCore.Mvc.Localization
+
+@inject IViewLocalizer Localizer
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<div class="rowPage">
+    <h4>@Localizer["Structure Class"]</h4>
+</div>
+
+<hr />
+<div class="rowPage"  style="@Localizer["text-align: left  ;direction: ltr"]">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="structureName" class="control-label">@Localizer["Structure Name"]</label>
+                    <input asp-for="structureName" class="form-control" />
+                    <span asp-validation-for="structureName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="structureName2" class="control-label">@Localizer["Structure Name2"]</label>
+                    <input asp-for="structureName2" class="form-control" />
+                    <span asp-validation-for="structureName2" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="structureRank" class="control-label">@Localizer["Structure Rank"]</label>
+                    <input asp-for="structureRank" class="form-control" />
+                    <span asp-validation-for="structureRank" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="structureUserId" class="control-label">@Localizer["Structure UserId"]</label>
+                    <input asp-for="structureUserId" class="form-control" />
+                    <span asp-validation-for="structureUserId" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="structureCreationDate" class="control-label">@Localizer["Structure Create Date"]</label>
+                    <input asp-for="structureCreationDate" class="form-control" />
+                    <span asp-validation-for="structureCreationDate" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="structureNote" class="control-label">@Localizer["Structure Note"]</label>
+                    <input asp-for="structureNote" class="form-control" />
+                    <span asp-validation-for="structureNote" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Save" class="btn btn-primary" />
+                </div>
+        </form>
+    </div>
+</div>
+
+<div class="rowPage">
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

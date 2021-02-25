@@ -1,0 +1,39 @@
+﻿@model MVCWebAppServierCon.Models.Criteria
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+    <h3>Edit Criteria</h3>
+
+<hr />
+
+<div class="form_container row">
+        <form asp-action="Edit" class="form_style col-md-6 col-lg-6 col-sm-8 col-12">
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group input_group_style">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" placeholder="inert the name"/>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group row input_group_style">
+                <label asp-for="Criteria_Rank" class="control-label"></label>
+                <select asp-for="Criteria_Rank" class="form-control">
+                    <option selected></option>
+
+                    <option value="0">less</option>
+                    <option value="1">more</option>
+
+                </select>
+                <span asp-validation-for="Criteria_Rank" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary form_submit_btn" />
+            </div>
+        </form>
+</div>
+
+<div>
+    <a asp-action="Create">Back to List</a>
+</div>
+

@@ -1,0 +1,53 @@
+﻿@model MVCWebAppServierCon.Models.ItemClass
+@{
+    ViewData["Title"] = "Edit";
+}
+
+@using Microsoft.AspNetCore.Mvc.Localization
+
+@inject IViewLocalizer Localizer
+
+<h1>Edit</h1>
+
+<div class="rowPage"  style="@Localizer["text-align: left  ;direction: ltr"]">
+    <h4>@Localizer["Item Class"]</h4>
+</div>
+<hr />
+<div class="rowPage">
+    <div class="col-md-4">
+        <form asp-action="Edit"  style="@Localizer["text-align: left  ;direction: ltr"]">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="itemName" class="control-label">@Localizer["Item Name"]</label>
+                <input asp-for="itemName" class="form-control" />
+                <span asp-validation-for="itemName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="itemName2" class="control-label">@Localizer["Item Name2"]</label>
+                <input asp-for="itemName2" class="form-control" />
+                <span asp-validation-for="itemName2" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="itemPrice" class="control-label">@Localizer["Item Price"]</label>
+                <input asp-for="itemPrice" class="form-control" />
+                <span asp-validation-for="itemPrice" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="itemNote" class="control-label">@Localizer["Item Note"]</label>
+                <input asp-for="itemNote" class="form-control" />
+                <span asp-validation-for="itemNote" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="rowPage">
+    <a asp-action="Create">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

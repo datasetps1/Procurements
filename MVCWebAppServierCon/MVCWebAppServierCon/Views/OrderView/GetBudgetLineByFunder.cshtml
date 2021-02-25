@@ -1,0 +1,84 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+
+@inject IViewLocalizer Localizer
+
+
+<script src="~/lib/jquery/selectbox/dist/jquery-editable-select.js"></script>
+<link href="~/lib/jquery/selectbox/dist/jquery-editable-select.css" rel="stylesheet" />
+
+
+
+
+<label id="inputState4Lbl" for="" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Budget Line"]</label>
+@*<select id="inputState4" class="form-control" style="padding:0px; margin-left:-30px ;width:430px">*@
+<select id="cmbBudgetLine" class="form-control">
+    <option selected></option>
+
+    @foreach (CodeNameModel obj in ViewBag.lst)
+    {
+        <option value="@obj.Code">@obj.Name</option>
+    }
+
+
+
+</select>
+<div style="margin-top:5px">
+    <label id="LblTotalBudget" for="" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Total Budget:"]</label>
+    <label id="TxtTotalBudget" for="" style="@Localizer["text-align: left  ;direction: ltr"]"></label>
+</div>
+
+<script>
+
+        $('#cmbBudgetLine').editableSelect();
+        $('#cmbBudgetLine')
+            .editableSelect()
+            .on('select.editable-select', function (e, li) {
+                debugger
+                //var x = document.getElementsByClassName('selected');
+
+                //var y = $("#cmbBudgetLine").find('es-list').find("es-visible selected");
+
+                //// alert(BudgetLineCode.text);
+
+                var txt = document.getElementById('cmbBudgetLine');
+               txt.text = li.val();
+           
+                var ProjectCode = document.getElementById('inputState2');
+                if (ProjectCode.text == undefined) {
+                    alert("select project")
+                    return
+                }
+
+                getBudget(ProjectCode.text, txt.value);
+
+            });
+
+    function getBudget(Project, BudgetLineId) {
+         debugger
+        $.ajax(
+            {
+                url: "../OrderView/getBudget",
+                data: { ProjectCode:Project,BudgetLineName: BudgetLineId,byName:true },
+                dataType: "json",
+                type: "POST",
+                success: function (data) {
+                    document.getElementById("TxtTotalBudget").innerHTML = data.data;
+                //   alert("success buf  == " + data.data);
+                },
+                error: function (message) {
+                    console.log("Error In Calculate budget");
+                    console.log(message);
+                },
+
+            });
+
+    }
+    //    $('#cmbBudgetLine')
+    //.editableSelect()
+    //.on('select.editable-select', function (e, li) {
+    //    $('#last-selected').html(
+    //       alert( li.val() + '. ' + li.text())
+    //    );
+    //});
+
+</script>

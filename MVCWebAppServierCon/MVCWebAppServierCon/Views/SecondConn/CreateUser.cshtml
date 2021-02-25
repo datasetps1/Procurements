@@ -1,0 +1,205 @@
+﻿
+@model MVCWebAppServierCon.ViewModels.UserViewModel
+@*@model IEnumerable<MVCWebAppServierCon.Models.UserClass>*@
+
+
+@{
+    ViewData["Title"] = "CreateUser";
+
+}
+
+<h1>CreateUser</h1>
+
+<h4>UserClass</h4>
+<hr />
+<div class="row">
+    <div class="col-md-12">
+        <form asp-action="CreateUser">
+            <div class="row">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                @*<div class="form-group">
+            <label asp-for="userCode" class="control-label"></label>
+            <input asp-for="userCode" class="form-control" />
+            <span asp-validation-for="userCode" class="text-danger"></span>
+        </div>*@
+                <div class="form-group col-md-4">
+                    <label asp-for="userName" class="control-label"></label>
+                    <input asp-for="userName" class="form-control" />
+                    <span asp-validation-for="userName" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="userEmail" class="control-label"></label>
+                    <input asp-for="userEmail" class="form-control" />
+                    <span asp-validation-for="userEmail" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="userPassword" class="control-label"></label>
+                    <input asp-for="userPassword" class="form-control" />
+                    <span asp-validation-for="userPassword" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-4">
+                    <label asp-for="userActive" class="control-label"></label>
+                    <input asp-for="userActive" class="form-control" />
+                    <span asp-validation-for="userActive" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="userType" class="control-label"></label>
+                    <br/>
+                    <select asp-for="userType">
+                        @* asp-items="" *@
+
+                        <option>Please select user Type</option>
+                        @foreach (String item in ViewBag.uType)
+                        {
+                            <option> @Html.DisplayFor(modelItem => item)</option>
+                        }
+                    </select>
+                </div>
+                @*<div class="form-group col-md-4">
+                    <label asp-for="userDepartment" class="control-label"></label>
+                    <br />
+                    <select asp-for="userDepartment">
+                        <option>Please select department Manager</option>
+                        @foreach (String item in ViewBag.uDepMan)
+                        {
+                            <option> @Html.DisplayFor(modelItem => item)</option>
+                        }
+                    </select>
+                </div>*@
+
+            </div>
+            @*<div class="row">
+                <div class="form-group col-md-4">
+                    <label asp-for="managmentAccesstance" class="control-label"></label>
+                    <br />
+                    <select asp-for="managmentAccesstance">
+                         asp-items="" 
+                        <option>Please select managment Accesstance</option>
+                        @foreach (String item in ViewBag.uMngAss)
+                        {
+                            <option> @Html.DisplayFor(modelItem => item)</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="sectionManager" class="control-label"></label>
+                    <br />
+                    <select asp-for="sectionManager">
+                         asp-items="" 
+                        <option>Please select section Manager</option>
+                        @foreach (String item in ViewBag.uSecMan)
+                        {
+                            <option> @Html.DisplayFor(modelItem => item)</option>
+                        }
+                        <option value="1">Shyju</option>
+                        <option value="2">Sean</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="finacnceDepartment" class="control-label"></label>
+                    <br />
+                    <select asp-for="finacnceDepartment">
+                         asp-items="ViewBag.uFinDep" 
+                        <option>Please select finacnce Department</option>
+                        @foreach (String item in ViewBag.uFinDep)
+                        {
+                            <option> @Html.DisplayFor(modelItem => item)</option>
+                        }
+                    </select>
+                </div>
+
+            </div>*@
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+            @ViewBag.message
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="UserList">Back to List</a>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.userName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.userEmail)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.userPassword)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.userType)
+            </th>
+            @*<th>
+                @Html.DisplayNameFor(model => model.userDepartment)
+            </th>*@
+            @*<th>
+                @Html.DisplayNameFor(model => model.managmentAccesstance)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.sectionManager)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.finacnceDepartment)
+            </th>*@
+            <th>
+                @Html.DisplayNameFor(model => model.userActive)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (UserClass item in ViewBag.Users)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.userCode)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.userName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.userEmail)
+                </td>
+                @*<td>
+                    @Html.DisplayFor(modelItem => item.userPassword)
+                </td>*@
+                <td>
+                    @Html.DisplayFor(modelItem => item.userTypeCode)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.userDepartmentCode)
+                </td>
+                @*<td>
+                    @Html.DisplayFor(modelItem => item.managmentAccesstanceCode)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.sectionManagerCode)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.finacnceDepartmentCode)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.userActive)
+                </td>*@
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                    @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                    @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

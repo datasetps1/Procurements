@@ -1,0 +1,53 @@
+﻿@model IEnumerable<MVCWebAppServierCon.Models.ItemClass>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table table-striped responsive-table text-center table-hover table-bordered">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.itemName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.itemName2)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.itemPrice)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.itemNote)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (ItemClass item in ViewBag.Items) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.itemName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.itemName2)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.itemPrice)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.itemNote)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.itemCode }) |
+                @Html.ActionLink("Details", "Details", new { id = item.itemCode }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.itemCode })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

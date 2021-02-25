@@ -1,0 +1,17 @@
+﻿@model MVCWebAppServierCon.Models.OrderTypeClass
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>Delete</h1>
+
+<h4 class="rowPage">Order Type</h4>
+<h3 class="rowPage">Are you sure you want to delete this?</h3>
+
+<form asp-action="Delete" class="rowPage">
+    <input type="hidden" asp-for="orderTypeCode" />
+    <input type="submit" value="Delete" class="btn btn-danger" /> |
+    <a asp-action="Index">Back to List</a>
+</form>
+

@@ -1,0 +1,232 @@
+﻿
+@using Microsoft.AspNetCore.Mvc.Localization
+
+
+@model List<OrderHeaderClass>
+
+@inject IViewLocalizer Localizer
+
+
+@{
+    ViewData["Title"] = "All Orders";
+}
+
+<title></title>
+
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<style>
+
+    a:hover {
+        text-decoration: underline;
+        background-color: navajowhite;
+        cursor: pointer;
+    }
+
+    .loader {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        margin-top: -50px;
+        margin-left: -100px;
+        height: 120px;
+        width: 120px;
+    }
+
+
+    .float {
+        position: fixed;
+        width: 60px;
+        height: 60px;
+        bottom: 40px;
+        right: 40px;
+        background-color: #ffba71;
+        color: #FFF;
+        border-radius: 50px;
+        text-align: center;
+        box-shadow: 2px 2px 3px #999;
+    }
+
+    .my-float {
+        margin-top: 22px;
+    }
+
+    .float:hover {
+        -ms-transform: rotate(25deg); /* IE 9 */
+        -webkit-transform: rotate(25deg); /* Chrome, Safari, Opera */
+        transform: rotate(25deg);
+        background-color: navajowhite;
+    }
+
+    .label-container {
+        position: fixed;
+        bottom: 48px;
+        right: 105px;
+        display: table;
+        visibility: hidden;
+    }
+
+    .label-text {
+        color: #FFF;
+        background: #ffba71;
+        display: table-cell;
+        vertical-align: middle;
+        padding: 10px;
+        border-radius: 3px;
+    }
+
+    .label-arrow {
+        display: table-cell;
+        vertical-align: middle;
+        color: #ffba71;
+        opacity: 0.5;
+    }
+
+    a.float + div.label-container {
+        visibility: hidden;
+        opacity: 0;
+        transition: visibility 0s, opacity 0.5s ease;
+    }
+
+    a.float:hover + div.label-container {
+        visibility: visible;
+        opacity: 1;
+    }
+</style>
+<h1>All orders</h1>
+
+@*<p>
+        <a asp-action="Create">Create New</a>
+    </p>*@
+
+<div asp-validation-summary="All" class="text-danger" style="margin-top:12px;">
+
+    <table class="table table-striped responsive-table text-center table-hover table-bordered">
+        <thead style="background-color:#46688a;color:white ;font-size:smaller ;">
+            <tr>
+                <th>
+                    @Localizer["Code"]
+                </th>
+
+                <th>
+                    @Localizer["date"]
+                </th>
+
+                <th>
+                    @Localizer["User Name"]
+                </th>
+                <th>
+
+                    @Localizer["Currency"]
+                </th>
+
+
+                <th>
+                    @Localizer["Total"]
+                </th>
+                <th>
+                    @Localizer["Total In Basic"]
+                </th>
+                <th>
+
+                    @Localizer["ProjectName"]
+                </th>
+                <th>
+
+                    @Localizer["BudgetLine"]
+                </th>
+
+                <th>
+                    @Localizer["OrderType"]
+                </th>
+                <th>
+
+                    @Localizer["Expected Date"]
+                </th>
+                <th>
+                    @Localizer["Note"]
+                </th>
+                <th>
+                    @Localizer["Supplier"]
+                </th>
+                <th> @Localizer["Status"]</th>
+                <th>@Localizer["Last User"]</th>
+           
+                @*<th>  @Localizer["Actions"] </th>*@
+
+            </tr>
+        </thead>
+        <tbody style="font-size:smaller ;">
+           @* @foreach (var item in Model)*@
+                @foreach (OrderHeaderClass item in Model)
+                {
+                    <tr>
+                        <td>
+                            <a asp-action="Edit" asp-controller="OrderView" asp-route-id="@item.OrderHeaderCode" asp-route-IsPreview="true"> @Html.DisplayFor(modelItem => item.OrderHeaderCode)</a>
+
+
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => item.OrderHeaderdate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.UserName)
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Currency)
+                        </td>
+                        <td>
+                        @Html.DisplayFor(modelItem => item.OrderHeaderRate)
+                    </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.OrderHeaderRealTotal)
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ProjectName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.BudgetLine)
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => item.OrderTypeName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ExpectedDate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.OrderHeaderNote)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.SupplierName)
+                        </td>
+                        <td style="color:#251fca ;">
+                            @Html.DisplayFor(modelItem => item.StatusName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.LastUserName)
+                        </td>
+                        @*<td>
+                        @if (item.StatusName == "Return" || item.StatusName == "Document")
+                        {
+                            <a asp-action="Edit" asp-controller="OrderView" asp-route-id="@item.OrderHeaderCode"><span class="Editbtn fa fa-pen" title="Edit"></span></a>
+
+                        }
+                        <a style="color:red ;" onclick="PostOrderStatus(@item.OrderHeaderCode,3)"> <span class=" fa fa-ban " title="Reject"></span></a> |
+
+                    </td>*@
+                    </tr>
+                }
+        </tbody>
+    </table>
+
+
+
+</div>
+
+

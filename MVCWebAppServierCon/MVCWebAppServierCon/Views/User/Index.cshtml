@@ -1,0 +1,107 @@
+﻿@model IEnumerable<MVCWebAppServierCon.Models.UserClass>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.userName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.userEmail)
+            </th>
+            @*<th>
+                @Html.DisplayNameFor(model => model.userPassword)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.userConfirmPassword)
+            </th>*@
+            <th>
+                @Html.DisplayNameFor(model => model.userTypeCode)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.userDepartmentCode)
+            </th>
+            @*<th>
+                @Html.DisplayNameFor(model => model.managmentAccesstanceCode)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.sectionManagerCode)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.finacnceDepartmentCode)
+            </th>*@
+            <th>
+                @Html.DisplayNameFor(model => model.userActive)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.userUserId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.userCreationDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.userNote)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.userName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.userEmail)
+            </td>
+            @*<td>
+                @Html.DisplayFor(modelItem => item.userPassword)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.userConfirmPassword)
+            </td>*@
+            <td>
+                @Html.DisplayFor(modelItem => item.userTypeCode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.userDepartmentCode)
+            </td>
+            @*<td>
+                @Html.DisplayFor(modelItem => item.managmentAccesstanceCode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.sectionManagerCode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.finacnceDepartmentCode)
+            </td>*@
+            <td>
+                @Html.DisplayFor(modelItem => item.userActive)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.userUserId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.userCreationDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.userNote)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.userCode">Edit</a> |
+                @*<a asp-action="Details" asp-route-id="@item.userCode">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.userCode">Delete</a>*@
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

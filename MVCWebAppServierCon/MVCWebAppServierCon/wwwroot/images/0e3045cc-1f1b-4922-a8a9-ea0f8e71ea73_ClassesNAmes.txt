@@ -1,0 +1,17 @@
+sb-nav-fixed   side BAr
+
+table-responsive  table 
+
+Irsh@d123
+
+https://docs.microsoft.com/en-us/aspnet/core/fundamentals/localization?view=aspnetcore-3.1
+
+http://www.codedigest.com/posts/53/create-multi-language-website-in-aspnet-mvc---localization
+
+https://gunnarpeipman.com/aspnet-core-simple-localization/
+
+
+sb-nav-fixed
+
+
+sb-nav-fixed sb-sidenav-toggled

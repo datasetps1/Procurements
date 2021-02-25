@@ -1,0 +1,106 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+
+
+@model MVCWebAppServierCon.ViewModels.LoginViewModel
+
+
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+
+
+<link rel="stylesheet" href="~/css/site.css" />
+<link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/js/all.min.js" crossorigin="anonymous"></script>
+
+
+@*<h2>@ViewData["Title"].</h2>
+    <h3>@ViewData["Message"]</h3>*@
+@*@Localizer["<i>Hello</i> <b>{0}!</b>"]*@
+<div style="position: relative; top : 20%; width : 25%; left : 40%; border: groove rgb(248, 136, 72) ; border-radius: 10px ; border-spacing :20px; border-width : thin;">
+
+
+    <div class="log row" style="margin-top:4px" >
+        <div class="col-md-7">
+            <img class="col-md-12" alt="" src="@ViewBag.Base64String" style="height:50px;width:80px; margin-left: 19px;" />
+           @* @ViewBag.CompName*@
+        <h6 class="col-md-12" style="font-size: large;font-weight: bold; margin-top:3px; font-weight: bold; margin-left: 12px;"> @ViewBag.CompName</h6>
+        </div>
+        <div class="col-md-5">
+            <div class="row" style=" float: right;">
+                <span class="fa fa-user" style="color : rgb(248, 136, 72);     font-size: xx-large;    float: right;    margin-right: 52px;"></span>
+            </div>
+                <div class="row" style=" float: right;">
+                 
+                 <h3 style="position: relative;  font-family: initial;  margin-right: -24px;margin-top: 38px;    float: right; "> Login</h3>
+                 </div>
+             </div>
+        </div>
+    @*<div class="log row">
+        <div class="col-md-12">
+            <img class="col-md-12" alt="" src="@ViewBag.Base64String" style="height:50px;width:80px;" />
+            <h6 class="col-md-12">@ViewBag.CompName</h6>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <h2 style="position: relative;margin-top: 20px;margin-top: 20px; "> <span class="fa fa-user" style="color : rgb(248, 136, 72);"></span>Login</h2>
+        </div>
+    </div>*@
+    <hr />
+    <div class="col-12">
+
+        <form asp-action="Login">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <i class="fa fa-envelope" style="color : rgb(248, 136, 72);"></i>
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <i class="fa fa-key" style="color: rgb(248, 136, 72);"></i>
+                <label asp-for="Password" class="control-label"></label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="RememberMe" /> @Html.DisplayNameFor(model => model.RememberMe)
+                </label>
+                @* <a class="dropdown-item" asp-action="Register" asp-controller="Account">Register </a>*@
+                <div class="text-right"  style="margin-top:-14px;">
+                    <a asp-action="ForgotPassword">Forgot Password?</a>
+                </div>
+            </div>
+
+
+
+
+
+
+            @*<div>
+                    <input type='hidden' value=<%myurl%> name='returnurl' />
+                    <p> Hello Version 2.0</p>
+                </div>*@
+            <div class="form-group">
+                <input type="submit" value="Login" class="btn btn-light" style="position: relative; left : 45%; background-color : rgb(248, 136, 72);" />
+                @*@Html.ActionLink("Log On", "Login", "Account", new { lc = Context.Request.Scheme, returnUrl = Context.Request.Path}, null)*@
+            </div>
+        </form>
+        @{
+            Layout = null;
+            if (ViewBag.Base64String != null)
+            {
+                <hr />
+
+            }
+        }
+    </div>
+
+
+
+
+    @*<img src='@imgSrc' style="max-width:100px; max-height:100px;" />*@
+
+
+</div>

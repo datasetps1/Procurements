@@ -1,0 +1,100 @@
+﻿@model MVCWebAppServierCon.ViewModels.TestViewModel
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>TestClass</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Test.testCode" id="test1" />
+            <div class="form-group">
+                <label asp-for="Test.testName" class="control-label"></label>
+                <input asp-for="Test.testName" class="form-control" id="testname" />
+                <span asp-validation-for="Test.testName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Test.name2" class="control-label"></label>
+                <input asp-for="Test.name2" class="form-control" id="name2"/>
+                <span asp-validation-for="Test.name2" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Test.name3" class="control-label"></label>
+                <input asp-for="Test.name3" class="form-control" id="name3"/>
+                <span asp-validation-for="Test.name3" class="text-danger"></span>
+            </div>
+            <input type="hidden" asp-for="Test2.testCode" id="test2" />
+            <div class="form-group">
+                <label asp-for="Test2.testName" class="control-label"></label>
+                <input asp-for="Test2.testName" class="form-control" id="testname1" />
+                <span asp-validation-for="Test2.testName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Test2.name2" class="control-label"></label>
+                <input asp-for="Test2.name2" class="form-control" id="name22" />
+                <span asp-validation-for="Test2.name2" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Test2.name3" class="control-label"></label>
+                <input asp-for="Test2.name3" class="form-control" id="name33" />
+                <span asp-validation-for="Test2.name3" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input onclick="submitForEdit()" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@*fcn for Edit in Ajax*@
+<script>
+    function submitForEdit() {
+        var array = new Array();
+
+            var i1 = document.getElementById("testname").value;
+            var i2 = document.getElementById("name2").value;
+            var i3 = document.getElementById("name3").value;
+            var i4 = document.getElementById("testname1").value;
+            var i5 = document.getElementById("name22").value;
+            var i6 = document.getElementById("name33").value;
+
+
+            array.push(i1);
+            array.push(i2);
+            array.push(i3);
+            array.push(i4);
+            array.push(i5);
+        array.push(i6);
+        var id1 = document.getElementById("test1").value;
+        var id2 = document.getElementById("test2").value;
+
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: "../Test/editByAjax",
+            data: {
+                id1: id1,
+                id2: id2,
+                cArray : array
+            },
+            success: function (message, length) {
+                console.log("handle response :" + message);
+                console.log(length);
+                document.location = '/Home/Index';
+            },
+            error: function (message) {
+
+                console.log("just die... please" + "  " + message);
+            },
+        });
+    }
+</script>

@@ -1,0 +1,383 @@
+﻿@model SalesQouteHeader
+@{
+    ViewData["Title"] = "Analize";
+}
+
+<h3>Analize screen</h3>
+<div style="display:flex; align-items:center; justify-content:space-between">
+    <h5 style="margin-bottom:0">Offer Name : @Model.OfferName</h5>
+    <div class="btn btn-primary" id="submit_btn">Calculate</div>
+</div>
+
+<div class="table-responsive" style="margin-left:0 !important; width: 100% !important; margin-top:15px; box-shadow: 0 2px 4px rgba(0, 0, 0, .1), 0 8px 16px rgba(0, 0, 0, .1);">
+
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th style="text-align: center; vertical-align: middle;" rowspan="4">
+                    Suppliers Name
+                </th>
+                <th>
+                    percentage
+                </th>
+                @foreach (var c in Model.salesCriterias)
+                {
+                    <th colspan="2">
+                        @c.Percentage
+                    </th>
+                }
+                <th style="text-align:center; vertical-align: middle;" rowspan="4">
+                    result
+                </th>
+            </tr>
+            <tr>
+                <th>
+                    Criteria
+                </th>
+                @foreach (var c in Model.salesCriterias)
+                {
+                    <th id="criteria_name+@c.CriteriaId" colspan="2">
+
+                    </th>
+                }
+            </tr>
+            <tr>
+                <th>
+
+                </th>
+                @foreach (var c in Model.salesCriterias)
+                {
+                    <th>
+                        Statement
+                    </th>
+                    <th>
+                        Percentage
+                    </th>
+                }
+            </tr>
+            <tr>
+                <th>
+
+                </th>
+                @foreach (var c in Model.salesCriterias)
+                {
+                    <th>
+                        manualy
+                    </th>
+                    <th>
+                        automatic based on the sum
+                    </th>
+                }
+            </tr>
+        </thead>
+        <tbody id="supplier_list">
+            @foreach (var supplier in Model.salesSuppliers)
+            {
+                <tr>
+                    <td>@supplier.SupplierName</td>
+                    <td></td>
+                    @foreach (var c in Model.salesCriterias)
+                    {
+                        <td style="padding: 0;">
+                            <input id="statement+@c.CriteriaId+@supplier.Id+@c.Percentage" type="number" placeholder="type No." style="width: 100%; height: 40px; padding: 0 10px;" />
+                        </td>
+                        <td id="percentage+@c.CriteriaId+@supplier.Id">result</td>
+                    }
+                    <td id="suppliers_results+@supplier.Id"></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<h5 style="margin-top:30px;">Results : </h5>
+
+<div class="table-responsive" style="margin-left:0 !important; width: 100% !important; margin-top:5px; box-shadow: 0 2px 4px rgba(0, 0, 0, .1), 0 8px 16px rgba(0, 0, 0, .1);">
+
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>
+                    Supplier's Number
+                </th>
+                <th>
+                    Result
+                </th>
+            </tr>
+        </thead>
+        <tbody id="result_table">
+        </tbody>
+    </table>
+</div>
+
+<!----------------------------------Validation Modal-------------------------------------------->
+<div class="modal fade" id="ValidationModal" tabindex="-1" role="dialog" aria-labelledby="ValidationModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Empty Fields</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                please fill all input surrounded by red color ! ,
+                <br />
+                <br />
+                and be sure not to insert a zero to an input !
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Okay</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script>
+        var statement_inputs = document.querySelectorAll('[id*="statement"]');
+        var original_suppliers = @Json.Serialize(ViewBag.salesSuppliers)
+            console.log(original_suppliers);
+
+        var original_criterias = @Json.Serialize(ViewBag.original_criterias)
+            console.log(original_criterias);
+
+        //fill criterias names:
+        var criteria_name_elements = document.querySelectorAll('[id*="criteria_name"]');
+        criteria_name_elements.forEach(current => {
+            var criteria_id = current.id.split("+")[1];
+            original_criterias.forEach(original_criteria => {
+                if (original_criteria.id == criteria_id) {
+                    current.innerHTML = original_criteria.name;
+                }
+            })
+        })
+
+        //get info from database if they exist :
+        var analysis_info_array = @Json.Serialize(ViewBag.OrderAnalysis_data)
+        console.log(analysis_info_array);
+
+        analysis_info_array.forEach(current => {
+            //debugger
+            var input_id = `statement+${current.salesCriteriasId}+${current.salesSuppliersId}`;
+            document.querySelectorAll(`[id*='${input_id}']`)[0].value = current.statement;
+            document.getElementById(`percentage+${current.salesCriteriasId}+${current.salesSuppliersId}`).innerHTML = current.percentage;
+        });
+
+        async function on_calculate() {
+
+            //validation on inputs
+            var there_empty_input = false;
+            statement_inputs.forEach(input => {
+                if (input.value.length == 0) {
+                    input.style.borderColor = "red";
+                    there_empty_input = true;
+                } else if (parseFloat(input.value) == 0) {
+                    input.style.borderColor = "red";
+                    there_empty_input = true;
+                }else {
+                    input.style.borderColor = "";
+                }
+            })
+
+            if (there_empty_input) {
+                $("#ValidationModal").modal('show');
+                return
+            }
+
+            statement_inputs.forEach(input => {
+                var input_id = input.id;
+                var input_id_array = input_id.split("+");
+                var criteria_id = input_id_array[1];
+                var supplier_id = input_id_array[2];
+                var percentage = parseInt(input_id_array[3]);
+
+                if (input.value.length != 0) {
+
+                    //find criteria rank
+                    var rank;
+                    var percentage;
+                    original_criterias.forEach(original_criteria => {
+                        if (original_criteria.id == criteria_id) {
+                            rank = original_criteria.criteria_Rank;
+                        }
+                    })
+
+                    //get highest rank (less | more)
+                    var highest_rank = -1;
+                    if (rank == 0) {//mean less  -> find min
+                        statement_inputs.forEach((input_0, index) => {
+                            var input_id = input_0.id;
+                            var input_id_array = input_id.split("+");
+                            var c = input_id_array[1];
+
+                            if (c == criteria_id) {
+                                if (highest_rank == -1) {
+                                    highest_rank = parseInt(input_0.value)
+                                } else
+                                    if (parseInt(input_0.value) < highest_rank) {
+                                        highest_rank = parseInt(input_0.value);
+                                    }
+                            }
+                        })
+                    } else {//means more -> find max
+                        statement_inputs.forEach((input_0,index) => {
+                            var input_id = input_0.id;
+                            var input_id_array = input_id.split("+");
+                            var c = input_id_array[1];
+
+                            if (c == criteria_id) {
+                                if (highest_rank == -1) {
+                                    highest_rank = parseInt(input_0.value)
+                                }else
+                                if (parseInt(input_0.value) > highest_rank) {
+                                    highest_rank = parseInt(input_0.value);
+                                }
+                            }
+                        })
+                    }
+
+
+                    var percentage_html = document.getElementById(`percentage+${criteria_id}+${supplier_id}`);
+                     percentage_html.innerHTML = Math.round(highest_rank / parseInt(input.value) * percentage *100)/100;
+
+
+                }
+
+            });
+
+                //compute result :
+                var percentage_elements = document.querySelectorAll('[id*="percentage"]');
+                var current_supplier_id_to_calculate_result = -1;
+                var sum_percemtage = 0;
+
+                //array to sotre every supplier id and its result
+                var suppliers_and_results = []
+
+                percentage_elements.forEach((current, index) => {
+                    var current_id = current.id;
+                    var current_id_array = current_id.split("+");
+                    var supplier_id = current_id_array[2];
+                    //debugger
+                    if (current.innerHTML != "result") {
+                        if (supplier_id != current_supplier_id_to_calculate_result) {
+                            if (current_supplier_id_to_calculate_result == -1) {//if firts time enter the loop
+                                current_supplier_id_to_calculate_result = supplier_id;
+                                sum_percemtage += parseFloat(current.innerHTML)
+                            } else if (current_supplier_id_to_calculate_result != -1) {
+                                //set result to the sum_percemtage
+                                document.getElementById("suppliers_results+" + current_supplier_id_to_calculate_result).innerHTML = sum_percemtage;
+                                //store supplier and result
+                                suppliers_and_results.push({
+                                    supplier_id: current_supplier_id_to_calculate_result,
+                                    result: sum_percemtage
+                                })
+                                // set the sum_percemtage to 0
+                                sum_percemtage = parseFloat(current.innerHTML);
+                                //set current_supplier_id_to_calculate_result to new supplier id
+                                current_supplier_id_to_calculate_result = supplier_id;
+                            }
+                        } else if (index == percentage_elements.length - 1) {
+                            sum_percemtage += parseFloat(current.innerHTML);
+                            document.getElementById("suppliers_results+" + current_supplier_id_to_calculate_result).innerHTML = sum_percemtage;
+                            //store supplier and result
+                            suppliers_and_results.push({
+                                supplier_id: current_supplier_id_to_calculate_result,
+                                result: sum_percemtage
+                            })
+                        } else {
+                            sum_percemtage += parseFloat(current.innerHTML);
+                        }
+                    }
+                })
+
+            suppliers_and_results.sort((obj1, obj2) => {
+                return obj1.result - obj2.result;
+            });        // First sort the elements of suppliers_and_results
+            suppliers_and_results.reverse();     // Then reverse the order of the elements
+
+            //get list of suppliers to get the name of the supplier
+
+            document.getElementById('result_table').innerHTML = "";
+
+            suppliers_and_results.forEach(current => {
+
+                document.getElementById('result_table').innerHTML += `
+                    <tr>
+                        <td>
+                            ${original_suppliers.map(original_supplier => {
+                                //debugger
+                                var id1 = parseInt(original_supplier.id);
+                                var id2 = parseInt(current.supplier_id);
+                                if(id1 == id2)
+                                    return original_supplier.supplierName
+                            }).join("")}
+                        </td>
+                        <td>
+                            ${current.result}
+                        </td>
+                    </tr>
+                `;
+            })
+
+            debugger
+            //check if the order is expiered
+            var order_expier_date = new Date(@Json.Serialize(Model.ExpierDate));
+            if (order_expier_date < new Date()) {
+                //show model;
+                document.getElementById("modal-body").innerHTML = "Sorry this offer was Expiered";
+                $("#ValidationModal").modal('show');
+                return;
+            }
+
+            //prepare data to post to databse
+            var Analisis_array_to_post = [];
+
+            statement_inputs.forEach(input => {
+                var input_id = input.id;
+                var input_id_array = input_id.split("+");
+                var criteria_id = parseInt(input_id_array[1]);
+                var supplier_id = parseInt(input_id_array[2]);
+                var statement = parseFloat(input.value);
+                var percentage = parseFloat(document.getElementById("percentage+" + criteria_id + "+" + supplier_id).innerHTML);
+
+                Analisis_array_to_post.push({
+                    SalesQouteHeaderId:@ViewBag.HeaderId,
+                    SalesCriteriasId: criteria_id,
+                    SalesSuppliersId: supplier_id,
+                    Statement: statement,
+                    Percentage: percentage
+                });
+            });
+
+            console.log(Analisis_array_to_post);
+
+            var object_to_post = {};
+            object_to_post.list = Analisis_array_to_post
+            object_to_post.order_id = @ViewBag.HeaderId
+
+            if (analysis_info_array.length == 0) {
+                object_to_post.there_was_existing_analysis = false
+            } else {
+                object_to_post.there_was_existing_analysis = true
+            }
+
+            $.ajax({
+                url: "Analize",
+                type: "POST",
+                data: object_to_post,
+                datatype: "json",
+                success: function (data) {
+                    console.log(data)
+                },
+                error: (error) => {
+                    console.log(error)
+                }
+            });
+        }
+
+        document.getElementById("submit_btn").addEventListener("click", on_calculate);
+
+    </script>
+}

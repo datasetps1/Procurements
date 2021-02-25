@@ -1,0 +1,69 @@
+﻿@model IEnumerable<MVCWebAppServierCon.Models.AmountSittingClass>
+
+@using Microsoft.AspNetCore.Mvc.Localization
+
+@inject IViewLocalizer Localizer
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.amountCode)
+                @Localizer["Amount code"]
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.amountFrom)
+                @Localizer["Amount from"]
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.amountTo)
+                @Localizer["Amount to"]
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.amountStructure)
+                @Localizer["Amount structure"]
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.amountNote)
+                @Localizer["Amount note"]
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.amountCode)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.amountFrom)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.amountTo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.amountStructure)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.amountNote)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                    @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                    @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

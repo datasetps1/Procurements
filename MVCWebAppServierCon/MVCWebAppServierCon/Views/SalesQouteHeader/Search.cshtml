@@ -1,0 +1,117 @@
+﻿
+@{
+    ViewData["Title"] = "Search";
+}
+
+<div style="display:flex; justify-content:center;">
+    <div style="max-width: 500px;">
+        <h3>Search an Offer</h3>
+        <div class="form-group input_group_style">
+            <input id="search_query_html" class="form-control" placeholder="type a search word ..." />
+            <span id="search_query" class="text-danger"></span>
+        </div>
+    </div>
+</div>
+
+<div class="table-responsive" style="margin-left:0 !important; width: 100% !important; margin-top: 20px;">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>
+                    id
+                </th>
+                <th>
+                    Offer Name
+                </th>
+                <th>
+                    Offer Date
+                </th>
+                <th>
+                    Expier Date
+                </th>
+                <th>
+                    Creation Date
+                </th>
+                <th>
+                    No. of Suppliers
+                </th>
+                <th>
+                    Supplier Name
+                </th>
+                <th>
+                    amout
+                </th>
+                <th>
+                    Analysis
+                </th>
+            </tr>
+        </thead>
+        <tbody id="headers_list_html">
+        </tbody>
+    </table>
+</div>
+
+
+
+
+@section scripts{
+    <script>
+        const get_date = (cs_date) => {
+            return new Date(cs_date).toLocaleDateString('en-US', {
+                      day: '2-digit',
+                      month: '2-digit',
+                      year: 'numeric',
+                    })
+        }
+
+        var headers_list = @Json.Serialize(ViewBag.header_list);
+        console.log(headers_list)
+
+        var headers_list_html = document.getElementById("headers_list_html");
+        var search_query_html = document.getElementById("search_query_html");
+
+        headers_list.forEach(header => {
+           headers_list_html.innerHTML += `
+                <tr>
+                    <td>${header.id}</td>
+                    <td>${header.offerName}</td>
+                    <td>${get_date(header.offerDate)}</td>
+                    <td>${new Date(header.expierDate) > new Date() ? get_date(header.expierDate) : 'expiered'}</td>
+                    <td>${get_date(header.creationDate)}</td>
+                    <td>0</td>
+                    <td></td>
+                    <td></td>
+                    <td><a href="Analize/${header.id}">analize</a></td>
+            `;
+        });
+
+
+        const search_headers_list = (e) => {
+            var search_query = e.target.value;
+            headers_list_html.innerHTML = "";
+
+            headers_list.forEach(header => {
+                if (header.offerName.includes(search_query)) {
+                    console.log(header);
+                     headers_list_html.innerHTML += `
+                        <tr>
+                            <td>${header.id}</td>
+                            <td>${header.offerName}</td>
+                            <td>${get_date(header.offerDate)}</td>
+                            <td>${new Date(header.expierDate) > new Date() ? get_date(header.expierDate) : 'expiered'}</td>
+                            <td>${get_date(header.creationDate)}</td>
+                            <td>0</td>
+                            <td></td>
+                            <td></td>
+                            <td><a href="Analize/${header.id}">analize</a></td>
+                    `;
+                }
+            });
+        }
+
+         search_query_html.addEventListener("keyup",e=> search_headers_list(e))
+
+
+    </script>
+}
+

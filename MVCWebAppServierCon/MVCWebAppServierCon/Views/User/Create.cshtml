@@ -1,0 +1,248 @@
+﻿@model MVCWebAppServierCon.ViewModels.UserViewModel
+
+@using Microsoft.AspNetCore.Mvc.Localization
+
+@inject IViewLocalizer Localizer
+
+@{
+    ViewData["Title"] = "Create";
+}       
+ <h1>@Localizer["Create"]</h1>
+<div class="rowPage">
+    <h4>@Localizer["User Class"]</h4>
+</div>
+<hr />
+
+<div class="rowPage">
+
+    <div class="col-md-12">
+        <form asp-action="CreateUser" style="@Localizer["text-align: left  ;direction: ltr"]">
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="row">
+                <div class="form-group col-md-3">
+                    <label asp-for="userName" class="control-label">@Localizer["User Name"]</label>
+                    <input asp-for="userName" class="form-control" />
+                    <span asp-validation-for="userName" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-3">
+                    <label asp-for="userEmail" class="control-label">@Localizer["User Email"]</label>
+                    <input asp-for="userEmail" class="form-control" />
+                    <span asp-validation-for="userEmail" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-3">
+                    <label asp-for="userPassword" class="control-label">@Localizer["User Password"]</label>
+                    <input asp-for="userPassword" class="form-control" />
+                    <span asp-validation-for="userPassword" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-3">
+                    <label asp-for="userConfirmPassword" class="control-label">@Localizer["User Confirm Password"]</label>
+                    <input asp-for="userConfirmPassword" class="form-control" />
+                    <span asp-validation-for="userConfirmPassword" class="text-danger"></span>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="form-group col-md-2">
+                    <label asp-for="userActive" class="control-label">@Localizer["User Active"]</label>
+                    @*<input asp-for="userActive" class="form-control" />*@
+                    <br />
+                    <select class="form-control" asp-for="userActive">
+                        <option value="1">@Localizer["True"]</option>
+                        <option value="0">@Localizer["False"]</option>
+                    </select>
+                    <span asp-validation-for="userActive" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-1">
+                </div>
+                <div class="form-group col-md-3">
+                    <label asp-for="userType" class="control-label">@Localizer["User Type"]</label>
+                    <br />
+                    <select class="form-control" asp-for="userType">
+                        @* asp-items="" *@
+
+                        <option>Please select user Type</option>
+                        @foreach (StructureClass item in ViewBag.uType)
+                        {
+                            <option value="@item.structureRank"> @Html.DisplayFor(modelItem => item.structureName)</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="form-group col-md-3">
+                    <label asp-for="userDepartment" class="control-label">@Localizer["Department"]</label>
+                    <br />
+                    <select class="form-control" asp-for="userDepartment">
+                        @* asp-items="" *@
+
+                        <option>Please select user Type</option>
+                        @foreach (DepartmentClass item in ViewBag.DepName)
+                        {
+                            <option value="@item.departmentCode"> @Html.DisplayFor(modelItem => item.departmentName)</option>
+                        }
+                    </select>
+                </div>
+
+                @*<div class="form-group col-md-4">
+            <label asp-for="userDepartment" class="control-label"></label>
+            <br />
+            <select asp-for="userDepartment">
+                <option>Please select department Name</option>
+                @foreach (DepartmentClass item in ViewBag.DepName)
+                {
+                    <option value="@item.departmentCode"> @Html.DisplayFor(modelItem => item.departmentName)</option>
+                }
+            </select>
+        </div>*@
+
+            </div>
+                @*<div class="row">
+            <div class="form-group col-md-4">
+                <label asp-for="managmentAccesstance" class="control-label"></label>
+                <br />
+                <select asp-for="managmentAccesstance">
+                     asp-items=""
+                    <option>Please select managment Accesstance</option>
+                    @foreach (String item in ViewBag.uMngAss)
+                    {
+                        <option> @Html.DisplayFor(modelItem => item)</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group col-md-4">
+                <label asp-for="sectionManager" class="control-label"></label>
+                <br />
+                <select asp-for="sectionManager">
+                     asp-items=""
+                    <option>Please select section Manager</option>
+                    @foreach (String item in ViewBag.uSecMan)
+                    {
+                        <option> @Html.DisplayFor(modelItem => item)</option>
+                    }
+                    <option value="1">Shyju</option>
+                    <option value="2">Sean</option>
+                </select>
+            </div>
+            <div class="form-group col-md-4">
+                <label asp-for="finacnceDepartment" class="control-label"></label>
+                <br />
+                <select asp-for="finacnceDepartment">
+                     asp-items="ViewBag.uFinDep"
+                    <option>Please select finacnce Department</option>
+                    @foreach (String item in ViewBag.uFinDep)
+                    {
+                        <option value=""> @Html.DisplayFor(modelItem => item)</option>
+                    }
+                </select>
+            </div>
+
+        </div>*@
+                <div class="row">
+                    <div class="form-group col-md-12">
+                        <label asp-for="userNote" class="control-label">@Localizer["User Note"]</label>
+                        <input asp-for="userNote" class="form-control" />
+                        <span asp-validation-for="userNote" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
+                @ViewBag.message
+</form>
+    </div>
+</div>
+
+<div class="rowPage">
+    <a asp-action="Index">Back to List</a>
+</div>
+
+<div class="rowPage">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @*@Html.DisplayNameFor(model => model.userName)*@
+                    @Localizer["User Name"]
+                </th>
+                <th>
+                    @*@Html.DisplayNameFor(model => model.userEmail)*@
+                    @Localizer["User Email"]
+                </th>
+                <th>
+                    @*@Html.DisplayNameFor(model => model.userType)*@
+                    @Localizer["User Type"]
+                </th>
+                @*<th>
+                        @Html.DisplayNameFor(model => model.userDepartment)
+                    </th>*@
+                @*<th>
+                        @Html.DisplayNameFor(model => model.managmentAccesstance)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.sectionManager)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.finacnceDepartment)
+                    </th>*@
+                <th>
+                    @*@Html.DisplayNameFor(model => model.userActive)*@
+                    @Localizer["User Active"]
+                </th>
+                <th>
+                    @*@Html.DisplayNameFor(model => model.userNote)*@
+                    @Localizer["User Note"]
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (UserClass item in ViewBag.Users)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.userName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.userEmail)
+                    </td>
+                    @*<td>
+                            @Html.DisplayFor(modelItem => item.userPassword)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.userConfirmPassword)
+                        </td>*@
+                    <td>
+                        @Html.DisplayFor(modelItem => item.userTypeCode)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.userDepartmentCode)
+                    </td>
+                    @*<td>
+                            @Html.DisplayFor(modelItem => item.managmentAccesstanceCode)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.sectionManagerCode)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.finacnceDepartmentCode)
+                        </td>*@
+                    <td>
+                        @Html.DisplayFor(modelItem => item.userActive)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.userNote)
+                    </td>
+                    <td>
+                        <a asp-controller="User" asp-action="Edit" asp-route-id="@item.userCode">Edit</a> |
+                        @*<a asp-action="Details" asp-route-id="@item.userCode">Details</a> |*@
+                        @*<a asp-action="Delete" asp-route-id="@item.userCode">Delete</a>*@
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    }
+</div>
