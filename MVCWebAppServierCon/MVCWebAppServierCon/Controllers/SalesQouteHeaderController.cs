@@ -272,7 +272,7 @@ namespace MVCWebAppServierCon.Controllers
             var original_criterias = await _context.Criteria.ToListAsync();
             ViewBag.original_criterias = original_criterias;
 
-            List < SupplierViewModel > s_names = new List<SupplierViewModel>();
+            List <SupplierViewModel> s_names = new List<SupplierViewModel>();
             foreach(var s in suppliers)
             {
                 s_names.Add(new SupplierViewModel() { Id = s.Id, SupplierName = s.SupplierName });
@@ -301,7 +301,8 @@ namespace MVCWebAppServierCon.Controllers
             }
             _context.OrderAnalysis.AddRange(list);
             _context.SaveChanges();
-            return null;
+
+            return Json(new { urlToDirect = Url.Action("Search")});
         }
 
     }

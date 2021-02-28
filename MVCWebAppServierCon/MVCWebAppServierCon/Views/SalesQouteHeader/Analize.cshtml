@@ -6,7 +6,10 @@
 <h3>Analize screen</h3>
 <div style="display:flex; align-items:center; justify-content:space-between">
     <h5 style="margin-bottom:0">Offer Name : @Model.OfferName</h5>
-    <div class="btn btn-primary" id="submit_btn">Calculate</div>
+    <div>
+        <div class="btn btn-outline-info" id="save_btn">save</div>
+        <div class="btn btn-info" id="calculate_btn">Calculate</div>
+    </div>
 </div>
 
 <div class="table-responsive" style="margin-left:0 !important; width: 100% !important; margin-top:15px; box-shadow: 0 2px 4px rgba(0, 0, 0, .1), 0 8px 16px rgba(0, 0, 0, .1);">
@@ -154,16 +157,22 @@
             })
         })
 
-        //get info from database if they exist :
+        //----------------------------------------------------------------------------
+        //get analysis info from database if they exist :
         var analysis_info_array = @Json.Serialize(ViewBag.OrderAnalysis_data)
         console.log(analysis_info_array);
-
+        //fill the data in the html elements :
         analysis_info_array.forEach(current => {
-            //debugger
             var input_id = `statement+${current.salesCriteriasId}+${current.salesSuppliersId}`;
             document.querySelectorAll(`[id*='${input_id}']`)[0].value = current.statement;
             document.getElementById(`percentage+${current.salesCriteriasId}+${current.salesSuppliersId}`).innerHTML = current.percentage;
         });
+
+
+        if (analysis_info_array.length > 0) {
+            on_calculate()
+        }
+
 
         async function on_calculate() {
 
@@ -192,7 +201,7 @@
                 var criteria_id = input_id_array[1];
                 var supplier_id = input_id_array[2];
                 var percentage = parseInt(input_id_array[3]);
-
+                //debugger
                 if (input.value.length != 0) {
 
                     //find criteria rank
@@ -248,12 +257,12 @@
             });
 
                 //compute result :
-                var percentage_elements = document.querySelectorAll('[id*="percentage"]');
-                var current_supplier_id_to_calculate_result = -1;
-                var sum_percemtage = 0;
+            var percentage_elements = document.querySelectorAll('[id*="percentage"]');
+            var current_supplier_id_to_calculate_result = -1;
+            var sum_percemtage = 0;
 
                 //array to sotre every supplier id and its result
-                var suppliers_and_results = []
+            var suppliers_and_results = [];
 
                 percentage_elements.forEach((current, index) => {
                     var current_id = current.id;
@@ -321,7 +330,12 @@
                 `;
             })
 
-            debugger
+
+
+        }
+
+        function save_to_database() {
+            //save to the database :
             //check if the order is expiered
             var order_expier_date = new Date(@Json.Serialize(Model.ExpierDate));
             if (order_expier_date < new Date()) {
@@ -369,7 +383,7 @@
                 data: object_to_post,
                 datatype: "json",
                 success: function (data) {
-                    console.log(data)
+                    window.location.href = data.urlToDirect
                 },
                 error: (error) => {
                     console.log(error)
@@ -377,7 +391,8 @@
             });
         }
 
-        document.getElementById("submit_btn").addEventListener("click", on_calculate);
+        document.getElementById("calculate_btn").addEventListener("click", on_calculate);
+        document.getElementById("save_btn").addEventListener("click", save_to_database);
 
     </script>
 }
