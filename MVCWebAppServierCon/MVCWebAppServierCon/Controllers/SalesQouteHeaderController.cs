@@ -46,10 +46,25 @@ namespace MVCWebAppServierCon.Controllers
         }
 
         // GET: SalesQouteHeader/Create
-        public ActionResult Create()
+        public async Task<ActionResult> Create(int? id)
         {
+            // if the action is display (get the order with the passed id) 
             ViewBag.Criteria_List = _context.Criteria.ToList();
+
+            if(id != null)
+            {
+                ViewBag.Status = "display";
+                //get the order and its all realated data
+                var Order_to_display = await _context.SalesQouteHeader
+                    .Include(o => o.salesSuppliers)
+                    .Include(o => o.salesCriterias)
+                    .FirstOrDefaultAsync(o => o.Id == id);
+
+                return View(Order_to_display);
+            }
+
             return View();
+
         }
 
         // POST: SalesQouteHeader/Create
@@ -77,6 +92,7 @@ namespace MVCWebAppServierCon.Controllers
                 criterias_array[i] = new SalesCriterias();
             }
 
+            //iterate files from the request => save them
             var file_list = request.Files;
             foreach (var file in file_list)
             {
@@ -84,17 +100,9 @@ namespace MVCWebAppServierCon.Controllers
                 var index_to_add_on = Int16.Parse(file_key.Substring(file_key.Length-1));
 
                 //save file
-                string uploadsFolder = Path.Combine(hostingEnviroment.WebRootPath, "SalesSupplier"); 
-
-                var uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
-                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await file.CopyToAsync(stream);
-                    stream.Close();
-                }
-
+                var uniqueFileName = await save_file(file);
+               
+                //save path of the file
                 suppliers_array[index_to_add_on].AttachmentPath = uniqueFileName;
             }
 
@@ -170,18 +178,30 @@ namespace MVCWebAppServierCon.Controllers
         private async Task<string> save_file(IFormFile file)
         {
 
-            string uploadsFolder = Path.Combine(hostingEnviroment.WebRootPath, "SalesSupplier");
+            string uploads_folder = Path.Combine(hostingEnviroment.WebRootPath, "SalesSupplier");
 
-            var generate_file_Name = Guid.NewGuid().ToString() + "/" + file.FileName;
-            var file_Path = Path.Combine(uploadsFolder, generate_file_Name);
+            var coming_file_name = "";
+            // to prevent files with very long name to throw error 
+            if(file.FileName.Length > 15)
+            {
+                coming_file_name = file.FileName.Substring(file.FileName.Length-13);
+            }
+            else
+            {
+                coming_file_name = file.FileName;
+            }
 
-            using (var stream = new FileStream(file_Path, FileMode.Create))
+            var file_name = Guid.NewGuid().ToString() + "_" + coming_file_name;
+
+            string full_path = Path.Combine(uploads_folder, file_name);
+
+            using (var stream = new FileStream(full_path, FileMode.Create))
             {
                 await file.CopyToAsync(stream);
                 stream.Close();
             }
 
-            return generate_file_Name;
+            return file_name;
         }
 
         // GET: SalesQouteHeader/Edit/5
@@ -192,19 +212,10 @@ namespace MVCWebAppServierCon.Controllers
 
         // POST: SalesQouteHeader/Edit/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, IFormCollection collection)
         {
-            try
-            {
-                // TODO: Add update logic here
 
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            return Json(new { redirectToUrl = Url.Action("Search") });
         }
 
         // GET: SalesQouteHeader/Delete/5

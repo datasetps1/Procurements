@@ -12,7 +12,11 @@
     <form asp-action="Create" class="form_style col-lg-6 col-md-8 col-sm-12 col-12">
         <div style="display: flex; align-items: center; justify-content: space-between;">
             <h5>Sales Qoute Header information :</h5>
-            <div class="form-group">
+            <div class="form-group" style="display: flex;">
+                @*@if (ViewBag.Status == "display")
+        {
+            <div onclick="submit()" class="btn form_submit_btn" style="margin-right:4px; background-color: #ce1313; border-color: red; color:#fff;">Cancle</div>*@
+                @* } *@
                 <div onclick="submit()" type="button" class="btn btn-primary form_submit_btn">Create</div>
             </div>
         </div>
@@ -201,6 +205,8 @@
 {
 
     <script>
+        var status = @Json.Serialize(@ViewBag.status)
+
         var supplier_name = document.getElementById('supplier_name');
         var supplier_name_error = document.getElementById('supplier_name_error');
         var supplier_file = document.getElementById('supplier_file');
@@ -222,8 +228,8 @@
 
                 //now add the name and the file to the suppliers array as objects
                 suppliers_array.push({
-                    SupplierName: supplier_name.value,
-                    File: supplier_file.files[0]
+                    supplierName: supplier_name.value,
+                    file: supplier_file.files[0]
                 });
 
                 //colse the modal
@@ -237,8 +243,8 @@
                 //update displayed list
                 var supplier_list_html = suppliers_array.map((supplier, index) => (
                     `<tr>
-                                                                        <td>${supplier.SupplierName}</td>
-                                                                        <td>${supplier.File === undefined ? "not added" : "added"}</td>
+                                                                        <td>${supplier.supplierName}</td>
+                                                                        <td>${supplier.file == undefined ? "not added" : "added"}</td>
                                                                     </tr>`
                 ))
 
@@ -282,7 +288,7 @@
 
         function add_criteria() {
 
-
+            debugger
             //check for required fields
             if (criteria_input.value == "not selected") {
                 criteria_input_error.innerHTML = "this field must filled";
@@ -300,7 +306,7 @@
                 percentage_sum = 0;
                 for (var i = 0; i < sales_citeria_array.length; i++) {
                     //console.log(sales_citeria_array[i].Percentage);
-                    percentage_sum += parseInt(sales_citeria_array[i].Percentage);
+                    percentage_sum += parseInt(sales_citeria_array[i].percentage);
                 }
 
                 if (percentage_sum + parseInt(criteria_percentage_input.value) > 100) {
@@ -316,10 +322,11 @@
             //if all validation is okey => add the criteria
             if (criteria_input.value != "not selected" && criteria_percentage_input.value.length != 0 && percentage_sum + parseInt(criteria_percentage_input.value) <= 100) {
                 sales_citeria_array.push({
-                    CriteriaId: criteria_input.value,
-                    Percentage: criteria_percentage_input.value
+                    criteriaId: criteria_input.value,
+                    percentage: criteria_percentage_input.value
                 });
 
+                //display the percentage
                 display_percentage_sum_element.innerHTML = ("Percentage Sum = " + (percentage_sum + parseInt(criteria_percentage_input.value)));
 
                 //console.log(sales_citeria_array)
@@ -334,11 +341,11 @@
                 var criteria_list_html = sales_citeria_array.map((citeria, index) => (
                     `<tr>
                          <td>${Criteria_array_js.map(current => {
-                             if (current.id == citeria.CriteriaId) {
+                             if (current.id == citeria.criteriaId) {
                                  return current.name;
                              }
                          }).join("")}</td>
-                         <td>${citeria.Percentage}</td>
+                         <td>${citeria.percentage}</td>
                     </tr>`
                 ))
 
@@ -403,18 +410,35 @@
 
                 //append suppliers array to form data
                 for (var i = 0; i < suppliers_array.length; i++) {
-                    data_1.append(`file${i}`, suppliers_array[i].File ? suppliers_array[i].File : 'null');
-                    data_1.append(`SupplierName${i}`, suppliers_array[i].SupplierName);
+                    data_1.append(`file${i}`, suppliers_array[i].file ? suppliers_array[i].file : 'null');
+                    data_1.append(`SupplierName${i}`, suppliers_array[i].supplierName);
                 }
 
                 //append citerias array to form data
                 for (var i = 0; i < sales_citeria_array.length; i++) {
-                    data_1.append(`citeria_CriteriaId${i}`, sales_citeria_array[i].CriteriaId);
-                    data_1.append(`citeria_Percentage${i}`, sales_citeria_array[i].Percentage);
+                    data_1.append(`citeria_CriteriaId${i}`, sales_citeria_array[i].criteriaId);
+                    data_1.append(`citeria_Percentage${i}`, sales_citeria_array[i].percentage);
                 }
 
                 console.log("start ajax request")
-                $.ajax({
+
+                if (status == "display") {
+                    $.ajax({
+                        url: "@Url.Action("CreateSupliers")",
+                        data: data_1,
+                        type: 'POST',
+                        method: 'POST',
+                        contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
+                        processData: false, // NEEDED, DON'T OMIT THIS
+                        success: function (response) {
+                            window.location.href = response.redirectToUrl;
+                        },
+                        error: function (response) {
+                            console.log(response)
+                        },
+                    });
+                } else {
+                    $.ajax({
                     url: "@Url.Action("CreateSupliers")",
                     data: data_1,
                     type: 'POST',
@@ -428,8 +452,86 @@
                         console.log(response)
                     },
                 });
+                }
             }
         }
+
+
+        //---------------------fill the inputs and lists if the status is display ----------------------
+        if (status == "display") {
+            var current_order_to_display = @Json.Serialize(@Model);
+            console.log(current_order_to_display);
+
+            //get criteria array
+            sales_citeria_array = current_order_to_display.salesCriterias;
+
+            //display criterias ---------------------------------------------------------
+
+            //compute the percentage
+            var current_percentage_to_display = 0;
+            sales_citeria_array.forEach(current => {
+                current_percentage_to_display += current.percentage;
+            })
+            //display the percentage
+            display_percentage_sum_element.innerHTML = ("Percentage Sum = " + current_percentage_to_display);
+
+            //update displayed list
+            var criteria_list_html_to_display = sales_citeria_array.map((citeria, index) => (
+
+                `<tr>
+                         <td>${
+                Criteria_array_js.map(current => {
+                    if (current.id == citeria.criteriaId) {
+                        return current.name;
+                    }
+                }).join("")
+                           }</td>
+                         <td>${citeria.percentage}</td>
+                    </tr>`
+            ))
+
+            citeria_list.innerHTML = criteria_list_html_to_display.join("");
+
+            //display suppliers ---------------------------------------------------------
+            suppliers_array = current_order_to_display.salesSuppliers;
+            console.log(suppliers_array)
+
+
+            //update displayed list
+            var supplier_list_html_01 = suppliers_array.map((supplier, index) => (
+                `<tr>
+                                                                        <td>${supplier.supplierName}</td>
+                                                                        <td>${supplier.attachmentPath == undefined ? "not added" : "added"}</td>
+                                                                    </tr>`
+            ))
+
+            supplier_list.innerHTML = supplier_list_html_01.join("");
+
+            //display order info ---------------------------------------------------------
+            OfferName_input.value = current_order_to_display.offerName;
+            var expier_date_to_display = new Date(current_order_to_display.expierDate)
+            var day = expier_date_to_display.getDate(),
+                month = expier_date_to_display.getMonth() + 1,
+                year = expier_date_to_display.getFullYear();
+
+            month = (month < 10 ? "0" : "") + month;
+            day = (day < 10 ? "0" : "") + day;
+
+            var ExpierDate_00= year + "-" + month + "-" + day
+            ExpierDate_input.value = ExpierDate_00;
+
+            var offer_Date_to_display = new Date(current_order_to_display.offerDate)
+            day = offer_Date_to_display.getDate();
+            month = offer_Date_to_display.getMonth() + 1;
+            year = offer_Date_to_display.getFullYear();
+
+            month = (month < 10 ? "0" : "") + month;
+            day = (day < 10 ? "0" : "") + day;
+
+            var offerDate_00 = year + "-" + month + "-" + day
+            OfferDate_input.value = offerDate_00;
+        }
+
     </script>
 
 }

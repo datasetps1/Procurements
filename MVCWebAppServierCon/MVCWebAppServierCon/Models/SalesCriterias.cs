@@ -18,6 +18,6 @@ namespace MVCWebAppServierCon.Models
         public int Percentage { get; set; }
 
         public int salesQouteHeaderId { get; set; }
-        public SalesQouteHeader salesQouteHeader { get; set; }
+        //public SalesQouteHeader salesQouteHeader { get; set; }
     }
 }

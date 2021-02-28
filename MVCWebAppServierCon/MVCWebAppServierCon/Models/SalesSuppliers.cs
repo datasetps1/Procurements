@@ -22,6 +22,6 @@ namespace MVCWebAppServierCon.Models
         public IFormFile File { get; set; }
 
         public int salesQouteHeaderId { get; set; }
-        public SalesQouteHeader salesQouteHeader { get; set; }
+        //public SalesQouteHeader salesQouteHeader { get; set; }
     }
 }

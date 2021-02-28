@@ -74,7 +74,7 @@
            headers_list_html.innerHTML += `
                 <tr>
                     <td>${header.id}</td>
-                    <td>${header.offerName}</td>
+                    <td><a href="/SalesQouteHeader/create/${header.id}">${header.offerName}</a></td>
                     <td>${get_date(header.offerDate)}</td>
                     <td>${new Date(header.expierDate) > new Date() ? get_date(header.expierDate) : 'expiered'}</td>
                     <td>${get_date(header.creationDate)}</td>
