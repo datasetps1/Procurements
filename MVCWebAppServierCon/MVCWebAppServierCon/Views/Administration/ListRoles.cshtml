@@ -8,30 +8,37 @@
 
 @if (Model.Any())
 {
-    <a class="btn btn-primary mb-3" style="width:auto" asp-action="CreateRole"
-        asp-controller="administration">Add new role</a>
+<div class="row">
 
+    <div class="form-group col-sm-4">
+        <a class="btn btn-primary mb-3" style="width:auto" asp-action="CreateRole"
+           asp-controller="administration">Add new role</a>
+    </div>
+    <div  class="form-group col-sm-4">
+        <a class="btn btn-primary mb-3" asp-controller="User" asp-action="EditUsersView" >Back to Permissions</a>
+    </div>
+ </div>
     foreach (var role in Model)
     {
-        <div class="card mb-3">
-            <div class="card-heade">
-                Role Id : @role.Id
-            </div>
-            <div class="card-body">
-                <h5 class="card-title">@role.Name</h5>
-            </div>
-            <div class="card-footer">
-                <a class="btn btn-primary" asp-action="EditRole"
-                   asp-controller="Administration" asp-route-id="@role.Id">
-                   Edit
-                </a>
-                <a href="#" class="btn btn-primary">Delete</a>
-            </div>
+    <div class="card mb-3">
+        <div class="card-header">
+            Role Id : @role.Id
         </div>
+        <div class="card-body">
+            <h5 class="card-title" style="font-weight:bold">@role.Name</h5>
+        </div>
+        <div class="card-footer">
+            <a class="btn btn-primary" asp-action="EditRole"
+               asp-controller="Administration" asp-route-id="@role.Id">
+                Edit
+            </a>
+            <a href="#" class="btn btn-primary">Delete</a>
+        </div>
+    </div>
     }
-}
-else
-{
+    }
+    else
+    {
     <div class="card">
         <div class="card-header">
             No roles created yet
@@ -46,4 +53,4 @@ else
             </a>
         </div>
     </div>
-}
+    }

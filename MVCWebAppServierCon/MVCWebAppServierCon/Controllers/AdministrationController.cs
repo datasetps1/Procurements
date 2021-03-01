@@ -10,7 +10,7 @@ using MVCWebAppServierCon.ViewModels;
 
 namespace MVCWebAppServierCon.Controllers
 {
-    [Authorize(Roles = "Admin")]
+   [Authorize(Roles = "Admin")]
     public class AdministrationController : Controller
     {
         private readonly RoleManager<IdentityRole> roleManager;
@@ -130,6 +130,79 @@ namespace MVCWebAppServierCon.Controllers
         }
 
         [HttpGet]
+     
+
+        // This action responds to HttpPost and receives EditRoleViewModel
+        [HttpPost]
+        public async Task<IActionResult> UserListRole(EditRoleViewModel model)
+        {
+            var role = await roleManager.FindByIdAsync(model.Id);
+
+            if (role == null)
+            {
+                ViewBag.ErrorMessage = $"Role with Id = {model.Id} cannot be found";
+                return View("NotFound");
+            }
+            else
+            {
+                role.Name = model.RoleName;
+
+                // Update the Role using UpdateAsync
+                var result = await roleManager.UpdateAsync(role);
+
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("ListRoles");
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+
+                return View(model);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditUsersInUsers(string id)
+        {
+            ViewBag.userId = id;
+
+            var role = await roleManager.FindByIdAsync(id);
+
+            if (role == null)
+            {
+                ViewBag.ErrorMessage = $"Role with Id = {id} cannot be found";
+                return View("NotFound");
+            }
+
+            var model = new List<UserRoleViewModel>();
+
+            foreach (var user in userManager.Users)
+            {
+                var userRoleViewModel = new UserRoleViewModel
+                {
+                    UserId = user.Id,
+                    UserName = user.UserName
+                };
+
+                if (await userManager.IsInRoleAsync(user, role.Name))
+                {
+                    userRoleViewModel.IsSelected = true;
+                }
+                else
+                {
+                    userRoleViewModel.IsSelected = false;
+                }
+
+                model.Add(userRoleViewModel);
+            }
+
+            return View(model);
+        }
+
+        [HttpGet]
         public async Task<IActionResult> EditUsersInRole(string roleId)
         {
             ViewBag.roleId = roleId;
@@ -143,8 +216,9 @@ namespace MVCWebAppServierCon.Controllers
             }
 
             var model = new List<UserRoleViewModel>();
+            model = model.OrderBy(u => u.UserName).ToList();
 
-            foreach (var user in userManager.Users)
+            foreach (var user in userManager.Users) 
             {
                 var userRoleViewModel = new UserRoleViewModel
                 {

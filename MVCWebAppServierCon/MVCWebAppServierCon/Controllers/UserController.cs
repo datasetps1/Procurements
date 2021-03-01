@@ -8,6 +8,10 @@ using MVCWebAppServierCon.Models;
 using Microsoft.EntityFrameworkCore;
 using MVCWebAppServierCon.ViewModels;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
+using System.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Hosting;
 
 namespace MVCWebAppServierCon.Controllers
 {
@@ -17,14 +21,28 @@ namespace MVCWebAppServierCon.Controllers
         private readonly SecondConnClass _sc;
         private readonly UserManager<IdentityUser> userManager;
         private readonly SignInManager<IdentityUser> signInManager;
-        public UserController(SecondConnClass sc, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        private readonly RoleManager<IdentityRole> roleManager;
+        private readonly IConfiguration configuration;
+        private IHostingEnvironment hostingEnviroment { get; }
+
+        string conString = "";
+        SqlConnection connection;
+
+        public UserController(SecondConnClass sc, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, RoleManager<IdentityRole> roleManager, IConfiguration config, IHostingEnvironment hostingEnviroment)
         {
             _sc = sc;
             this.userManager = userManager;
             this.signInManager = signInManager;
+            this.roleManager = roleManager;
+      
+            configuration = config;
+            conString = configuration.GetConnectionString("ProcurementConn");
+            connection = new SqlConnection(conString);
+            this.hostingEnviroment = hostingEnviroment;
         }
 
         // GET: User
+        [Authorize(Roles = "Admin, EnterSet")]
         public ActionResult Index()
         {
             var result = _sc.TblUser.ToList();
@@ -32,12 +50,14 @@ namespace MVCWebAppServierCon.Controllers
         }
 
         // GET: User/Details/5
+        [Authorize(Roles = "Admin, EnterSet")]
         public ActionResult Details(int id)
         {
             return View();
         }
 
         // GET: User/Create
+        [Authorize(Roles = "Admin, EnterSet")]
         public ActionResult Create()
         {
             var mess = TempData["ErrorMessage"] as String;
@@ -68,6 +88,7 @@ namespace MVCWebAppServierCon.Controllers
         // POST: User/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, SaveSet")]
         public async Task<IActionResult> Create(UserViewModel uvc)// iusert to the user table and aspDotNetUsers table
         {
             string errormsg = "";
@@ -186,7 +207,139 @@ namespace MVCWebAppServierCon.Controllers
             }*/
         }
 
+        [HttpGet]
+        //public async Task<IActionResult> EditUsersView(string id)
+        //{
+        //    ViewBag.roleId = id;
+
+        //    var UserRole = await roleManager.FindByIdAsync(id);
+
+        //    if (UserRole == null)
+        //    {
+        //        ViewBag.ErrorMessage = $"User with Id = {id} cannot be found";
+        //        return View("NotFound");
+        //    }
+
+        //    var model = new List<VUserRoles>();
+
+        //    foreach (var user in userManager.Users)
+        //    {
+        //        var VUserRoles = new VUserRoles
+        //        {
+        //            UserId = user.Id,
+        //            UserName = user.UserName
+        //        };
+
+        //        //if (await userManager.IsInRoleAsync(user, UserRole.Name))
+        //        //{
+        //        //    VUserRoles.IsSelected = true;
+        //        //}
+        //        //else
+        //        //{
+        //        //    VUserRoles.IsSelected = false;
+        //        //}
+
+        //        model.Add(VUserRoles);
+        //    }
+
+        //    return View(model);
+        //}
+
+        [HttpGet]
+       //  public List<CostsViewModel> projLoad(String tblName)
+        public List<VUserRoles> EditUsersViewLst(String id)
+        {
+            //  VUserRoles vur = new VUserRoles();
+            //  List<VUserRoles> UsersRolesLst = new List<VUserRoles>();
+            //  var res = _sc.VUsersRole.Where(u => u.UserId == id).FirstOrDefault();
+            //  ViewBag.UsersRole = res;
+            //  ViewBag.userroleName = res.Name;
+
+            ////  UsersRolesLst.Add(ViewBag.userroleName);
+            //  return UsersRolesLst.to ;
+            connection.Open();
+
+            SqlCommand command = new SqlCommand("SELECT UserId ,Name, UserName  FROM VUsersRole where UserId = '" + id + "';", connection);
+            var reader = command.ExecuteReader();
+            List<VUserRoles> costLst = new List<VUserRoles>();
+            while (reader.Read())
+            {
+                VUserRoles costs = new VUserRoles();
+                costs.Name = reader.GetValue(1).ToString();
+                ViewBag.UserName = reader.GetValue(2).ToString();
+                costLst.Add(costs);
+
+                // do something with 'value'
+            }
+            connection.Close();
+            return costLst;
+
+        }
+
+        [HttpGet]
+
+        public ActionResult EditUsersView(String id)
+        {
+            //VUserRoles vur = new VUserRoles();
+   
+            //var res = _sc.VUsersRole.Where(u => u.UserId == id).FirstOrDefault();
+            //ViewBag.UsersRole = res;
+            //ViewBag.userroleName = res.Name;
+
+            ////  UsersRolesLst.Add(ViewBag.userroleName);
+            //return View(vur);
+
+            ViewBag.userId = id;
+
+            VUserRoles uvc = new VUserRoles();
+
+         
+            ViewBag.Name = EditUsersViewLst(id);
+        
+
+            // var res2 = AspNetRoleManager<AspNetUserManager>.Where(u => u.UserId == id).FirstOrDefault();
+            // ViewBag.UserRole = res2;
+
+            return View(uvc);
+
+        }
+
+
+        //public ActionResult getUserRoles(string UserId)
+        //{
+        //    var model = new VUserRoles();
+        //    var res = _sc.VUsersRole.Where(o => o.UserId == UserId).FirstOrDefault();
+        //    if (res.RoleId != "")
+        //    {
+        //      return View(model);
+        //    }
+        //    else
+        //    {
+        //        return Json(new { data = "hidden" });
+        //    }
+
+        //}
+
+        public ActionResult EditRole11(string id)
+        {
+            ViewBag.userId = id;
+
+            UserViewModel uvc = new UserViewModel();
+
+            var res = _sc.TblUser.Where(u => u.userCode == id).FirstOrDefault();
+            ViewBag.Users = res;
+            uvc.userName = res.userName;
+            uvc.userEmail = res.userEmail;
+
+           // var res2 = AspNetRoleManager<AspNetUserManager>.Where(u => u.UserId == id).FirstOrDefault();
+           // ViewBag.UserRole = res2;
+            
+            return View(uvc);
+        }
+
         // GET: User/Edit/5
+        [Authorize(Roles = "Admin, EnterSet")]
+ 
         public ActionResult Edit(string id)
         {
             var mess = TempData["ErrorMessage"] as String;
@@ -220,6 +373,7 @@ namespace MVCWebAppServierCon.Controllers
             return View(uvc);
 
         }
+        [Authorize(Roles = "Admin, SaveSet")]
 
         // POST: User/Edit/5
         [HttpPost]
@@ -266,6 +420,8 @@ namespace MVCWebAppServierCon.Controllers
         }
 
         // GET: User/Delete/5
+        [Authorize(Roles = "Admin, DeleteSet")]
+
         public ActionResult Delete(int id)
         {
             return View();
@@ -274,6 +430,7 @@ namespace MVCWebAppServierCon.Controllers
         // POST: User/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, DeleteSet")]
         public ActionResult Delete(int id, IFormCollection collection)
         {
             try

@@ -1,12 +1,18 @@
 ﻿@model EditRoleViewModel
 
+@using Microsoft.AspNetCore.Mvc.Localization
+
+@inject IViewLocalizer Localizer
+
 @{
-    ViewBag.Title = "Edit Role";
+    ViewData["Title"] = "Edit Role";
 }
 
-<h1>Edit Role</h1>
+<div class="rowPage">
+    <h1>@Localizer["Edit Role"]</h1>
+</div>
 
-<form method="post" class="mt-3">
+<form method="post" class="mt-3"  style="@Localizer["text-align: left  ;direction: ltr"]">
     <div class="form-group row">
         <label asp-for="Id" class="col-sm-2 col-form-label"></label>
         <div class="col-sm-10">
@@ -39,7 +45,7 @@
             {
                 foreach (var user in Model.Users)
                 {
-                    <h5 class="card-title">@user</h5>
+                    <h5 class="card-title" style="font-size:large; font-weight:bold">@user</h5>
                 }
             }
             else
