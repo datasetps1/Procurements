@@ -17,7 +17,7 @@
         {
             <div onclick="submit()" class="btn form_submit_btn" style="margin-right:4px; background-color: #ce1313; border-color: red; color:#fff;">Cancle</div>*@
                 @* } *@
-                <div onclick="submit()" type="button" class="btn btn-primary form_submit_btn">Create</div>
+                <div onclick="submit()" type="button" class="btn btn-info form_submit_btn">Create</div>
             </div>
         </div>
 
@@ -40,8 +40,11 @@
         <!----------------------------- for suppliers list------------------------------------------->
         <hr />
         <div style="display:flex; align-items:center; justify-content:space-between">
-            <h5 style="margin: 0;">Sales Suppliers :</h5>
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addSupplierModal">
+            <div>
+                <h5 style="margin: 0;">Sales Suppliers :</h5>
+                <span id="suppliers_error_element" class="text-danger"></span>
+            </div>
+            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#addSupplierModal">
                 Add
             </button>
 
@@ -77,8 +80,9 @@
             <div style="display:flex;flex-direction:column">
                 <h5 style="margin: 0;">Sales Criterias :</h5>
                 <h7 id="display_percentage_sum_element" style="margin: 0;">Percentage Sum =</h7>
+                <span id="criterias_error_element" class="text-danger"></span>
             </div>
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addCriteriaModal">
+            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#addCriteriaModal">
                 Add
             </button>
 
@@ -147,7 +151,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn" data-dismiss="modal">Close</button>
-                <button onclick="add_supplier()" type="button" class="btn btn-primary">Save</button>
+                <button onclick="add_supplier()" type="button" class="btn btn-info">Save</button>
             </div>
         </div>
     </div>
@@ -194,7 +198,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn" data-dismiss="modal">Close</button>
-                <button onclick="add_criteria()" type="button" class="btn btn-primary">Save</button>
+                <button onclick="add_criteria()" type="button" class="btn btn-info">Save</button>
             </div>
         </div>
     </div>
@@ -288,7 +292,6 @@
 
         function add_criteria() {
 
-            debugger
             //check for required fields
             if (criteria_input.value == "not selected") {
                 criteria_input_error.innerHTML = "this field must filled";
@@ -299,6 +302,17 @@
             if (criteria_percentage_input.value.length == 0) {
                 criteria_percentage_error.innerHTML = "this field must filled";
             } else {
+                criteria_percentage_error.innerHTML = "";
+
+                //check if the selected criteria is selected before or not : 
+                for (var i = 0; i < sales_citeria_array.length; i++) {
+                    if (sales_citeria_array[i].criteriaId == criteria_input.value) {
+                        //show error
+                        criteria_percentage_error.innerHTML = "this createria is already added";
+                        return;
+                    }
+                }
+                //if the previous loop does not terminate the function , then no repeat error
                 criteria_percentage_error.innerHTML = "";
 
 
@@ -371,31 +385,52 @@
         var ExpierDate_input = document.getElementById("ExpierDate_input");
         var ExpierDate_error_element = document.getElementById("ExpierDate_error_element");
 
-
+        var suppliers_error_element = document.getElementById("suppliers_error_element");
+        var criterias_error_element = document.getElementById("criterias_error_element");
 
 
         function submit() {
             //check validation on header information
+            var there_is_error = false;
+
             if (OfferName_input.value.length == 0) {
                 OfferName_error_element.innerHTML = "this field must filled";
+                there_is_error = true;
             } else {
                 OfferName_error_element.innerHTML = "";
             }
 
             if (!OfferDate_input.value) {
                 OfferDate_error_element.innerHTML = "this field must filled";
+                there_is_error = true;
             } else {
                 OfferDate_error_element.innerHTML = "";
             }
 
             if (!ExpierDate_input.value) {
                 ExpierDate_error_element.innerHTML = "this field must filled";
+                there_is_error = true;
             } else {
                 ExpierDate_error_element.innerHTML = "";
             }
             //...
+            //check if supplier_array has less than 1 ,then show a modal 
+            //check for criterias_array also : 
+            if (suppliers_array.length < 1) {
+                suppliers_error_element.innerHTML = "add at least 1 supplier";
+                there_is_error = true;
+            } else {
+                suppliers_error_element.innerHTML = "";
+            }
 
-            if (OfferName_input.value.length == 0 || !OfferDate_input.value || !ExpierDate_input.value) {
+            if (sales_citeria_array.length < 1) {
+                criterias_error_element.innerHTML = "add at least 1 criteria";
+                there_is_error = true;
+            } else {
+                criterias_error_element.innerHTML = "";
+            }
+
+            if (there_is_error) {
                 return;
             } else {
 
