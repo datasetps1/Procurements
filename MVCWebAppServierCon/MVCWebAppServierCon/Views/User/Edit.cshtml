@@ -23,6 +23,11 @@
 
             <div class="row">
                 <div class="form-group col-md-3">
+                    <label asp-for="userCode" class="control-label">@Localizer["User Code"]</label>
+                    <input asp-for="userCode" class="form-control" disabled="disabled" />
+                    <span asp-validation-for="userCode" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-3">
                     <label asp-for="userName" class="control-label">@Localizer["User Name"]</label>
                     <input asp-for="userName" class="form-control" disabled="disabled" />
                     <span asp-validation-for="userName" class="text-danger"></span>
@@ -84,10 +89,79 @@
             </p>
             @ViewBag.message
         </form>
-    </div>
-    @section Scripts {
-        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+       @* <div class="form-group">
+            <button id="myBtn" onclick="">Open Modal</button>
+        </div>
+
+
+        <!-- The Modal -->
+        <div id="myModal" class="modal">
+
+            <!-- Modal content -->
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <p>Some text in the Modal..</p>
+            </div>
+
+        </div>
+    </div>*@
+    @*@section Scripts {
+
+        <script type="text/javascript">
+            var modal = document.getElementById("myModal");
+
+            // Get the button that opens the modal
+            var btn = document.getElementById("myBtn");
+
+            // Get the <span> element that closes the modal
+            var span = document.getElementsByClassName("close")[0];
+
+            // When the user clicks on the button, open the modal
+            btn.onclick = function () {
+                modal.style.display = "block";
+                debugger
+                var txt = document.getElementById('userCode');
+                alert(txt.value)
+
+                getUserRoles(txt.value);
+            }
+
+            function getUserRoles(userid) {
+         debugger
+        $.ajax(
+            {
+                url: "../getUserRoles",
+                data: { UserId:userid },
+                dataType: "json",
+                type: "GET",
+                success: function (data) {
+                    alert("success")
+                //    document.getElementById("TxtTotalBudget").innerHTML = data.data;
+                //   alert("success buf  == " + data.data);
+                },
+                error: function (message) {
+                    console.log("Error ...");
+                    console.log(message);
+                },
+
+            });
+
     }
+            // When the user clicks on <span> (x), close the modal
+            span.onclick = function () {
+                modal.style.display = "none";
+            }
+
+            // When the user clicks anywhere outside of the modal, close it
+            window.onclick = function (event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            }
+
+
+        </script>
+    }*@
 </div>
 
 

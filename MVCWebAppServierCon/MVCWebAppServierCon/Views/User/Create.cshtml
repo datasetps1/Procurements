@@ -1,18 +1,21 @@
 ﻿@model MVCWebAppServierCon.ViewModels.UserViewModel
 
+
+ <link href="~/css/site.css" rel="stylesheet" />
 @using Microsoft.AspNetCore.Mvc.Localization
 
 @inject IViewLocalizer Localizer
 
 @{
     ViewData["Title"] = "Create";
-}       
- <h1>@Localizer["Create"]</h1>
+}
+<h1>@Localizer["Create"]</h1>
 <div class="rowPage">
     <h4>@Localizer["User Class"]</h4>
 </div>
 <hr />
 
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
 <div class="rowPage">
 
     <div class="col-md-12">
@@ -83,72 +86,73 @@
                     </select>
                 </div>
 
+
                 @*<div class="form-group col-md-4">
-            <label asp-for="userDepartment" class="control-label"></label>
-            <br />
-            <select asp-for="userDepartment">
-                <option>Please select department Name</option>
-                @foreach (DepartmentClass item in ViewBag.DepName)
-                {
-                    <option value="@item.departmentCode"> @Html.DisplayFor(modelItem => item.departmentName)</option>
-                }
-            </select>
-        </div>*@
+                        <label asp-for="userDepartment" class="control-label"></label>
+                        <br />
+                        <select asp-for="userDepartment">
+                            <option>Please select department Name</option>
+                            @foreach (DepartmentClass item in ViewBag.DepName)
+                            {
+                                <option value="@item.departmentCode"> @Html.DisplayFor(modelItem => item.departmentName)</option>
+                            }
+                        </select>
+                    </div>*@
 
             </div>
-                @*<div class="row">
-            <div class="form-group col-md-4">
-                <label asp-for="managmentAccesstance" class="control-label"></label>
-                <br />
-                <select asp-for="managmentAccesstance">
-                     asp-items=""
-                    <option>Please select managment Accesstance</option>
-                    @foreach (String item in ViewBag.uMngAss)
-                    {
-                        <option> @Html.DisplayFor(modelItem => item)</option>
-                    }
-                </select>
-            </div>
-            <div class="form-group col-md-4">
-                <label asp-for="sectionManager" class="control-label"></label>
-                <br />
-                <select asp-for="sectionManager">
-                     asp-items=""
-                    <option>Please select section Manager</option>
-                    @foreach (String item in ViewBag.uSecMan)
-                    {
-                        <option> @Html.DisplayFor(modelItem => item)</option>
-                    }
-                    <option value="1">Shyju</option>
-                    <option value="2">Sean</option>
-                </select>
-            </div>
-            <div class="form-group col-md-4">
-                <label asp-for="finacnceDepartment" class="control-label"></label>
-                <br />
-                <select asp-for="finacnceDepartment">
-                     asp-items="ViewBag.uFinDep"
-                    <option>Please select finacnce Department</option>
-                    @foreach (String item in ViewBag.uFinDep)
-                    {
-                        <option value=""> @Html.DisplayFor(modelItem => item)</option>
-                    }
-                </select>
-            </div>
-
-        </div>*@
-                <div class="row">
-                    <div class="form-group col-md-12">
-                        <label asp-for="userNote" class="control-label">@Localizer["User Note"]</label>
-                        <input asp-for="userNote" class="form-control" />
-                        <span asp-validation-for="userNote" class="text-danger"></span>
+            @*<div class="row">
+                    <div class="form-group col-md-4">
+                        <label asp-for="managmentAccesstance" class="control-label"></label>
+                        <br />
+                        <select asp-for="managmentAccesstance">
+                             asp-items=""
+                            <option>Please select managment Accesstance</option>
+                            @foreach (String item in ViewBag.uMngAss)
+                            {
+                                <option> @Html.DisplayFor(modelItem => item)</option>
+                            }
+                        </select>
                     </div>
+                    <div class="form-group col-md-4">
+                        <label asp-for="sectionManager" class="control-label"></label>
+                        <br />
+                        <select asp-for="sectionManager">
+                             asp-items=""
+                            <option>Please select section Manager</option>
+                            @foreach (String item in ViewBag.uSecMan)
+                            {
+                                <option> @Html.DisplayFor(modelItem => item)</option>
+                            }
+                            <option value="1">Shyju</option>
+                            <option value="2">Sean</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label asp-for="finacnceDepartment" class="control-label"></label>
+                        <br />
+                        <select asp-for="finacnceDepartment">
+                             asp-items="ViewBag.uFinDep"
+                            <option>Please select finacnce Department</option>
+                            @foreach (String item in ViewBag.uFinDep)
+                            {
+                                <option value=""> @Html.DisplayFor(modelItem => item)</option>
+                            }
+                        </select>
+                    </div>
+
+                </div>*@
+            <div class="row">
+                <div class="form-group col-md-12">
+                    <label asp-for="userNote" class="control-label">@Localizer["User Note"]</label>
+                    <input asp-for="userNote" class="form-control" />
+                    <span asp-validation-for="userNote" class="text-danger"></span>
                 </div>
-                <div class="form-group">
-                    <input type="submit" value="Create" class="btn btn-primary" />
-                </div>
-                @ViewBag.message
-</form>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+            @ViewBag.message
+        </form>
     </div>
 </div>
 
@@ -233,7 +237,10 @@
                         @Html.DisplayFor(modelItem => item.userNote)
                     </td>
                     <td>
-                        <a asp-controller="User" asp-action="Edit" asp-route-id="@item.userCode">Edit</a> |
+                        <a asp-controller="User" asp-action="Edit" asp-route-id="@item.userCode">Edit</a>
+                        <a>  \  </a>
+                        <a asp-controller="User" asp-action="EditUsersView" asp-route-id="@item.userCode">Permissions</a>
+
                         @*<a asp-action="Details" asp-route-id="@item.userCode">Details</a> |*@
                         @*<a asp-action="Delete" asp-route-id="@item.userCode">Delete</a>*@
                     </td>
@@ -241,8 +248,6 @@
             }
         </tbody>
     </table>
-
-    @section Scripts {
-        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    }
+ 
 </div>
+
