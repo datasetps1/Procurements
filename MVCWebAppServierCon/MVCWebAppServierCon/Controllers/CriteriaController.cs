@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MVCWebAppServierCon.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MVCWebAppServierCon.Controllers
 {
@@ -19,6 +20,7 @@ namespace MVCWebAppServierCon.Controllers
         }
 
         // GET: Criteria/Details/1
+        [Authorize(Roles = "Admin, EnterSet")]
         public async Task<IActionResult> Details(int? id)
         {
             if(id == null)
@@ -39,6 +41,7 @@ namespace MVCWebAppServierCon.Controllers
         [Route("Criteria/")]
         [Route("Criteria/Create")]
         // GET: Criteria/Create
+        [Authorize(Roles = "Admin, EnterSet")]
         public async Task<IActionResult> Create()
         {
             ViewBag.criteriaList = await _context.Criteria.ToListAsync();
@@ -52,6 +55,7 @@ namespace MVCWebAppServierCon.Controllers
         [Route("Criteria/Create")]
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, SaveSet")]
         public async Task<IActionResult> Create(Criteria criteria)
         {
             ViewBag.criteriaList = await _context.Criteria.ToListAsync();
@@ -66,6 +70,7 @@ namespace MVCWebAppServierCon.Controllers
         }
 
         // GET: Criteria/Edit/5
+        [Authorize(Roles = "Admin, EnterSet")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -86,6 +91,7 @@ namespace MVCWebAppServierCon.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, SaveSet")]
         public async Task<IActionResult> Edit(int id,Criteria criteria)
         {
             if (id != criteria.Id)
@@ -117,6 +123,7 @@ namespace MVCWebAppServierCon.Controllers
         }
 
         // GET: Criteria/Delete/5
+        [Authorize(Roles = "Admin, DeleteSet")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -135,6 +142,7 @@ namespace MVCWebAppServierCon.Controllers
         }
 
         // POST: Criteria/Delete/5
+        [Authorize(Roles = "Admin, DeleteSet")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

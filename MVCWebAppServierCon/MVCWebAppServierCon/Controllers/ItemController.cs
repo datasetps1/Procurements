@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MVCWebAppServierCon.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MVCWebAppServierCon.Controllers
 {
@@ -18,6 +19,7 @@ namespace MVCWebAppServierCon.Controllers
             _sc = sc;
         }
         // GET: Item
+        [Authorize(Roles = "Admin, EnterSet")]
         public ActionResult Index()
         {
             ViewBag.Items = _sc.TblItem.ToList();
@@ -26,12 +28,14 @@ namespace MVCWebAppServierCon.Controllers
         }
 
         // GET: Item/Details/5
+        [Authorize(Roles = "Admin, EnterSet")]
         public ActionResult Details(int id)
         {
             return View();
         }
 
         // GET: Item/Create
+        [Authorize(Roles = "Admin, EnterSet")]
         public ActionResult Create()
         {
             var mess = TempData["ErrorMessage"] as String;
@@ -46,6 +50,7 @@ namespace MVCWebAppServierCon.Controllers
         // POST: Item/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, SaveSet")]
         public ActionResult Create(ItemClass ic)
         {
             try
@@ -68,6 +73,7 @@ namespace MVCWebAppServierCon.Controllers
         }
 
         // GET: Item/Edit/5
+        [Authorize(Roles = "Admin, EnterSet")]
         public ActionResult Edit(int id)
         {
             var res = _sc.TblItem.Where(i => i.itemCode == id).FirstOrDefault();
@@ -77,6 +83,7 @@ namespace MVCWebAppServierCon.Controllers
         // POST: Item/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, SaveSet")]
         public ActionResult Edit(int id, ItemClass ic)
         {
             try
@@ -98,6 +105,7 @@ namespace MVCWebAppServierCon.Controllers
         }
 
         // GET: Item/Delete/5
+        [Authorize(Roles = "Admin, DeleteSet")]
         public ActionResult Delete(int id)
         {
             var del = _sc.TblItem.Where(i => i.itemCode == id).FirstOrDefault();
@@ -109,6 +117,7 @@ namespace MVCWebAppServierCon.Controllers
         // POST: Item/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, DeleteSet")]
 
         public ActionResult Delete(int id, ItemClass collection)
         {

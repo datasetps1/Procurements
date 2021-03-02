@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MVCWebAppServierCon.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MVCWebAppServierCon.Controllers
 {
@@ -23,6 +24,7 @@ namespace MVCWebAppServierCon.Controllers
              _cc = cc;
          }*/
         // GET: Structure
+        [Authorize(Roles = "Admin, EnterSet")]
         public ActionResult Index()
         {
             var list = _sc.TblStructure.OrderBy(s => s.structureRank).ToList();
@@ -30,12 +32,14 @@ namespace MVCWebAppServierCon.Controllers
         }
 
         // GET: Structure/Details/5
+        [Authorize(Roles = "Admin, EnterSet")]
         public ActionResult Details(int id)
         {
             return View();
         }
 
         // GET: Structure/Create
+        [Authorize(Roles = "Admin, EnterSet")]
         public ActionResult Create()
         {
             ViewBag.structure = _sc.TblStructure.OrderBy(s => s.structureRank).ToList();
@@ -50,6 +54,7 @@ namespace MVCWebAppServierCon.Controllers
         // POST: Structure/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, SaveSet")]
         public ActionResult Create(StructureClass sc)
         {
             try
@@ -71,6 +76,7 @@ namespace MVCWebAppServierCon.Controllers
         }
 
         // GET: Structure/Edit/5
+        [Authorize(Roles = "Admin, EnterSet")]
         public ActionResult Edit(int id)
         {
             var res = _sc.TblStructure.Where(s => s.structureCode == id).FirstOrDefault();
@@ -80,6 +86,7 @@ namespace MVCWebAppServierCon.Controllers
         // POST: Structure/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, SaveSet")]
         public ActionResult Edit(int id, StructureClass sc)
         {
             try
@@ -99,6 +106,7 @@ namespace MVCWebAppServierCon.Controllers
         }
 
         // GET: Structure/Delete/5
+        [Authorize(Roles = "Admin, DeleteSet")]
         public ActionResult Delete(int id)
         {
             var del = _sc.TblStructure.Where(i => i.structureRank == id).FirstOrDefault();
@@ -111,6 +119,7 @@ namespace MVCWebAppServierCon.Controllers
         // POST: Department/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, DeleteSet")]
         public ActionResult Delete(int id, StructureClass collection)
         {
             try

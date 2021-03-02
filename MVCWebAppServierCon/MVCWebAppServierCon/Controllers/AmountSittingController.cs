@@ -31,7 +31,9 @@ namespace MVCWebAppServierCon.Controllers
         }*/
 
         // GET: AmountSitting
+
         [AllowAnonymous]
+        [Authorize(Roles = "Admin, EnterSet")]
         public ActionResult Index()
         {
             var result = _sc.TblAmountSitting.ToList();
@@ -39,6 +41,7 @@ namespace MVCWebAppServierCon.Controllers
         }
 
         // GET: AmountSitting/Details/5
+        [Authorize(Roles = "Admin, EnterSet")]
         public ActionResult Details(int id)
         {
             var res = _sc.TblAmountSitting.Where(r => r.amountCode == id).FirstOrDefault();
@@ -46,6 +49,7 @@ namespace MVCWebAppServierCon.Controllers
         }
 
         // GET: AmountSitting/Create
+        [Authorize(Roles = "Admin, EnterSet")]
         public ActionResult Create()
         {
             List<StructureClass> stru = _sc.TblStructure.OrderBy(x => x.structureRank).ToList();
@@ -67,6 +71,7 @@ namespace MVCWebAppServierCon.Controllers
         // POST: AmountSitting/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, SaveSet")]
         public ActionResult Create(AmountSittingClass asc)
         {
             try
@@ -93,11 +98,13 @@ namespace MVCWebAppServierCon.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin, SaveSet")]
         public Task<IActionResult> InsertRow()
         {
 
             return null;
         }
+        [Authorize(Roles = "Admin, SaveSet")]
 
         public ActionResult StruArray(int[] strArray, int fromAmount, int toAmount, string amountNote)
         {
@@ -133,6 +140,7 @@ namespace MVCWebAppServierCon.Controllers
         }
 
         // GET: AmountSitting/Edit/5
+        [Authorize(Roles = "Admin, EnterSet")]
         public ActionResult Edit(int id)// this take amountFrom and delete its values then insert the new values 
         {
             var res = _sc.TblAmountSitting.Where(a => a.amountFrom == id).ToList();
@@ -147,6 +155,7 @@ namespace MVCWebAppServierCon.Controllers
         // POST: AmountSitting/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, SaveSet")]
         public ActionResult Edit(int id, AmountSittingClass asc)
         {
             try
@@ -159,7 +168,7 @@ namespace MVCWebAppServierCon.Controllers
                 return View();
             }
         }
-
+        [Authorize(Roles = "Admin, SaveSet")]
         public ActionResult EditAmSit(int[] strArray, int fromAmountPrevious, int fromAmount, int toAmount, string amountNote)
         {
             try
@@ -178,6 +187,7 @@ namespace MVCWebAppServierCon.Controllers
         }
 
         // GET: AmountSitting/Delete/5
+        [Authorize(Roles = "Admin, DeleteSet")]
         public ActionResult Delete(int fromAmount)
         {
             try
@@ -200,7 +210,7 @@ namespace MVCWebAppServierCon.Controllers
 
             }
         }
-
+        [Authorize(Roles = "Admin, DeleteSet")]
         public ActionResult DeleteStrArr(int fromAmountPrevious)
         {
             try
@@ -228,6 +238,7 @@ namespace MVCWebAppServierCon.Controllers
         // POST: AmountSitting/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, DeleteSet")]
         public ActionResult Delete(int id, IFormCollection collection)
         {
             try

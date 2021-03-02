@@ -7,7 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MVCWebAppServierCon.Models;
 using MVCWebAppServierCon.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+
 namespace MVCWebAppServierCon.Controllers
+
 {
     public class OrderController : Controller
     {
@@ -19,6 +22,7 @@ namespace MVCWebAppServierCon.Controllers
             _conns = conns;
         }
         // GET: Order
+        [Authorize(Roles = "Admin, EnterSet")]
         public ActionResult Index()
         {
             var result = _sc.TblOrderHeader.ToList();
@@ -50,12 +54,14 @@ namespace MVCWebAppServierCon.Controllers
 
 
         // GET: Order/Details/5
+        [Authorize(Roles = "Admin, EnterSet")]
         public ActionResult Details(int id)
         {
             return View();
         }
 
         // GET: Order/Create
+        [Authorize(Roles = "Admin, EnterSet")]
         public ActionResult Create()
         {
             ViewBag.Order = _sc.TblOrderType.ToList();
@@ -65,6 +71,7 @@ namespace MVCWebAppServierCon.Controllers
         // POST: Order/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, SaveSet")]
         public ActionResult Create(OrderTypeClass otc)
         {
             try
@@ -87,6 +94,7 @@ namespace MVCWebAppServierCon.Controllers
         }
 
         // GET: Order/Edit/5
+        [Authorize(Roles = "Admin, EnterSet")]
         public ActionResult Edit(int id)
         {
             var res = _sc.TblOrderType.Where(o => o.orderTypeCode == id).FirstOrDefault();
@@ -96,6 +104,7 @@ namespace MVCWebAppServierCon.Controllers
         // POST: Order/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, SaveSet")]
         public ActionResult Edit(int id, OrderTypeClass otc)
         {
             try
@@ -122,6 +131,7 @@ namespace MVCWebAppServierCon.Controllers
         }
 
         // GET: Order/Delete/5
+        [Authorize(Roles = "Admin, DeleteSet")]
         public ActionResult Delete(int id)
         {
             return View();
@@ -130,6 +140,7 @@ namespace MVCWebAppServierCon.Controllers
         // POST: Order/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, DeleteSet")]
         public ActionResult Delete(int id, OrderTypeClass collection)
         {
             try

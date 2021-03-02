@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using MVCWebAppServierCon.Models;
 using System.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MVCWebAppServierCon.Controllers
 {
@@ -23,6 +24,7 @@ namespace MVCWebAppServierCon.Controllers
             configuration = config;
         }
         // GET: Department
+        [Authorize(Roles = "Admin, EnterSet")]
         public ActionResult Index()
         {
             var result = _sc.TblDepartment.ToList();
@@ -30,12 +32,14 @@ namespace MVCWebAppServierCon.Controllers
         }
 
         // GET: Department/Details/5
+        [Authorize(Roles = "Admin, EnterSet")]
         public ActionResult Details(int id)
         {
             return View();
         }
 
         // GET: Department/Create
+        [Authorize(Roles = "Admin, EnterSet")]
         public ActionResult Create()
         {
             var users = _sc.TblUser.ToList();
@@ -79,6 +83,7 @@ namespace MVCWebAppServierCon.Controllers
         // POST: Department/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, SaveSet")]
         public ActionResult Create(DepartmentClass dc)
         {
             try
@@ -101,6 +106,7 @@ namespace MVCWebAppServierCon.Controllers
         }
 
         // GET: Department/Edit/5
+        [Authorize(Roles = "Admin, EnterSet")]
         public ActionResult Edit(int id)
         {
             var users = _sc.TblUser.ToList();
@@ -113,6 +119,7 @@ namespace MVCWebAppServierCon.Controllers
         // POST: Department/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, SaveSet")]
         public ActionResult Edit(int id, DepartmentClass dc)
         {
             try
@@ -137,6 +144,7 @@ namespace MVCWebAppServierCon.Controllers
         }
 
         // GET: Department/Delete/5
+        [Authorize(Roles = "Admin, DeleteSet")]
         public ActionResult Delete(int id)
         {
 
@@ -146,6 +154,7 @@ namespace MVCWebAppServierCon.Controllers
         // POST: Department/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, DeleteSet")]
         public ActionResult Delete(int id, DepartmentClass collection)
         {
             try
