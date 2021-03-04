@@ -33,6 +33,7 @@ namespace MVCWebAppServierCon.Controllers
             connection = new SqlConnection(conString);
             this.hostingEnviroment = hostingEnviroment;
         }
+
         public IActionResult Index()
         {
             List<OrderViewModel> orderViewList = new List<OrderViewModel>();
@@ -76,6 +77,7 @@ namespace MVCWebAppServierCon.Controllers
             connection.Close();
             return costLst;
         }
+
         public String projName(String tblName, string code)
         {// use sql command to make new query to get data from cost table that needed in the order
             connection.Open();
@@ -485,6 +487,18 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
             ViewBag.userTypeCode = user.userTypeCode;
             return View();
         }
+
+        // get  : /orderview/EditProjectBudget
+        public IActionResult EditProjectBudget()
+        {
+
+            ViewBag.ProjectName = projLoad("TBLCost2");
+            ViewBag.BudgetLine = projLoad("TBLCost8");
+            ViewBag.OrderHeader = _sc.TblOrderHeader.ToList();
+
+            return View();
+        }
+
         [HttpPost]
         public IActionResult RepushOrder(OrderHeaderClass headerlst, List<TransactionClass> transLst, int id)
         {

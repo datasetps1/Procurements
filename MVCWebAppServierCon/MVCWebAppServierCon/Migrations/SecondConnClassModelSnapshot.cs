@@ -70,6 +70,71 @@ namespace MVCWebAppServierCon.Migrations
                     b.ToTable("TblApproval");
                 });
 
+            modelBuilder.Entity("MVCWebAppServierCon.Models.CompleteActivity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("ActivityDate");
+
+                    b.Property<string>("ActivityVenue");
+
+                    b.Property<string>("BookNumber");
+
+                    b.Property<string>("CoordinatorName");
+
+                    b.Property<DateTime>("Date");
+
+                    b.Property<string>("Description");
+
+                    b.Property<string>("DoneTasks");
+
+                    b.Property<int>("OrderCode");
+
+                    b.Property<string>("ProjectName");
+
+                    b.Property<int>("SupplierId");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CompleteActivity");
+                });
+
+            modelBuilder.Entity("MVCWebAppServierCon.Models.CompleteActivityFiles", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CompleteActivityId");
+
+                    b.Property<string>("File_path");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompleteActivityId");
+
+                    b.ToTable("CompleteActivityFiles");
+                });
+
+            modelBuilder.Entity("MVCWebAppServierCon.Models.CompleteActivityOffered", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CompleteActivityId");
+
+                    b.Property<string>("Offered_to_us");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompleteActivityId");
+
+                    b.ToTable("CompleteActivityOffered");
+                });
+
             modelBuilder.Entity("MVCWebAppServierCon.Models.Contracts", b =>
                 {
                     b.Property<int>("Code")
@@ -385,7 +450,7 @@ namespace MVCWebAppServierCon.Migrations
                         new
                         {
                             Id = -4,
-                            CreationDate = new DateTime(2021, 2, 28, 12, 58, 56, 219, DateTimeKind.Local).AddTicks(4215),
+                            CreationDate = new DateTime(2021, 3, 3, 16, 19, 2, 847, DateTimeKind.Local).AddTicks(8543),
                             ExpierDate = new DateTime(2022, 10, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             OfferDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             OfferName = "شراء قرطاسية"
@@ -393,7 +458,7 @@ namespace MVCWebAppServierCon.Migrations
                         new
                         {
                             Id = -3,
-                            CreationDate = new DateTime(2021, 2, 28, 12, 58, 56, 222, DateTimeKind.Local).AddTicks(8957),
+                            CreationDate = new DateTime(2021, 3, 3, 16, 19, 2, 847, DateTimeKind.Local).AddTicks(8543),
                             ExpierDate = new DateTime(2021, 1, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             OfferDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             OfferName = "شراء شي"
@@ -401,7 +466,7 @@ namespace MVCWebAppServierCon.Migrations
                         new
                         {
                             Id = -2,
-                            CreationDate = new DateTime(2021, 2, 28, 12, 58, 56, 222, DateTimeKind.Local).AddTicks(9029),
+                            CreationDate = new DateTime(2021, 3, 3, 16, 19, 2, 847, DateTimeKind.Local).AddTicks(8543),
                             ExpierDate = new DateTime(2022, 10, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             OfferDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             OfferName = "something"
@@ -409,7 +474,7 @@ namespace MVCWebAppServierCon.Migrations
                         new
                         {
                             Id = -1,
-                            CreationDate = new DateTime(2021, 2, 28, 12, 58, 56, 222, DateTimeKind.Local).AddTicks(9042),
+                            CreationDate = new DateTime(2021, 3, 3, 16, 19, 2, 847, DateTimeKind.Local).AddTicks(8543),
                             ExpierDate = new DateTime(2022, 10, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             OfferDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             OfferName = "another thing"
@@ -748,6 +813,22 @@ namespace MVCWebAppServierCon.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
+                });
+
+            modelBuilder.Entity("MVCWebAppServierCon.Models.CompleteActivityFiles", b =>
+                {
+                    b.HasOne("MVCWebAppServierCon.Models.CompleteActivity", "CompleteActivity")
+                        .WithMany("activityFiles")
+                        .HasForeignKey("CompleteActivityId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("MVCWebAppServierCon.Models.CompleteActivityOffered", b =>
+                {
+                    b.HasOne("MVCWebAppServierCon.Models.CompleteActivity", "CompleteActivity")
+                        .WithMany("activityOffereds")
+                        .HasForeignKey("CompleteActivityId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("MVCWebAppServierCon.Models.SalesCriterias", b =>

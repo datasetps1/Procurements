@@ -177,6 +177,7 @@
                 <th>@Localizer["Waiting user"]</th>
                 <th>  @Localizer["Actions"] </th>
                 <th>  @Localizer["print"] </th>
+                <th>  Complete Activity</th>
             </tr>
         </thead>
         <tbody style="font-size:smaller ;">
@@ -266,11 +267,10 @@
                    @* <a style="color:mediumturquoise ; font-size: large" onclick="openModal(@item.OrderHeaderCode)"><span class=" fa fa-user " title="Add Supplier"></span></a>*@
 
                 </td>
+                <td>
+                    <a asp-action="create" asp-controller="CompleteActivities" asp-route-code="@item.OrderHeaderCode">Complete Activity</a>
+                </td>
 
-
-
-
-               
             </tr>
             }
         </tbody>

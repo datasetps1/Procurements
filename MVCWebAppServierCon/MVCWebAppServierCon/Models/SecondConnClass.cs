@@ -39,6 +39,9 @@ namespace MVCWebAppServierCon.Models
         public DbSet<SalesSuppliers> SalesSuppliers { get; set; }
         public DbSet<SalesCriterias> SalesCriterias { get; set; }
         public DbSet<OrderAnalysis> OrderAnalysis { get; set; }
+        public DbSet<CompleteActivity> CompleteActivity { get; set; }
+        public DbSet<CompleteActivityOffered> CompleteActivityOffered { get; set; }
+        public DbSet<CompleteActivityFiles> CompleteActivityFiles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

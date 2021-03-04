@@ -7,6 +7,7 @@
 <h1>Create</h1>
 
 <h4>Sales Qoute Header</h4>
+
 <hr />
 <div class="form_container row" style="width: 100%; margin-bottom:100px;">
     <form asp-action="Create" class="form_style col-lg-6 col-md-8 col-sm-12 col-12">
@@ -14,9 +15,9 @@
             <h5>Sales Qoute Header information :</h5>
             <div class="form-group" style="display: flex;">
                 @*@if (ViewBag.Status == "display")
-        {
-            <div onclick="submit()" class="btn form_submit_btn" style="margin-right:4px; background-color: #ce1313; border-color: red; color:#fff;">Cancle</div>*@
-                @* } *@
+                {
+                    <div onclick="submit()" class="btn form_submit_btn" style="margin-right:4px; background-color: #ce1313; border-color: red; color:#fff;">Cancle</div>*@
+                @*} *@
                 <div onclick="submit()" type="button" class="btn btn-info form_submit_btn">Create</div>
             </div>
         </div>
@@ -330,7 +331,6 @@
                     criteria_percentage_error.innerHTML = "";
                     percentage_sum_element.innerHTML = "";
                 }
-
             }
 
             //if all validation is okey => add the criteria

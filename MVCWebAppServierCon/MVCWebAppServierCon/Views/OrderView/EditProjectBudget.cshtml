@@ -1,0 +1,49 @@
+﻿
+@{
+    ViewData["Title"] = "Edit Project and Budget";
+}
+
+<h4>Edit Project and Budget</h4>
+<hr />
+
+<script src="~/lib/jquery/selectbox/dist/jquery-editable-select.js"></script>
+<link href="~/lib/jquery/selectbox/dist/jquery-editable-select.css" rel="stylesheet" />
+
+<div class="form_container row" style="width: 100%; margin-bottom:100px;">
+    <form asp-action="Create" class="form_style col-lg-6 col-md-8 col-sm-12 col-12">
+        <label>Order code</label>
+        <select id="inputState3" class="form-control" name="headerLst">
+            <option selected>type or select order</option>
+            @*@foreach (OrderTypeClass ord in ViewBag.OrderType)
+                {
+                    <option value="@ord.orderTypeCode">@ord.orderTypeName</option>
+                }*@
+            <option>hello</option>
+            <option>helewlo</option>
+            <option>hellofew</option>
+            <option>hello31</option>
+
+        </select>
+        <span class="text-danger"></span>
+        <ej-drop-down-list id="selectCar"></ej-drop-down-list>
+    </form>
+</div>
+
+@section scripts{
+    <script>
+
+        $('#inputState3').editableSelect();
+
+
+        $('#inputState3')
+            .editableSelect()
+            .on('select.editable-select', function (e, li) {
+                // alert(li.val())
+                // debugger
+                var txt = document.getElementById('inputState3');
+                txt.text = li.val();
+                alert()
+
+            });
+    </script>
+}
