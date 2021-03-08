@@ -1,4 +1,4 @@
-﻿
+﻿@model EditProjectBudgetViewModel
 @{
     ViewData["Title"] = "Edit Project and Budget";
 }
@@ -6,44 +6,209 @@
 <h4>Edit Project and Budget</h4>
 <hr />
 
-<script src="~/lib/jquery/selectbox/dist/jquery-editable-select.js"></script>
-<link href="~/lib/jquery/selectbox/dist/jquery-editable-select.css" rel="stylesheet" />
-
 <div class="form_container row" style="width: 100%; margin-bottom:100px;">
-    <form asp-action="Create" class="form_style col-lg-6 col-md-8 col-sm-12 col-12">
-        <label>Order code</label>
-        <select id="inputState3" class="form-control" name="headerLst">
-            <option selected>type or select order</option>
-            @*@foreach (OrderTypeClass ord in ViewBag.OrderType)
-                {
-                    <option value="@ord.orderTypeCode">@ord.orderTypeName</option>
-                }*@
-            <option>hello</option>
-            <option>helewlo</option>
-            <option>hellofew</option>
-            <option>hello31</option>
+    <form asp-action="EditProjectBudgetPost" asp-controller="OrderView" class="form_style col-lg-6 col-md-8 col-sm-12 col-12">
 
-        </select>
-        <span class="text-danger"></span>
-        <ej-drop-down-list id="selectCar"></ej-drop-down-list>
+        <div id="OrderHeader_dropdown" style="position:relative;">
+            <div class="My_drop_down_title ddc">Order Code</div>
+            <div class="input_container">
+                <input type="hidden" id="selected_OrderHeader" asp-for="selected_OrderHeader_code" />
+                <input id="My_drop_down_input-OrderHeader" type="text" class="My_drop_down_input ddc"
+                       placeholder="Type word here ..."  />
+                <i class="fas fa-chevron-circle-down input_icon"></i>
+            </div>
+            <div id="My_drop_down_container-OrderHeader" class="My_drop_down_container ddc">
+                <div id="My_drop_down_list_result_OrderHeader" class="My_drop_down_list_result ddc">
+
+                </div>
+            </div>
+
+        </div>
+
+        <div id="budgetLines_dropdown" style="position:relative;    margin-top: 10px;">
+            <div class="My_drop_down_title ddc">Budget Line</div>
+            <div class="input_container">
+                <input type="hidden" id="selected_budgetLines" asp-for="selected_budgetLines_code" />
+                <input id="My_drop_down_input-budgetLines" type="text" class="My_drop_down_input ddc"
+                       placeholder="Type word here ..."  asp-for="selected_budgetLines_Name"/>
+                <i class="fas fa-chevron-circle-down input_icon"></i>
+            </div>
+            <div id="My_drop_down_container-budgetLines" class="My_drop_down_container ddc">
+                <div id="My_drop_down_list_result_budgetLines" class="My_drop_down_list_result ddc">
+
+                </div>
+            </div>
+
+        </div>
+
+        <div id="ProjectName_dropdown" style="position:relative;    margin-top: 10px;">
+            <div class="My_drop_down_title ddc">Project Name :</div>
+            <div class="input_container ddc">
+                <input type="hidden" id="selected_ProjectName" asp-for="selected_ProjectName_code" />
+                <input id="My_drop_down_input-ProjectName" type="text" class="My_drop_down_input ddc"
+                       placeholder="Type word here ..." asp-for="selected_ProjectName_Name" />
+                <i class="fas fa-chevron-circle-down input_icon ddc"></i>
+            </div>
+            <div id="My_drop_down_container-ProjectName" class="My_drop_down_container ddc">
+                <div id="My_drop_down_list_result_ProjectName" class="My_drop_down_list_result ddc">
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="form-group">
+            <input type="submit" value="Create" class="btn btn-primary form_submit_btn" style="border-radius: 30px; width: 94% !important; margin-left: 3%;    margin-top: 27px;" />
+        </div>
     </form>
 </div>
 
 @section scripts{
     <script>
+        
+        var My_drop_down_container_BudgetLines = document.getElementById("My_drop_down_container-budgetLines");
+        var My_drop_down_list_result_BudgetLines = document.getElementById("My_drop_down_list_result_budgetLines");
+        var My_drop_down_list_result_OrderHeader = document.getElementById("My_drop_down_list_result_OrderHeader");
+        var My_drop_down_list_result_ProjectName = document.getElementById("My_drop_down_list_result_ProjectName");
 
-        $('#inputState3').editableSelect();
+        var selected_option_BudgetLines = -1
+
+        //serialize array from viewBag
+        var options_list_budgetLines = @Json.Serialize(ViewBag.BudgetLine);
+        console.log(options_list_budgetLines.length)
+        //serialize array from viewBag
+        var options_list_OrderHeader = @Json.Serialize(ViewBag.OrderHeaders);
+        //serialize array from viewBag
+        var options_list_ProjectName = @Json.Serialize(ViewBag.ProjectName);
 
 
-        $('#inputState3')
-            .editableSelect()
-            .on('select.editable-select', function (e, li) {
-                // alert(li.val())
-                // debugger
-                var txt = document.getElementById('inputState3');
-                txt.text = li.val();
-                alert()
+        //initialize the result list
+        options_list_budgetLines.forEach(current => {
+            My_drop_down_list_result_BudgetLines.innerHTML += `
+                            <div class="My_drop_down_list_result_item ddc" onclick="select_option('${current.id}' ,'${current.name}' , 'budgetLines')">
+                                ${current.name}
+                            </div>
+                    `;
+        });
 
-            });
+        //initialize the result list
+        options_list_OrderHeader.forEach(current => {
+            My_drop_down_list_result_OrderHeader.innerHTML += `
+                            <div class="My_drop_down_list_result_item ddc" onclick="select_option('${current.id}' ,'${current.name}', 'OrderHeader')">
+                                ${current.name}
+                            </div>
+                    `;
+        });
+
+        //initialize the result list
+        options_list_ProjectName.forEach(current => {
+            My_drop_down_list_result_ProjectName.innerHTML += `
+                            <div class="My_drop_down_list_result_item ddc" onclick="select_option('${current.id}' ,'${current.name}', 'ProjectName')">
+                                ${current.name}
+                            </div>
+                    `;
+        });
+
+        window.addEventListener("keyup", function (e) {
+            //reset the result element
+            //if the event applied on dropdown input :
+            if (e.target.id.includes("My_drop_down_input")) {
+                //get the element unique word
+                var unique_word = e.target.id.split('-')[1]
+
+                var option_list_to_search = [];
+
+                //decide which array to search :
+                if (unique_word == "budgetLines") {
+                    option_list_to_search = options_list_budgetLines;
+                } else if (unique_word == "OrderHeader") {
+                    option_list_to_search = options_list_OrderHeader;
+                } else if (unique_word == "ProjectName") {
+                    option_list_to_search = options_list_ProjectName;
+                }
+
+                var My_drop_down_list_result = document.getElementById('My_drop_down_list_result_' + unique_word);
+                My_drop_down_list_result.innerHTML = "";
+                //update ui result list:
+                option_list_to_search.forEach(current => {
+                    if (current.name.includes(e.target.value)) {
+                        console.log(true);
+                        My_drop_down_list_result.innerHTML += `
+                                                        <div class="My_drop_down_list_result_item ddc" onclick="select_option(${current.id} ,'${current.name}','${unique_word}')">
+                                                               ${current.name}
+                                                        </div>
+                                          `;
+                    }
+                });
+            }
+
+        });
+
+        window.addEventListener("click", function (e) {
+            console.log(e.target.id)
+            var clicked_element_id = e.target.id;
+            //if clicked_element is dropdown input open the related dropdown
+            if (clicked_element_id.includes("My_drop_down_input")) {
+                //get the element unique word
+                var unique_word = clicked_element_id.split("-")[1]
+
+                //get the dropdown container to open it
+                var My_drop_down_container = document.getElementById(`My_drop_down_container-${unique_word}`)
+
+                if (!My_drop_down_container.classList.contains("show_dropdown")) {
+                    //close other dropdowns if they are opened
+
+                    //get all dropdown containers
+                    var dropdown_containers_list = document.querySelectorAll('[id*="My_drop_down_container"]')
+                    //close them excpt the one we will open
+                    dropdown_containers_list.forEach(current => {
+                        if (!current.id.includes(unique_word)) {//if this dropdown is not the one we will open => colse it
+                            if (current.classList.contains("show_dropdown")) {
+                                //set z-index to default
+                                document.getElementById(current.id.split("-")[1] + "_dropdown").style.zIndex = '';
+                                //remove show class
+                                current.classList.remove("show_dropdown");
+                            }
+                        }
+                    });
+
+                    //make dropdown appeare on top of others
+                    document.getElementById(unique_word + "_dropdown").style.zIndex = '100';
+                    My_drop_down_container.classList.add("show_dropdown");
+                }
+            }
+
+        });
+
+        window.addEventListener("click", function (e) {
+            //if the cliced element is not related to any dropdown
+            if (!e.target.classList.contains("ddc")) {
+                //close opened dropdown
+                //get all dropdown containers
+                var dropdown_containers_list = document.querySelectorAll('[id*="My_drop_down_container"]')
+                //close them excpt the one we will open
+                dropdown_containers_list.forEach(current => {
+                    if (current.classList.contains("show_dropdown")) {
+                        //set z-index to default
+                        document.getElementById(current.id.split("-")[1] + "_dropdown").style.zIndex = '';
+                        //remove show class
+                        current.classList.remove("show_dropdown");
+                    }
+                });
+            }
+        });
+
+        const select_option = (id, name, unique_word) => {
+            // close_dropdown :
+            if (document.getElementById("My_drop_down_container-" + unique_word).classList.contains("show_dropdown")) {
+                document.getElementById(unique_word + "_dropdown").style.zIndex = '';
+                document.getElementById("My_drop_down_container-" + unique_word).classList.remove("show_dropdown");
+            }
+            //change selected_option
+            document.getElementById('selected_' + unique_word).value = id;
+            //change input value
+            document.getElementById('My_drop_down_input-' + unique_word).value = name;
+
+        }
     </script>
 }

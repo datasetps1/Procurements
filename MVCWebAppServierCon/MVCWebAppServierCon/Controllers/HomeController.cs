@@ -55,9 +55,9 @@ namespace MVCWebAppServierCon.Controllers
             CompanyDefinition();
             if (userRank == (int)Enums.UserRanks.Employee)
             {
-           
+
                 return RedirectToAction("StuckOrders", "Home");
-                
+
 
             }
             if (userRank == 0)
@@ -76,10 +76,10 @@ namespace MVCWebAppServierCon.Controllers
 
                     if (userRank == (int)Enums.UserRanks.GeneralManager || userRank == (int)Enums.UserRanks.Purchase || userRank == (int)Enums.UserRanks.FinancialDepartment) //|| userRank == (int)Enums.UserRanks.DepartmentManager)
                     {
-                        orders = _sc.TblOrderHeader.Where(o => o.OrderHeaderRealTotal * o.OrderHeaderRate > minAmount && o.OrderHeaderRealTotal * o.OrderHeaderRate < maxAmount && o.Freaze==false).ToList();
+                        orders = _sc.TblOrderHeader.Where(o => o.OrderHeaderRealTotal * o.OrderHeaderRate > minAmount && o.OrderHeaderRealTotal * o.OrderHeaderRate < maxAmount && o.Freaze == false).ToList();
 
                     }
-                    else if (  userRank == (int)Enums.UserRanks.DepartmentManager)
+                    else if (userRank == (int)Enums.UserRanks.DepartmentManager)
                     {
                         orders = _sc.TblOrderHeader.ToList();
                     }
@@ -100,7 +100,7 @@ namespace MVCWebAppServierCon.Controllers
                         {
                             continue;
                         }
-                            if (lastApproval.ToUser == user.userCode)
+                        if (lastApproval.ToUser == user.userCode)
                         {
                             try
                             {
@@ -117,16 +117,17 @@ namespace MVCWebAppServierCon.Controllers
                                 t.TotalInbasic = t.ActualTotalAmount * t.OrderHeaderRate;
                                 t.NotesFromLastAction = lastApproval.ApprovalNote;
                                 t.TotalInbasic = t.ActualTotalAmount * t.OrderHeaderRate;
-                                if (t.SupplierCode != null) {
-                                t.PriceQuoteAmount = getData.GetPriceQouteAmountForSupplier(t.SupplierCode.ToString(), connection);
-                               
-                                if (t.PriceQuoteAmount > 0)
+                                if (t.SupplierCode != null)
                                 {
-                                    if ((t.ActualTotalAmount * t.OrderHeaderRate) >= t.PriceQuoteAmount)
+                                    t.PriceQuoteAmount = getData.GetPriceQouteAmountForSupplier(t.SupplierCode.ToString(), connection);
+
+                                    if (t.PriceQuoteAmount > 0)
                                     {
-                                        t.IsNeedPriceQuote = true;
+                                        if ((t.ActualTotalAmount * t.OrderHeaderRate) >= t.PriceQuoteAmount)
+                                        {
+                                            t.IsNeedPriceQuote = true;
+                                        }
                                     }
-                                }
                                 }
                                 var dud = _sc.TblGeneralPreference.FirstOrDefault();
                                 if ((t.ActualTotalAmount * t.OrderHeaderRate) >= dud.DeductionAmount)
@@ -139,12 +140,12 @@ namespace MVCWebAppServierCon.Controllers
                             catch (Exception e)
                             {
 
-                                Console.WriteLine(e.Message + "At order " + t.OrderHeaderCode );
+                                Console.WriteLine(e.Message + "At order " + t.OrderHeaderCode);
 
 
                             }
 
-                          
+
                         }
                     }
 
@@ -172,28 +173,28 @@ namespace MVCWebAppServierCon.Controllers
             var GPref = _sc.TblGeneralPreference.FirstOrDefault();
 
 
-            orders = _sc.TblOrderHeader.Where(x=>x.Freaze ==false).ToList();
+            orders = _sc.TblOrderHeader.Where(x => x.Freaze == false).ToList();
 
-                   
 
-                    foreach (var t in orders)
-                    {
-                        var approv = _sc.TblApproval.Where(s => s.ApprovalHeaderCode == t.OrderHeaderCode).OrderBy(a => a.ApprovalCode).ToList();
-                        ApprovalClass lastApproval = approv.LastOrDefault();
-              if (lastApproval.ApprovalIsApproved == (int)(int)Enums.ApprovalStatus.Reject)
-                        {
-                            continue;
-                        }
+
+            foreach (var t in orders)
+            {
+                var approv = _sc.TblApproval.Where(s => s.ApprovalHeaderCode == t.OrderHeaderCode).OrderBy(a => a.ApprovalCode).ToList();
+                ApprovalClass lastApproval = approv.LastOrDefault();
+                if (lastApproval.ApprovalIsApproved == (int)(int)Enums.ApprovalStatus.Reject)
+                {
+                    continue;
+                }
                 if (lastApproval.ToUser == user.userCode)
-                        {
+                {
 
-                            t.OrderTypeName = _sc.TblOrderType.Where(u => u.orderTypeCode == t.OrderHeaderOrderTypeCode).FirstOrDefault().orderTypeName;
-                            t.ProjectName = getData.getTblCodeName("TBLCost2", t.OrderHeaderProjectCode.ToString(), connection);
+                    t.OrderTypeName = _sc.TblOrderType.Where(u => u.orderTypeCode == t.OrderHeaderOrderTypeCode).FirstOrDefault().orderTypeName;
+                    t.ProjectName = getData.getTblCodeName("TBLCost2", t.OrderHeaderProjectCode.ToString(), connection);
 
-                            t.BudgetLine = getData.getTblCodeName("TBLCost8", t.OrderHeaderBudgetLineCode.ToString(), connection);
-                            t.Currency = getData.getTblCodeName("TblCurrency", t.OrderHeaderCurrencey.ToString(), connection);
-                            t.UserName = _sc.TblUser.Where(u => u.userCode == t.OrderHeaderUserId).FirstOrDefault().userName;
-                            t.StatusName = GetStatusName(lastApproval.ApprovalIsApproved);
+                    t.BudgetLine = getData.getTblCodeName("TBLCost8", t.OrderHeaderBudgetLineCode.ToString(), connection);
+                    t.Currency = getData.getTblCodeName("TblCurrency", t.OrderHeaderCurrencey.ToString(), connection);
+                    t.UserName = _sc.TblUser.Where(u => u.userCode == t.OrderHeaderUserId).FirstOrDefault().userName;
+                    t.StatusName = GetStatusName(lastApproval.ApprovalIsApproved);
                     t.StatusCode = lastApproval.ApprovalIsApproved;
                     t.LastUserName = _sc.TblUser.Where(u => u.userCode == lastApproval.ApprovalUserId).FirstOrDefault().userName;
                     t.waitingUser = _sc.TblUser.Where(u => u.userCode == lastApproval.ToUser).FirstOrDefault().userName;
@@ -216,16 +217,16 @@ namespace MVCWebAppServierCon.Controllers
                     {
                         t.NeedDeductionAtsource = true;
                     }
-                    
+
                     orders2.Add(t);
-                        }
-                    }
-                    
-                    ViewBag.userTypeCode = user.userTypeCode;
+                }
+            }
+
+            ViewBag.userTypeCode = user.userTypeCode;
             var RejectedOrders = new List<OrderHeaderClass>();
-          RejectedOrders = orders2.Where(x => x.StatusCode == 3 && x.OrderHeaderdate < DateTime.Now.AddDays(-5)).ToList();
-            
-                orders2 = orders2.Except(RejectedOrders).ToList();
+            RejectedOrders = orders2.Where(x => x.StatusCode == 3 && x.OrderHeaderdate < DateTime.Now.AddDays(-5)).ToList();
+
+            orders2 = orders2.Except(RejectedOrders).ToList();
             ViewBag.Orders = orders2;
 
 
@@ -273,10 +274,10 @@ namespace MVCWebAppServierCon.Controllers
             var orders = new List<OrderHeaderClass>();
             var orders2 = new List<OrderHeaderClass>();
             var getData = new getAuditData();
-            
+
             orders = _sc.TblOrderHeader.Where(o => o.OrderHeaderUserId == user.userCode).ToList();
 
-        
+
             foreach (var t in orders)
             {
                 var approv = _sc.TblApproval.Where(s => s.ApprovalHeaderCode == t.OrderHeaderCode).OrderBy(a => a.ApprovalCode).ToList();
@@ -304,20 +305,20 @@ namespace MVCWebAppServierCon.Controllers
 
             return View(orders2);
         }
-      
+
         public IActionResult GetAllOrders()
         {
             var user = _sc.TblUser.Where(u => u.userName.Equals(User.Identity.Name)).FirstOrDefault();
-            if(user.userTypeCode==1 || user.userTypeCode == 2 || user.userTypeCode == 3 || user.userTypeCode == 4 || user.userTypeCode == 5)
+            if (user.userTypeCode == 1 || user.userTypeCode == 2 || user.userTypeCode == 3 || user.userTypeCode == 4 || user.userTypeCode == 5)
             {
 
-           
-            var getData = new getAuditData();
-            ViewBag.DepartmentName = _sc.TblDepartment.Where(x=>x.departmentGeneralManagerCode== user.userCode || x.departmentManagerCode == user.userCode || x.departmentFinancialCode == user.userCode || x.departmentProcurementSectionCode == user.userCode || x.departmentHeadCode == user.userCode).ToList();
-            ViewBag.OrderType = _sc.TblOrderType.ToList();
 
-            ViewBag.Project = getData.getTableData("TBLCost2", "",connection);
-            ViewBag.Employee = _sc.TblUser.OrderBy(x=>x.userName).ToList();
+                var getData = new getAuditData();
+                ViewBag.DepartmentName = _sc.TblDepartment.Where(x => x.departmentGeneralManagerCode == user.userCode || x.departmentManagerCode == user.userCode || x.departmentFinancialCode == user.userCode || x.departmentProcurementSectionCode == user.userCode || x.departmentHeadCode == user.userCode).ToList();
+                ViewBag.OrderType = _sc.TblOrderType.ToList();
+
+                ViewBag.Project = getData.getTableData("TBLCost2", "", connection);
+                ViewBag.Employee = _sc.TblUser.OrderBy(x => x.userName).ToList();
                 // ViewBag.BudgetLine = getData.getTableData("TBLCost8", connection);
                 ViewBag.Supplier = getData.getTableData("VAccountSuppliers", "", connection);
                 ViewBag.UserDepartmentName = _sc.TblDepartment.Where(x => x.departmentCode == user.userDepartmentCode).Select(u => u.departmentName).FirstOrDefault();
@@ -333,12 +334,12 @@ namespace MVCWebAppServierCon.Controllers
                 ViewBag.UserDepartmentCodeEnabled = true;
                 return View();
             }
-            else{
-               return RedirectToAction("Privacy", "Home");
+            else
+            {
+                return RedirectToAction("Privacy", "Home");
             }
 
         }
-
 
 
         public IActionResult MyFollowUp()
@@ -349,12 +350,13 @@ namespace MVCWebAppServierCon.Controllers
             var getData = new getAuditData();
 
 
-                var LstApprov = _sc.TblApproval.Where(s => s.ApprovalUserId == user.userUserId ).OrderBy(a => a.ApprovalCode).ToList();
+            var LstApprov = _sc.TblApproval.Where(s => s.ApprovalUserId == user.userUserId).OrderBy(a => a.ApprovalCode).ToList();
 
 
 
-                foreach (var a in LstApprov) {
-              
+            foreach (var a in LstApprov)
+            {
+
                 var t = _sc.TblOrderHeader.Where(x => x.OrderHeaderCode == a.ApprovalHeaderCode).FirstOrDefault();
                 t.OrderTypeName = _sc.TblOrderType.Where(u => u.orderTypeCode == t.OrderHeaderOrderTypeCode).FirstOrDefault().orderTypeName;
                 t.ProjectName = getData.getTblCodeName("TBLCost2", t.OrderHeaderProjectCode.ToString(), connection);
@@ -368,24 +370,21 @@ namespace MVCWebAppServierCon.Controllers
                 t.NotesFromLastAction = a.ApprovalNote;
 
                 orders2.Add(t);
-                }
-           
+            }
+
             ViewBag.Orders = orders2;
 
             return View(orders2);
         }
 
 
-
-
-
-        public IActionResult GetAllOrdersBydate(DateTime FromDate, DateTime ToDate, string Project , string BudgetLine ,int Department,bool ShowStuckOrdersOnly, string Employee ,string Supplier, bool ShowExecutedOnly, bool ShowUnderExecutedOnly,bool ShowRejectedOnly, double FromAmount, double ToAmount)
+        public IActionResult GetAllOrdersBydate(DateTime FromDate, DateTime ToDate, string Project, string BudgetLine, int Department, bool ShowStuckOrdersOnly, string Employee, string Supplier, bool ShowExecutedOnly, bool ShowUnderExecutedOnly, bool ShowRejectedOnly, double FromAmount, double ToAmount)
         {
-            if (FromDate.ToString()=="01/01/0001 12:00:00 AM")
+            if (FromDate.ToString() == "01/01/0001 12:00:00 AM")
             {
                 FromDate = DateTime.Now.AddMonths(-1);
             }
-            if ( ToDate.ToString() == "01/01/0001 12:00:00 AM")
+            if (ToDate.ToString() == "01/01/0001 12:00:00 AM")
             {
                 ToDate = DateTime.Now;
             }
@@ -394,18 +393,23 @@ namespace MVCWebAppServierCon.Controllers
             var orders2 = new List<OrderHeaderClass>();
             var getData = new getAuditData();
 
-              orders = _sc.TblOrderHeader.Where(o => o.OrderHeaderdate >=FromDate && o.OrderHeaderdate<=ToDate).ToList();
+            orders = _sc.TblOrderHeader.Where(o => o.OrderHeaderdate >= FromDate && o.OrderHeaderdate <= ToDate).ToList();
             //  orders = _sc.TblOrderHeader.ToList();
 
-            if (Project !=null && Project != "0") {
-               var ProjectCode = getData.getCodeByName("TBLCost2", Project.ToString(), connection);
-                orders = orders.Where(o => o.OrderHeaderProjectCode == ProjectCode).ToList(); }
-            if (BudgetLine != null && BudgetLine != "0") {
+            if (Project != null && Project != "0")
+            {
+                var ProjectCode = getData.getCodeByName("TBLCost2", Project.ToString(), connection);
+                orders = orders.Where(o => o.OrderHeaderProjectCode == ProjectCode).ToList();
+            }
+            if (BudgetLine != null && BudgetLine != "0")
+            {
                 var BudgetLineCode = getData.getCodeByName("TBLCost8", BudgetLine.ToString(), connection);
-                orders = orders.Where(o => o.OrderHeaderBudgetLineCode == BudgetLineCode).ToList(); }
+                orders = orders.Where(o => o.OrderHeaderBudgetLineCode == BudgetLineCode).ToList();
+            }
             if (Department != 0) { orders = orders.Where(o => o.OrderHeaderdepartmentCode == Department).ToList(); }
             if (Department != 0) { orders = orders.Where(o => o.OrderHeaderdepartmentCode == Department).ToList(); }
-            if (Employee != ""  &&  Employee != "0"   && Employee != null) {
+            if (Employee != "" && Employee != "0" && Employee != null)
+            {
                 var EmpCode = _sc.TblUser.Where(x => x.userName == Employee).Select(x => x.userCode).FirstOrDefault();
                 orders = orders.Where(o => o.OrderHeaderUserId == EmpCode).ToList();
 
@@ -416,9 +420,9 @@ namespace MVCWebAppServierCon.Controllers
                 orders = orders.Where(o => o.SupplierCode == SupplierCode).ToList();
 
             }
-            if ( FromAmount != 0  && ToAmount != 0 )
+            if (FromAmount != 0 && ToAmount != 0)
             {
-                orders = orders.Where(o => o.ActualTotalAmount * o.OrderHeaderRate>= FromAmount && o.ActualTotalAmount * o.OrderHeaderRate <= ToAmount).ToList();
+                orders = orders.Where(o => o.ActualTotalAmount * o.OrderHeaderRate >= FromAmount && o.ActualTotalAmount * o.OrderHeaderRate <= ToAmount).ToList();
             }
             foreach (var t in orders)
             {
@@ -428,17 +432,17 @@ namespace MVCWebAppServierCon.Controllers
 
 
                 t.OrderTypeName = _sc.TblOrderType.Where(u => u.orderTypeCode == t.OrderHeaderOrderTypeCode).FirstOrDefault().orderTypeName;
-               t.ProjectName = getData.getTblCodeName("TBLCost2", t.OrderHeaderProjectCode.ToString(), connection);
-                
-                  t.BudgetLine = getData.getTblCodeName("TBLCost8", t.OrderHeaderBudgetLineCode.ToString(), connection);
-               
-                 t.Currency = getData.getTblCodeName("TblCurrency", t.OrderHeaderCurrencey.ToString(), connection);
-           
-               t.UserName = _sc.TblUser.Where(u => u.userCode == t.OrderHeaderUserId).FirstOrDefault().userName;
+                t.ProjectName = getData.getTblCodeName("TBLCost2", t.OrderHeaderProjectCode.ToString(), connection);
+
+                t.BudgetLine = getData.getTblCodeName("TBLCost8", t.OrderHeaderBudgetLineCode.ToString(), connection);
+
+                t.Currency = getData.getTblCodeName("TblCurrency", t.OrderHeaderCurrencey.ToString(), connection);
+
+                t.UserName = _sc.TblUser.Where(u => u.userCode == t.OrderHeaderUserId).FirstOrDefault().userName;
                 t.StatusName = GetStatusName(lastApproval.ApprovalIsApproved);
                 t.StatusCode = lastApproval.ApprovalIsApproved;
                 t.LastUserName = _sc.TblUser.Where(u => u.userCode == lastApproval.ApprovalUserId).FirstOrDefault().userName;
-                t.waitingUser= _sc.TblUser.Where(u => u.userCode == lastApproval.ToUser).FirstOrDefault().userName;
+                t.waitingUser = _sc.TblUser.Where(u => u.userCode == lastApproval.ToUser).FirstOrDefault().userName;
                 t.TotalInbasic = t.ActualTotalAmount * t.OrderHeaderRate;
                 t.NotesFromLastAction = lastApproval.ApprovalNote;
                 orders2.Add(t);
@@ -447,7 +451,7 @@ namespace MVCWebAppServierCon.Controllers
             if (ShowStuckOrdersOnly == true) { orders2 = orders2.Where(o => o.StatusCode == 7).ToList(); }
             if (ShowUnderExecutedOnly == true) { orders2 = orders2.Where(o => o.StatusCode == 8).ToList(); }
             if (ShowExecutedOnly == true) { orders2 = orders2.Where(o => o.StatusCode == 9).ToList(); }
-            if(ShowRejectedOnly==true) { orders2 = orders2.Where(o => o.StatusCode == 3).ToList(); }
+            if (ShowRejectedOnly == true) { orders2 = orders2.Where(o => o.StatusCode == 3).ToList(); }
             ViewBag.Orders = orders2;
 
             // return View(orders2);
@@ -524,7 +528,7 @@ namespace MVCWebAppServierCon.Controllers
                 nextRankUser = order.OrderHeaderUserId;
 
             }
-            if (ApprovalIsApproved == (int)Enums.ApprovalStatus.UnderExecution )
+            if (ApprovalIsApproved == (int)Enums.ApprovalStatus.UnderExecution)
             {
                 nextRankUser = user.userCode;
 
@@ -559,7 +563,7 @@ namespace MVCWebAppServierCon.Controllers
             }
         }
 
-      [HttpPost]
+        [HttpPost]
         public JsonResult CreateOrderStatusAsDocuments(int ApprovalHeaderCode, int ApprovalIsApproved, string Notes)
         {
 
@@ -624,8 +628,8 @@ namespace MVCWebAppServierCon.Controllers
 
             if (nextRank > 3)
             {
-               for (int i = amountsRanks.Count() - 1; i >= 0; i--)
-              
+                for (int i = amountsRanks.Count() - 1; i >= 0; i--)
+
                 {
                     nextRank = amountsRanks[i].amountStructure;
                     if (amountsRanks[i].amountStructure == (int)Enums.UserRanks.HeadSection)
@@ -681,12 +685,12 @@ namespace MVCWebAppServierCon.Controllers
 
                 //  check if the head section make order less than 500 it should go to the department manager not to procurment 
                 // like ashraf and  shaher
-              //  var user = _sc.TblUser.Where(u => u.userName.Equals(User.Identity.Name)).FirstOrDefault();
+                //  var user = _sc.TblUser.Where(u => u.userName.Equals(User.Identity.Name)).FirstOrDefault();
 
                 var approval = _sc.TblApproval.Where(u => u.ApprovalHeaderCode == order.OrderHeaderCode).ToList();
-                    if (approval.Count == 0)
-                    {
-                    if(user.userTypeCode== (int)Enums.UserRanks.HeadSection)
+                if (approval.Count == 0)
+                {
+                    if (user.userTypeCode == (int)Enums.UserRanks.HeadSection)
                     {
                         nextRankUser = _sc.TblDepartment.Where(u => u.departmentCode == order.OrderHeaderdepartmentCode).Select(u => u.departmentManagerCode).FirstOrDefault();
                         return nextRankUser;
@@ -698,7 +702,7 @@ namespace MVCWebAppServierCon.Controllers
                     }
 
                 }
-                
+
             }
 
             if (nextRank == 0 || nextRankUser == null)
@@ -890,7 +894,7 @@ namespace MVCWebAppServierCon.Controllers
 
             SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
             var mail = new MailMessage();
-             mail.From = new MailAddress("DatasetGlob@gmail.com");
+            mail.From = new MailAddress("DatasetGlob@gmail.com");
             //mail.From = new MailAddress("myasar.fares@gmail.com");
 
             if (ToUserEmail != null) mail.To.Add(ToUserEmail);
@@ -971,8 +975,8 @@ namespace MVCWebAppServierCon.Controllers
             mail.Body = htmlBody;
             SmtpServer.Port = 587;
             SmtpServer.UseDefaultCredentials = false;
-             SmtpServer.Credentials = new System.Net.NetworkCredential("DatasetGlob@gmail.com", "Dataset@1234");
-    
+            SmtpServer.Credentials = new System.Net.NetworkCredential("DatasetGlob@gmail.com", "Dataset@1234");
+
             SmtpServer.EnableSsl = true;
             try
             {
@@ -981,9 +985,9 @@ namespace MVCWebAppServierCon.Controllers
             catch (Exception e)
             {
                 ViewBag.message = "ERROR " + e.Message;
-               
+
             }
-           
+
             return new JsonResult(new { success = true, data = "ok" });
         }
 
@@ -1010,9 +1014,9 @@ namespace MVCWebAppServierCon.Controllers
 
         public ActionResult GetEmployee()
         {
-           
+
             List<UserClass> lst = new List<UserClass>();
-            lst =  _sc.TblUser.Where(u => u.userTypeCode ==6 ).ToList();
+            lst = _sc.TblUser.Where(u => u.userTypeCode == 6).ToList();
 
             ViewBag.lstEmps = lst;
 
@@ -1021,12 +1025,12 @@ namespace MVCWebAppServierCon.Controllers
 
 
         [HttpPost]
-        public JsonResult TransfeerToEmployee(int ApprovalHeaderCode, int ApprovalIsApproved,string EmpCode, string Notes)
+        public JsonResult TransfeerToEmployee(int ApprovalHeaderCode, int ApprovalIsApproved, string EmpCode, string Notes)
         {
-           
+
             var user = _sc.TblUser.Where(u => u.userName.Equals(User.Identity.Name)).FirstOrDefault();
             var order = _sc.TblOrderHeader.Where(u => u.OrderHeaderCode == ApprovalHeaderCode).FirstOrDefault();
-            var ToUser= _sc.TblUser.Where(u => u.userName.Equals(EmpCode)).FirstOrDefault();
+            var ToUser = _sc.TblUser.Where(u => u.userName.Equals(EmpCode)).FirstOrDefault();
             try
             {
 
@@ -1056,8 +1060,8 @@ namespace MVCWebAppServierCon.Controllers
             }
         }
 
-       [HttpGet]
-       public ContentResult PrintOrder(int OrderId)
+        [HttpGet]
+        public ContentResult PrintOrder(int OrderId)
         {
             var getData = new getAuditData();
             var order = _sc.TblOrderHeader.Where(x => x.OrderHeaderCode == OrderId).FirstOrDefault();
@@ -1072,30 +1076,30 @@ namespace MVCWebAppServierCon.Controllers
             order.TotalInbasic = order.ActualTotalAmount * order.OrderHeaderRate;
             var table = "";
             var Approvalstable = "";
-            var approv = _sc.TblApproval.Where(s => s.ApprovalHeaderCode == order.OrderHeaderCode ).OrderBy(a => a.ApprovalCode).ToList().Distinct().ToList();
-            approv=approv.GroupBy(o => new { o.ApprovalUserId })
+            var approv = _sc.TblApproval.Where(s => s.ApprovalHeaderCode == order.OrderHeaderCode).OrderBy(a => a.ApprovalCode).ToList().Distinct().ToList();
+            approv = approv.GroupBy(o => new { o.ApprovalUserId })
                               .Select(o => o.LastOrDefault()).ToList();
             ApprovalClass lastApproval = approv.LastOrDefault();
             var StatusName = GetStatusName(lastApproval.ApprovalIsApproved);
             var LastStatusUser = _sc.TblUser.Where(x => x.userCode == lastApproval.ApprovalUserId).FirstOrDefault();
-       
-            var LstApprovals = _sc.TblApproval.Where(s => s.ApprovalHeaderCode == order.OrderHeaderCode && s.ApprovalIsApproved==1).OrderBy(a => a.ApprovalCode).ToList();
+
+            var LstApprovals = _sc.TblApproval.Where(s => s.ApprovalHeaderCode == order.OrderHeaderCode && s.ApprovalIsApproved == 1).OrderBy(a => a.ApprovalCode).ToList();
             foreach (var item in LstTrans)
             {
-                var orderdate= "";
+                var orderdate = "";
                 if (item.TransactionDate.Year > 2009)
                 {
-                    orderdate= item.TransactionDate.ToString("dd/MM/yyyy");
+                    orderdate = item.TransactionDate.ToString("dd/MM/yyyy");
                 }
-                    table  = table + "<tr>" +
-                "<td>" + item.TransactionItemCode + "</td>" +
-                "<td>" + _sc.TblItem.Where(x => x.itemCode == item.TransactionItemCode).Select(x => x.itemName).FirstOrDefault() + "</td>" +
-                "<td>" + item.TransactionQty + "</td>" +
-                "<td>" + item.TransactionPrice + "</td>" +
-                "<td>" + item.TransactionQty * item.TransactionPrice + "</td>" +
-                "<td>" + item.TransactionNote + "</td>" +
-                "<td>" + orderdate +"</td>" +
-                "</tr>";
+                table = table + "<tr>" +
+            "<td>" + item.TransactionItemCode + "</td>" +
+            "<td>" + _sc.TblItem.Where(x => x.itemCode == item.TransactionItemCode).Select(x => x.itemName).FirstOrDefault() + "</td>" +
+            "<td>" + item.TransactionQty + "</td>" +
+            "<td>" + item.TransactionPrice + "</td>" +
+            "<td>" + item.TransactionQty * item.TransactionPrice + "</td>" +
+            "<td>" + item.TransactionNote + "</td>" +
+            "<td>" + orderdate + "</td>" +
+            "</tr>";
             }
             //var Approvals = "Approvals :";
             //    foreach (var item in LstApprovals)
@@ -1109,25 +1113,26 @@ namespace MVCWebAppServierCon.Controllers
             //}
 
             var Approvals = "Approvals :";
-            for (int  i=0;i < approv.Count();i++)
+            for (int i = 0; i < approv.Count(); i++)
             {
                 if (approv[i].ApprovalIsApproved == 3)
                 {
                     continue;
                 }
                 var approUser = _sc.TblUser.Where(x => x.userCode == approv[i].ApprovalUserId).FirstOrDefault();
-               // Approvals = Approvals +
-               
-               if (i == 0)
+                // Approvals = Approvals +
+
+                if (i == 0)
                 {
                     Approvalstable = Approvalstable + "<tr>" +
                     "<td>" + "Prepared by" + "</td>" +
                         "<td>" + _sc.TblStructure.Where(x => x.structureRank == approUser.userTypeCode).Select(x => x.structureName).FirstOrDefault() + "</td>" +
-                         "<td>" +  approUser.userName + "</td>" +
+                         "<td>" + approUser.userName + "</td>" +
                          "<td>" + approv[i].ApprovalCreationDate.ToString("dd/MM/yyyy") + "</td>" +
                         "</tr>";
                 }
-                else{
+                else
+                {
                     if (approv[i].ApprovalIsApproved == 9)
                     {
                         Approvalstable = Approvalstable + "<tr>" +
@@ -1138,15 +1143,15 @@ namespace MVCWebAppServierCon.Controllers
                   "</tr>";
                     }
                     else if (approv[i].ApprovalIsApproved == 8)
-                        {
-                            Approvalstable = Approvalstable + "<tr>" +
-                           "<td>" + "Under Execution" + "</td>" +
-                           "<td>" + _sc.TblStructure.Where(x => x.structureRank == approUser.userTypeCode).Select(x => x.structureName).FirstOrDefault() + "</td>" +
-                           "<td>" + approUser.userName + "</td>" +
-                            "<td>" + approv[i].ApprovalCreationDate.ToString("dd/MM/yyyy") + "</td>" +
-                      "</tr>";
-                        }
-                    
+                    {
+                        Approvalstable = Approvalstable + "<tr>" +
+                       "<td>" + "Under Execution" + "</td>" +
+                       "<td>" + _sc.TblStructure.Where(x => x.structureRank == approUser.userTypeCode).Select(x => x.structureName).FirstOrDefault() + "</td>" +
+                       "<td>" + approUser.userName + "</td>" +
+                        "<td>" + approv[i].ApprovalCreationDate.ToString("dd/MM/yyyy") + "</td>" +
+                  "</tr>";
+                    }
+
 
                     else
                     {
@@ -1160,8 +1165,8 @@ namespace MVCWebAppServierCon.Controllers
                        "</tr>";
                     }
                 }
-               
-               
+
+
 
             }
 
@@ -1170,12 +1175,12 @@ namespace MVCWebAppServierCon.Controllers
             {
                 ContentType = "text/html",
                 StatusCode = (int)HttpStatusCode.OK,
-                Content = "<html>"+
-                
-                  "<style type = 'text/css'>"+
-            ".div{"+
+                Content = "<html>" +
+
+                  "<style type = 'text/css'>" +
+            ".div{" +
                     "display:inline-flex; color: green;" +
-            "}"+
+            "}" +
             ".fnt{" +
                     " font-size:small ;" +
             "}" +
@@ -1191,19 +1196,19 @@ namespace MVCWebAppServierCon.Controllers
 
 
                 "<body>" +
-               
-                "<br />"+
-           
-                //"Order  " + OrderId +
+
+                "<br />" +
+
+             //"Order  " + OrderId +
              "<div class='container' id='invoice' style='padding:2px;'>" +
             "<div class='row'>" +
              "<div class='col-md-1'></div>" +
               "<div class='col-md-10 border'>" +
-         
+
 
              " <div class='row'>" +
                "<div class='col-md-12  text-center text-primary'>" +
-                 "  <h2>Order " + OrderId +"</h2>" +
+                 "  <h2>Order " + OrderId + "</h2>" +
                 "</div>" +
              "</div>" +
 
@@ -1217,7 +1222,7 @@ namespace MVCWebAppServierCon.Controllers
 
             "<div class='col-md-4 text-right'>" +
                "<div class='row'><p class='p'><strong>Order date: </strong> <strong>" + order.OrderHeaderdate.ToString("dd/MM/yyyy") + " </strong></p> </div > " +
-              "<div class='row'><p class='p'> <strong>Expected Date : </strong> <strong>" + order.OrderHeaderdate.ToString("dd/MM/yyyy")  + "</strong></p></div>" +
+              "<div class='row'><p class='p'> <strong>Expected Date : </strong> <strong>" + order.OrderHeaderdate.ToString("dd/MM/yyyy") + "</strong></p></div>" +
 
            " </div>" +
           "</div>" + //row1
@@ -1238,7 +1243,7 @@ namespace MVCWebAppServierCon.Controllers
             "<div class='row'>" +
             "<div class='col-md-7'>" +
                "<div class='row'><p class='p'><strong>General Notes: </strong> <strong>" + order.OrderHeaderNote + " </strong></p></div> " +
-            
+
            " </div>" +
             "</div>" + //row3
 
@@ -1261,22 +1266,22 @@ namespace MVCWebAppServierCon.Controllers
                "</table>" +
             " </div>" +
 
-    
+
 
             "<div class='row'>" +
              "<div class='col-md-1 text-left'>status</div>" +
 
-               
+
                "<div class='col-md-1 text-left'>" + StatusName + "</div>" +
 
                     "<div class='col-md-2 text-left'>" + "By : " + LastStatusUser.userName + "</div>" +
-               
+
 
              "<div class='col-md-5 text-right'>Total</div>" +
-             
+
                "<div class='col-md-2 text-right'>" + order.ActualTotalAmount + "</div>" +
                "<div class='col-md-1 text-right'>" + Currency + "</div>" +
-             
+
            "</div>" +
                   "</br>" +
 
@@ -1306,15 +1311,15 @@ namespace MVCWebAppServierCon.Controllers
             " </div>" +
 
          "</div>" +
-               
+
 
            "</div>" +
-      
+
 
 
    "</div>" +
-  
-                "</body ></html > " 
+
+                "</body ></html > "
             };
         }
 
@@ -1325,7 +1330,7 @@ public class Enums
 
     public enum ApprovalStatus
     {
-      //  Canceled = -2,
+        //  Canceled = -2,
         Document = -1,
         Created = 0,
         Accept = 1,
@@ -1333,7 +1338,7 @@ public class Enums
         Reject = 3,
         Edit = 4,
         PriceQuote = 6,
-        Stuck  =7,//Transfeer
+        Stuck = 7,//Transfeer
         UnderExecution = 8,
         Excuted = 9,
         Finished = 10,

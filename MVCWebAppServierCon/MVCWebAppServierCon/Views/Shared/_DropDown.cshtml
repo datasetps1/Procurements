@@ -1,0 +1,85 @@
+﻿@model IEnumerable<CostsViewModel>;
+
+<div style="position:relative;">
+    <div class="My_drop_down_title ddc">Order code</div>
+    <div class="input_container">
+        <input id="My_drop_down_input" type="text" class="My_drop_down_input ddc" placeholder="Type word here ..." />
+        <i class="fas fa-chevron-circle-down input_icon"></i>
+    </div>
+    <div id="My_drop_down_container" class="My_drop_down_container ddc">
+        <div id="My_drop_down_list_result" class="My_drop_down_list_result ddc">
+            
+        </div>
+    </div>
+
+</div>
+<script>
+    alert("hello")
+    var My_drop_down_input = document.getElementById("My_drop_down_input");
+        var My_drop_down_container = document.getElementById("My_drop_down_container");
+        var My_drop_down_list_result = document.getElementById("My_drop_down_list_result");
+
+        var selected_option = -1
+
+
+        var options_array = @Json.Serialize(Model)
+            debugger
+        //reset the result element
+        My_drop_down_list_result.innerHTML = "";
+
+        options_array.forEach(current => {
+            My_drop_down_list_result.innerHTML += `
+                            <div class="My_drop_down_list_result_item ddc" onclick="select_option(${current.costCode})">
+                                ${current.costName}
+                            </div>
+                    `;
+        });
+
+        My_drop_down_input.addEventListener("keyup", function (e) {
+            //reset the result element
+            My_drop_down_list_result.innerHTML = "";
+
+            //update ui result list:
+            options_array.forEach(current => {
+                if (current.name.includes(e.target.value)) {
+                    console.log(true);
+                    My_drop_down_list_result.innerHTML += `
+                            <div class="My_drop_down_list_result_item ddc" onclick="select_option(${current.costCode})">
+                                ${current.costName}
+                            </div>
+                    `;
+                }
+            });
+        });
+
+        My_drop_down_input.addEventListener("focus", function () {
+            if (!My_drop_down_container.classList.contains("show_dropdown")) {
+                My_drop_down_container.classList.add("show_dropdown");
+            }
+        });
+
+        window.addEventListener("click", function (e) {
+            if (!e.target.classList.contains("ddc")) {
+                close_dropdown();
+            }
+        });
+
+        const close_dropdown = () => {
+            if (My_drop_down_container.classList.contains("show_dropdown")) {
+                My_drop_down_container.classList.remove("show_dropdown");
+            }
+        }
+
+        const select_option = (id) => {
+            close_dropdown();
+            //change selected_option
+            selected_option = id;
+            //change input value
+            for (var i = 0; i < options_array.length; i++) {
+                if (options_array[i].costCode == id) {
+                    My_drop_down_input.value = options_array[i].costName;
+                    break;
+                }
+            }
+        }
+</script>

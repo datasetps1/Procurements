@@ -24,30 +24,6 @@ namespace MVCWebAppServierCon.Controllers
             this.hostingEnviroment = hostingEnviroment;
         }
 
-        // GET: CompleteActivities
-        public async Task<IActionResult> Index()
-        {
-            return View(await _context.CompleteActivity.ToListAsync());
-        }
-
-        // GET: CompleteActivities/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var completeActivity = await _context.CompleteActivity
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (completeActivity == null)
-            {
-                return NotFound();
-            }
-
-            return View(completeActivity);
-        }
-
         // GET: CompleteActivities/Create
         public async Task<IActionResult> Create(int? code)
         {
@@ -100,87 +76,7 @@ namespace MVCWebAppServierCon.Controllers
 
             return Json(new  { paths_array= paths_array });
 
-        }
-
-        // GET: CompleteActivities/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var completeActivity = await _context.CompleteActivity.FindAsync(id);
-            if (completeActivity == null)
-            {
-                return NotFound();
-            }
-            return View(completeActivity);
-        }
-
-        // POST: CompleteActivities/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,SupplierId,Description,OrderCode,BookName,ActivityVenue,ActivityDate,DoneTasks,CoordinatorName,ProjectName,Date")] CompleteActivity completeActivity)
-        {
-            if (id != completeActivity.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(completeActivity);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CompleteActivityExists(completeActivity.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(completeActivity);
-        }
-
-        // GET: CompleteActivities/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var completeActivity = await _context.CompleteActivity
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (completeActivity == null)
-            {
-                return NotFound();
-            }
-
-            return View(completeActivity);
-        }
-
-        // POST: CompleteActivities/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var completeActivity = await _context.CompleteActivity.FindAsync(id);
-            _context.CompleteActivity.Remove(completeActivity);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+        } 
 
         private bool CompleteActivityExists(int id)
         {

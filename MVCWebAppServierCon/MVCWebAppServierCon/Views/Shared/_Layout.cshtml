@@ -116,10 +116,6 @@
                             <div class="sb-nav-link-icon"><i class="fas fa-home"></i></div>
                             <h7>@Localizer["All Orders"]</h7>
                         </a>
-                        <a class="nav-link" asp-controller="Forms" asp-action="Create">
-                            <div class="sb-nav-link-icon"><i class="fas fa-building"></i></div>
-                            <h7>@Localizer["Forms"]</h7>
-                        </a>
                         @*   }*@
                         @if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
                         {
@@ -139,6 +135,26 @@
                                 </nav>
                             </div>
                         }
+
+                        <a class="nav-link" asp-controller="SalesQouteHeader" asp-action="Create">
+                            <div class="sb-nav-link-icon"><i class="fas fa-plus"></i></div>
+                            Create Price Quote
+                        </a>
+
+                        <a class="nav-link" asp-controller="SalesQouteHeader" asp-action="Search">
+                            <div class="sb-nav-link-icon"><i class="fas fa-search"></i></div>
+                            Price Quote Report
+                        </a>
+
+                        <a class="nav-link" asp-controller="Forms" asp-action="Create">
+                            <div class="sb-nav-link-icon"><i class="fas fa-building"></i></div>
+                            <h7>@Localizer["Forms"]</h7>
+                        </a>
+                        <a class="nav-link" asp-controller="Contracts" asp-action="Create">
+                            <div class="sb-nav-link-icon"><i class="fas fa-search"></i></div>
+                            Contracts
+                        </a>
+
                         <a class="nav-link" asp-controller="Home" asp-action="Privacy">
                             <div class="sb-nav-link-icon"><i class="fas fa-key"></i></div>
                             @Localizer["Privacy"]

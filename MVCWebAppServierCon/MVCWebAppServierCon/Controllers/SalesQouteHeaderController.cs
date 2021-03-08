@@ -33,17 +33,6 @@ namespace MVCWebAppServierCon.Controllers
             this.userManager = userManager;
         }
 
-        // GET: SalesQouteHeader
-        public ActionResult Index()
-        {
-            return View();
-        }
-
-        // GET: SalesQouteHeader/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
 
         // GET: SalesQouteHeader/Create
         public async Task<ActionResult> Create(int? id)
@@ -224,22 +213,6 @@ namespace MVCWebAppServierCon.Controllers
             return View();
         }
 
-        // POST: SalesQouteHeader/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
 
         //GET : /SalesQouteHeader/search
         public ActionResult Search()

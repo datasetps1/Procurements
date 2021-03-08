@@ -155,11 +155,11 @@ namespace MVCWebAppServierCon.Controllers
         }
         public ActionResult getBudget(string ProjectCode, string BudgetLineName, bool byName)
         {
-            string Budget="";
-           
+            string Budget = "";
+
             try
             {
-                Budget = calculateBuddget(ProjectCode, BudgetLineName,byName);
+                Budget = calculateBuddget(ProjectCode, BudgetLineName, byName);
                 return Json(new { data = Budget });
 
             }
@@ -168,12 +168,12 @@ namespace MVCWebAppServierCon.Controllers
                 return Json(new { data = 0 });
 
             }
-           
+
         }
-       private string calculateBuddget(string ProjectCode, string BudgetLineName, bool byName)
+        private string calculateBuddget(string ProjectCode, string BudgetLineName, bool byName)
         {
-               string Budget = "";
-            string BudgetLineCode= BudgetLineName;
+            string Budget = "";
+            string BudgetLineCode = BudgetLineName;
             float AuditBudget = 0;
             try
             {
@@ -187,18 +187,18 @@ namespace MVCWebAppServierCon.Controllers
                 }
                 SqlCommand command = new SqlCommand("SELECT Budget FROM TblBudgetCNTran  WHERE (FirstCost=2 and SecondCost=8 and  FirstCostCode= '" + ProjectCode + "' and SecondCostCode = '" + BudgetLineCode + "');", connection);
 
-        connection.Open();
+                connection.Open();
                 var reader = command.ExecuteReader();
                 while (reader.Read())
                 {
                     AuditBudget = float.Parse(reader.GetValue(0).ToString());
                 }
-    connection.Close();
-              
+                connection.Close();
+
 
                 List<ViewBudget> lst = new List<ViewBudget>();
-    var c = _sc.ViewBudget.FromSql(
-      @"SELECT    SUM(dbo.TblOrderHeader.ActualTotalAmount * dbo.TblOrderHeader.OrderHeaderRate) AS Budget, dbo.TblOrderHeader.OrderHeaderProjectCode, 
+                var c = _sc.ViewBudget.FromSql(
+                  @"SELECT    SUM(dbo.TblOrderHeader.ActualTotalAmount * dbo.TblOrderHeader.OrderHeaderRate) AS Budget, dbo.TblOrderHeader.OrderHeaderProjectCode, 
                       dbo.TblOrderHeader.OrderHeaderBudgetLineCode
 FROM         dbo.TblOrderHeader RIGHT OUTER JOIN
                       dbo.TblApproval ON dbo.TblOrderHeader.OrderHeaderCode = dbo.TblApproval.ApprovalHeaderCode
@@ -209,16 +209,16 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
 
 
 
-    lst = c.ToList();
+                lst = c.ToList();
 
                 lst = lst.Where(x => x.OrderHeaderProjectCode == ProjectCode && x.OrderHeaderBudgetLineCode == BudgetLineCode).ToList();
 
-    var TotalOrders = lst.Sum(x => x.Budget);
+                var TotalOrders = lst.Sum(x => x.Budget);
 
                 if (AuditBudget > 0)
                 {
                     Budget = String.Format("{0:N}", AuditBudget - TotalOrders);
-                 
+
                 }
                 return Budget;
 
@@ -372,7 +372,7 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
             }
         }
 
-        public async Task <ActionResult> UploadFile(IFormFile file, int OrderHeaderCode)
+        public async Task<ActionResult> UploadFile(IFormFile file, int OrderHeaderCode)
         {
             if (file != null)
             {
@@ -421,7 +421,7 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
         }
 
         [HttpGet]
-        public IActionResult Edit(int id ,bool IsPreview=false)
+        public IActionResult Edit(int id, bool IsPreview = false)
         {/*make a view model to set all properites that come from Audit DB and ours and send them as one object to the veiw*/
             var model = new OrderViewModel();
             model.headerClass = _sc.TblOrderHeader.Where(h => h.OrderHeaderCode == id).FirstOrDefault();
@@ -467,15 +467,15 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
             ViewBag.ProjectName = projLoad("TBLCost2");
             // ViewBag.BudgetLine = projLoad("TBLCost8");
             List<CodeNameModel> lst = new List<CodeNameModel>();
-            ViewBag.BudgetLine = getData.getTableData("VRelationalBudgetLineWithFunder", "  WHERE (FirstCostCenterCode = '" + model.headerClass.OrderHeaderProjectCode+ "' ) ", connection);
+            ViewBag.BudgetLine = getData.getTableData("VRelationalBudgetLineWithFunder", "  WHERE (FirstCostCenterCode = '" + model.headerClass.OrderHeaderProjectCode + "' ) ", connection);
 
             ViewBag.DepartmentName = _sc.TblDepartment.ToList();
             ViewBag.OrderType = _sc.TblOrderType.ToList();
             ViewBag.ItemName = _sc.TblItem.ToList();
             ViewBag.IsPreview = IsPreview;
-            ViewBag.Budget = calculateBuddget(model.headerClass.OrderHeaderProjectCode,model.headerClass.OrderHeaderBudgetLineCode,false);
-            var approvals = _sc.TblApproval.Where(h => h.ApprovalIsApproved == 0 && h.ApprovalHeaderCode== id).ToList();
-            if (approvals.Count>0)
+            ViewBag.Budget = calculateBuddget(model.headerClass.OrderHeaderProjectCode, model.headerClass.OrderHeaderBudgetLineCode, false);
+            var approvals = _sc.TblApproval.Where(h => h.ApprovalIsApproved == 0 && h.ApprovalHeaderCode == id).ToList();
+            if (approvals.Count > 0)
             {
                 ViewBag.ShowDelete = false;
             }
@@ -492,11 +492,64 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
         public IActionResult EditProjectBudget()
         {
 
-            ViewBag.ProjectName = projLoad("TBLCost2");
-            ViewBag.BudgetLine = projLoad("TBLCost8");
-            ViewBag.OrderHeader = _sc.TblOrderHeader.ToList();
+            List<CostsViewModel> ProjectName = projLoad("TBLCost2");
+            List<CostsViewModel> BudgetLine = projLoad("TBLCost8");
+            List<OrderHeaderClass> OrderHeader = _sc.TblOrderHeader.ToList();
+
+            //prepare data for dropdowns
+            List<DropDownViewModel> DropDownViewModel_List = new List<DropDownViewModel>();
+            OrderHeader.ForEach(current =>
+            {
+                DropDownViewModel_List.Add(new DropDownViewModel() { Id = current.OrderHeaderCode + "", Name = current.OrderHeaderCode + "" });
+            });
+            ViewBag.OrderHeaders = DropDownViewModel_List;
+
+            //for BudgetLine
+            DropDownViewModel_List = new List<DropDownViewModel>();
+            BudgetLine.ForEach(current =>
+            {
+                DropDownViewModel_List.Add(new DropDownViewModel() { Id = current.costCode, Name = current.costName });
+            });
+            ViewBag.BudgetLine = DropDownViewModel_List;
+
+            //for BudgetLine
+            DropDownViewModel_List = new List<DropDownViewModel>();
+            ProjectName.ForEach(current =>
+            {
+                DropDownViewModel_List.Add(new DropDownViewModel() { Id = current.costCode, Name = current.costName });
+            });
+            ViewBag.ProjectName = DropDownViewModel_List;
 
             return View();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> EditProjectBudgetPost(EditProjectBudgetViewModel editProjectBudget)
+        {
+
+            OrderHeaderClass order_to_edit = await _sc.TblOrderHeader.FirstOrDefaultAsync(o => o.OrderHeaderCode == Int32.Parse(editProjectBudget.selected_OrderHeader_code));
+            
+            if(order_to_edit == null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                order_to_edit.OrderHeaderBudgetLineCode = editProjectBudget.selected_budgetLines_code;
+                order_to_edit.BudgetLine = editProjectBudget.selected_budgetLines_Name;
+                order_to_edit.OrderHeaderProjectCode = editProjectBudget.selected_ProjectName_code;
+                order_to_edit.ProjectName = editProjectBudget.selected_ProjectName_Name;
+
+                _sc.TblOrderHeader.Update(order_to_edit);
+                await _sc.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+
+            }
+            
+            return RedirectToAction(nameof(EditProjectBudget));
         }
 
         [HttpPost]
@@ -602,8 +655,8 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
 
                 var res1 = _sc.TblOrderHeader.Where(i => i.OrderHeaderCode == OrderCode).FirstOrDefault();
 
-                res1.ActualTotalAmount = AcutalAmount ;
-             
+                res1.ActualTotalAmount = AcutalAmount;
+
 
                 _sc.SaveChanges();
                 return Json(new { message = "ok", length = 1 });
@@ -678,7 +731,7 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
             try
             {
 
-                
+
                 var del = _sc.TblOrderHeader.Where(i => i.OrderHeaderCode == id).FirstOrDefault();
                 _sc.TblOrderHeader.Remove(del);
                 _sc.SaveChanges();
@@ -695,7 +748,7 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
                 _sc.SaveChanges();
                 // return RedirectToAction("Index", "Home");
                 return new JsonResult(new { success = true, data = "OK" });
-             
+
 
             }
             catch (Exception e)
@@ -705,7 +758,7 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
             }
         }
 
-        
+
         public ActionResult DeleteFile(string filename, int id, int orderCode)
         {
 
@@ -730,12 +783,12 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
 
 
 
-            return RedirectToAction("Edit", new { id = orderCode ,  IsPreview = true });
+            return RedirectToAction("Edit", new { id = orderCode, IsPreview = true });
         }
 
 
 
 
-        
+
     }
 }
