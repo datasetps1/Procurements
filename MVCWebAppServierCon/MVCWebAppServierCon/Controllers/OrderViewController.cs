@@ -489,16 +489,17 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
         }
 
         // get  : /orderview/EditProjectBudget
-        public IActionResult EditProjectBudget()
+        public async Task<IActionResult> EditProjectBudget()
         {
+            List<CostsViewModel> ProjectNames = projLoad("TBLCost2");
+            List<CostsViewModel> BudgetLines = projLoad("TBLCost8");
+            List<OrderHeaderClass> OrderHeaders = _sc.TblOrderHeader.ToList();
+            ViewBag.OrderHeaders_full_list = OrderHeaders;
 
-            List<CostsViewModel> ProjectName = projLoad("TBLCost2");
-            List<CostsViewModel> BudgetLine = projLoad("TBLCost8");
-            List<OrderHeaderClass> OrderHeader = _sc.TblOrderHeader.ToList();
 
             //prepare data for dropdowns
             List<DropDownViewModel> DropDownViewModel_List = new List<DropDownViewModel>();
-            OrderHeader.ForEach(current =>
+            OrderHeaders.ForEach(current =>
             {
                 DropDownViewModel_List.Add(new DropDownViewModel() { Id = current.OrderHeaderCode + "", Name = current.OrderHeaderCode + "" });
             });
@@ -506,7 +507,7 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
 
             //for BudgetLine
             DropDownViewModel_List = new List<DropDownViewModel>();
-            BudgetLine.ForEach(current =>
+            BudgetLines.ForEach(current =>
             {
                 DropDownViewModel_List.Add(new DropDownViewModel() { Id = current.costCode, Name = current.costName });
             });
@@ -514,11 +515,54 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
 
             //for BudgetLine
             DropDownViewModel_List = new List<DropDownViewModel>();
-            ProjectName.ForEach(current =>
+            ProjectNames.ForEach(current =>
             {
                 DropDownViewModel_List.Add(new DropDownViewModel() { Id = current.costCode, Name = current.costName });
             });
             ViewBag.ProjectName = DropDownViewModel_List;
+
+
+            //if (id != null)
+            //{
+            //    var order_header = await _sc.TblOrderHeader.FirstOrDefaultAsync(o => o.OrderHeaderCode == id);
+            //    if (order_header == null)
+            //    {
+            //        return NotFound();
+            //    }
+            //    else
+            //    {
+            //        var project_name = "";
+            //        foreach (var current in ProjectNames)
+            //        {
+            //            if (current.costCode == order_header.OrderHeaderProjectCode)
+            //            {
+            //                project_name = current.costName;
+            //                break;
+            //            }
+            //        };
+            //        var budget_line = "";
+            //        foreach (var current in BudgetLines)
+            //        {
+            //            if (current.costCode == order_header.OrderHeaderBudgetLineCode)
+            //            {
+            //                budget_line = current.costName;
+            //                break;
+            //            }
+            //        };
+
+            //        return View(
+            //            new EditProjectBudgetViewModel()
+            //            {
+            //                selected_budgetLines_code = order_header.OrderHeaderBudgetLineCode,
+            //                selected_budgetLines_Name = budget_line,
+            //                selected_ProjectName_code = order_header.OrderHeaderProjectCode,
+            //                selected_ProjectName_Name = project_name,
+            //                selected_OrderHeader_code = order_header.OrderHeaderCode + "",
+            //                selected_OrderHeader_Name = order_header.OrderHeaderCode + ""
+            //            });
+            //    }
+
+            //}
 
             return View();
         }
@@ -528,8 +572,8 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
         {
 
             OrderHeaderClass order_to_edit = await _sc.TblOrderHeader.FirstOrDefaultAsync(o => o.OrderHeaderCode == Int32.Parse(editProjectBudget.selected_OrderHeader_code));
-            
-            if(order_to_edit == null)
+
+            if (order_to_edit == null)
             {
                 return NotFound();
             }
@@ -537,9 +581,9 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
             try
             {
                 order_to_edit.OrderHeaderBudgetLineCode = editProjectBudget.selected_budgetLines_code;
-                order_to_edit.BudgetLine = editProjectBudget.selected_budgetLines_Name;
+                //order_to_edit.BudgetLine = editProjectBudget.selected_budgetLines_Name;
                 order_to_edit.OrderHeaderProjectCode = editProjectBudget.selected_ProjectName_code;
-                order_to_edit.ProjectName = editProjectBudget.selected_ProjectName_Name;
+                //order_to_edit.ProjectName = editProjectBudget.selected_ProjectName_Name;
 
                 _sc.TblOrderHeader.Update(order_to_edit);
                 await _sc.SaveChangesAsync();
@@ -548,7 +592,7 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
             {
 
             }
-            
+
             return RedirectToAction(nameof(EditProjectBudget));
         }
 

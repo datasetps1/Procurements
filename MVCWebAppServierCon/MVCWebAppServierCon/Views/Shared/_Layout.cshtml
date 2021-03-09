@@ -97,6 +97,11 @@
                             <h7>@Localizer["Home"]</h7>
                         </a>
 
+                        <a class="nav-link" asp-controller="Home" asp-action="StuckOrders">
+                            <div class="sb-nav-link-icon"><i class="fas fa-plus"></i></div>
+                            Stuck Orders
+                        </a>
+
                         <a class="nav-link" asp-controller="Home" asp-action="MyOrders">
                             <div class="sb-nav-link-icon"><i class="fas fa-building"></i></div>
                             <h7>@Localizer["My Orders"]</h7>
@@ -153,6 +158,10 @@
                         <a class="nav-link" asp-controller="Contracts" asp-action="Create">
                             <div class="sb-nav-link-icon"><i class="fas fa-search"></i></div>
                             Contracts
+                        </a>
+                        <a class="nav-link" asp-controller="orderview" asp-action="editProjectBudget">
+                            <div class="sb-nav-link-icon"><i class="fas fa-key"></i></div>
+                            Project admin
                         </a>
 
                         <a class="nav-link" asp-controller="Home" asp-action="Privacy">

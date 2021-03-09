@@ -14,7 +14,7 @@
             <div class="input_container">
                 <input type="hidden" id="selected_OrderHeader" asp-for="selected_OrderHeader_code" />
                 <input id="My_drop_down_input-OrderHeader" type="text" class="My_drop_down_input ddc"
-                       placeholder="Type word here ..."  />
+                       placeholder="Search here ..."  asp-for="selected_OrderHeader_Name" />
                 <i class="fas fa-chevron-circle-down input_icon"></i>
             </div>
             <div id="My_drop_down_container-OrderHeader" class="My_drop_down_container ddc">
@@ -30,7 +30,7 @@
             <div class="input_container">
                 <input type="hidden" id="selected_budgetLines" asp-for="selected_budgetLines_code" />
                 <input id="My_drop_down_input-budgetLines" type="text" class="My_drop_down_input ddc"
-                       placeholder="Type word here ..."  asp-for="selected_budgetLines_Name"/>
+                       placeholder="Search here ..."  asp-for="selected_budgetLines_Name"/>
                 <i class="fas fa-chevron-circle-down input_icon"></i>
             </div>
             <div id="My_drop_down_container-budgetLines" class="My_drop_down_container ddc">
@@ -46,7 +46,7 @@
             <div class="input_container ddc">
                 <input type="hidden" id="selected_ProjectName" asp-for="selected_ProjectName_code" />
                 <input id="My_drop_down_input-ProjectName" type="text" class="My_drop_down_input ddc"
-                       placeholder="Type word here ..." asp-for="selected_ProjectName_Name" />
+                       placeholder="Search here ..." asp-for="selected_ProjectName_Name" />
                 <i class="fas fa-chevron-circle-down input_icon ddc"></i>
             </div>
             <div id="My_drop_down_container-ProjectName" class="My_drop_down_container ddc">
@@ -58,29 +58,37 @@
         </div>
 
         <div class="form-group">
-            <input type="submit" value="Create" class="btn btn-primary form_submit_btn" style="border-radius: 30px; width: 94% !important; margin-left: 3%;    margin-top: 27px;" />
+            <input type="submit" value="Save" class="btn btn-primary form_submit_btn" style="border-radius: 30px; width: 94% !important; margin-left: 3%;    margin-top: 27px;" />
         </div>
     </form>
 </div>
 
 @section scripts{
     <script>
-        
+
         var My_drop_down_container_BudgetLines = document.getElementById("My_drop_down_container-budgetLines");
         var My_drop_down_list_result_BudgetLines = document.getElementById("My_drop_down_list_result_budgetLines");
         var My_drop_down_list_result_OrderHeader = document.getElementById("My_drop_down_list_result_OrderHeader");
         var My_drop_down_list_result_ProjectName = document.getElementById("My_drop_down_list_result_ProjectName");
 
-        var selected_option_BudgetLines = -1
+        var My_drop_down_input_OrderHeader = document.getElementById("My_drop_down_input-OrderHeader");
+
+        var My_drop_down_input_budgetLines = document.getElementById("My_drop_down_input-budgetLines");
+        var selected_budgetLines = document.getElementById("selected_budgetLines");
+
+        var My_drop_down_input_ProjectName = document.getElementById("My_drop_down_input-ProjectName");
+        var selected_ProjectName = document.getElementById("selected_ProjectName");
+
+
 
         //serialize array from viewBag
         var options_list_budgetLines = @Json.Serialize(ViewBag.BudgetLine);
         console.log(options_list_budgetLines.length)
         //serialize array from viewBag
         var options_list_OrderHeader = @Json.Serialize(ViewBag.OrderHeaders);
+        var OrderHeaders_full_list = @Json.Serialize(ViewBag.OrderHeaders_full_list);
         //serialize array from viewBag
         var options_list_ProjectName = @Json.Serialize(ViewBag.ProjectName);
-
 
         //initialize the result list
         options_list_budgetLines.forEach(current => {
@@ -134,7 +142,7 @@
                     if (current.name.includes(e.target.value)) {
                         console.log(true);
                         My_drop_down_list_result.innerHTML += `
-                                                        <div class="My_drop_down_list_result_item ddc" onclick="select_option(${current.id} ,'${current.name}','${unique_word}')">
+                                                        <div class="My_drop_down_list_result_item ddc" onclick="select_option('${current.id}' ,'${current.name}','${unique_word}')">
                                                                ${current.name}
                                                         </div>
                                           `;
@@ -208,6 +216,38 @@
             document.getElementById('selected_' + unique_word).value = id;
             //change input value
             document.getElementById('My_drop_down_input-' + unique_word).value = name;
+
+            //if this is an order header : search for project and budgetlines if the exist
+            if (unique_word == "OrderHeader") {
+                //get it from full header :
+                var order = null;
+                for (var i = 0; i < OrderHeaders_full_list.length; i++) {
+                    if (OrderHeaders_full_list[i].orderHeaderCode == id) {
+                        order = OrderHeaders_full_list[i];
+                        break;
+                    }
+                }
+
+                //if order have project -> then get its name :
+                for (var i = 0; i < options_list_ProjectName.length; i++) {
+                    if (options_list_ProjectName[i].id == order.orderHeaderProjectCode) {
+                        My_drop_down_input_ProjectName.value = options_list_ProjectName[i].name;
+                        selected_ProjectName.value = options_list_ProjectName[i].id;
+                        break;
+                    }
+                }
+
+                //if order have budgetline -> then get its name :
+                for (var i = 0; i < options_list_budgetLines.length; i++) {
+                    if (options_list_budgetLines[i].id == order.orderHeaderBudgetLineCode) {
+                        My_drop_down_input_budgetLines.value = options_list_budgetLines[i].name;
+                        selected_budgetLines.value = options_list_budgetLines[i].id;
+                        break;
+                    }
+                }
+
+
+            }
 
         }
     </script>
