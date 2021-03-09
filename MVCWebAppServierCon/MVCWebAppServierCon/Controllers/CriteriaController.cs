@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace MVCWebAppServierCon.Controllers
 {
+   
     public class CriteriaController : Controller
     {
         private readonly SecondConnClass _context;
