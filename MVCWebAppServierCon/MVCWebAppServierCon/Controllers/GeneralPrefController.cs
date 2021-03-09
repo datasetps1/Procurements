@@ -21,7 +21,7 @@ namespace MVCWebAppServierCon.Controllers
         [HttpGet("GeneralPref/index")]
         public async Task<IActionResult> Index()
         {
-            
+
             return View(await _context.TblGeneralPreference.ToListAsync());
         }
 
@@ -33,9 +33,8 @@ namespace MVCWebAppServierCon.Controllers
         [HttpPost]
         public ActionResult Create(GeneralPreferenceClass model)
         {
-
-             var Gpref = _context.TblGeneralPreference.FirstOrDefault();
-             if (Gpref != null)
+            var Gpref = _context.TblGeneralPreference.FirstOrDefault();
+            if (Gpref != null)
             {
                 Gpref.QouteAmount = model.QouteAmount;
                 Gpref.DeductionAmount = model.DeductionAmount;
@@ -46,13 +45,13 @@ namespace MVCWebAppServierCon.Controllers
                 _context.Add(model);
                 _context.SaveChanges();
             }
-               
+
             return RedirectToAction(nameof(Index));
         }
 
         public async Task<ActionResult> Edit(int? id)
         {
-            if(id == null)
+            if (id == null)
             {
                 return NotFound();
             }
@@ -70,7 +69,7 @@ namespace MVCWebAppServierCon.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(GeneralPreferenceClass model)
-        {
+            {
             if (!ModelState.IsValid)
             {
                 return View(model);
@@ -83,7 +82,7 @@ namespace MVCWebAppServierCon.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!_context.TblGeneralPreference.Any(g=>g.code == model.code))
+                if (!_context.TblGeneralPreference.Any(g => g.code == model.code))
                 {
                     return NotFound();
                 }

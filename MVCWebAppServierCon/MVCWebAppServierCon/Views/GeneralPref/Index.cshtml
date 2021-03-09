@@ -18,6 +18,15 @@
             <th>
                 @Html.DisplayNameFor(model => model.DeductionAmount)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ConnecWith)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ActivitiyTable)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProjectTable)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -30,6 +39,15 @@
             <td>
                 @Html.DisplayFor(modelItem => item.DeductionAmount)
             </td>
+            <th>
+                @Html.DisplayFor(modelItem => item.ConnecWith)
+            </th>
+            <th>
+                @Html.DisplayFor(modelItem => item.ActivitiyTable)
+            </th>
+            <th>
+                @Html.DisplayFor(modelItem => item.ProjectTable)
+            </th>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.code">Edit</a>
             </td>
