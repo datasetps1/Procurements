@@ -34,5 +34,8 @@ namespace MVCWebAppServierCon.Models
         [ForeignKey("UserClass")]
         public string userCode { get; set; }
         public UserClass User { get; set; }
+
+        public string Description { get; set; }
+
     }
 }

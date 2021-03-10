@@ -83,5 +83,6 @@ namespace MVCWebAppServierCon.Models
         public Boolean Freaze { get; set; }
         public string FreazeNote { get; set; }
 
+
     }
 }

@@ -143,6 +143,10 @@ namespace MVCWebAppServierCon.Controllers
 
                     salesQouteHeader.ExpierDate = ExpierDate;
                 }
+                else if (key.Contains("Description"))
+                {
+                    salesQouteHeader.Description = request[key];
+                }
             }
 
             //complete other salesQouteHeader info
