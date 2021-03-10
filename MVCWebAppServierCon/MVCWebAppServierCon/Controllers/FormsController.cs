@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Internal;
 using Microsoft.AspNetCore.Http;
@@ -24,7 +25,7 @@ namespace MVCWebAppServierCon.Controllers
         {
             return View();
         }
-
+        [Authorize(Roles = "Admin, EnterForms")]
         public IActionResult Create()
         {
             ViewBag.LstFiles = _sc.Forms.ToList();
@@ -34,6 +35,7 @@ namespace MVCWebAppServierCon.Controllers
 
         
         [HttpPost]
+        [Authorize(Roles = "Admin, EnterForms")]
         public async Task<ActionResult>  Create(Forms model)
         {
             //var errors = ModelState.Values.SelectMany(v => v.Errors);
@@ -82,6 +84,7 @@ namespace MVCWebAppServierCon.Controllers
 
         }
         [HttpPost]
+        [Authorize(Roles = "Admin, DeleteForm")]
         public ActionResult Delete(int id)
         {
             try
@@ -114,7 +117,7 @@ namespace MVCWebAppServierCon.Controllers
 
             }
         }
-
+        [Authorize(Roles = "Admin, EnterForms")]
         public async Task<IActionResult> Download(int id)
         {
             var file = _sc.Forms.Where(m => m.Code == id).FirstOrDefault();

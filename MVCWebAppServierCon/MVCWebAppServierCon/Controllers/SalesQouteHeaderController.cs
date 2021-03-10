@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -16,7 +17,7 @@ using Newtonsoft.Json;
 
 namespace MVCWebAppServierCon.Controllers
 {
-    
+    [Authorize(Roles = "Admin, EnterPrice")]
     public class SalesQouteHeaderController : Controller
     {
 

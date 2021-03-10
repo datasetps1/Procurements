@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -12,6 +13,7 @@ using MVCWebAppServierCon.ViewModels;
 
 namespace MVCWebAppServierCon.Controllers
 {
+    [Authorize(Roles = "Admin, EnterContract")]
     public class ContractsController : Controller
     {
 

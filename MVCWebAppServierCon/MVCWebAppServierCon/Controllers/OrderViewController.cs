@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using System.Globalization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MVCWebAppServierCon.Controllers
 {
@@ -489,6 +490,8 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
         }
 
         // get  : /orderview/EditProjectBudget
+
+        [Authorize(Roles = "Admin, EnterProjAdmin")]
         public async Task<IActionResult> EditProjectBudget()
         {
             List<CostsViewModel> ProjectNames = projLoad("TBLCost2");
@@ -568,6 +571,7 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin, EnterProjAdmin")]
         public async Task<ActionResult> EditProjectBudgetPost(EditProjectBudgetViewModel editProjectBudget)
         {
 
