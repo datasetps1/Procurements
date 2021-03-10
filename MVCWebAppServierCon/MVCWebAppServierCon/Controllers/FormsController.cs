@@ -25,7 +25,7 @@ namespace MVCWebAppServierCon.Controllers
         {
             return View();
         }
-        [Authorize(Roles = "Admin, EnterForm")]
+        [Authorize(Roles = "Admin, EnterForms")]
         public IActionResult Create()
         {
             ViewBag.LstFiles = _sc.Forms.ToList();
@@ -35,7 +35,7 @@ namespace MVCWebAppServierCon.Controllers
 
         
         [HttpPost]
-        [Authorize(Roles = "Admin, EnterForm")]
+        [Authorize(Roles = "Admin, EnterForms")]
         public async Task<ActionResult>  Create(Forms model)
         {
             //var errors = ModelState.Values.SelectMany(v => v.Errors);
@@ -117,7 +117,7 @@ namespace MVCWebAppServierCon.Controllers
 
             }
         }
-        [Authorize(Roles = "Admin, EnterForm")]
+        [Authorize(Roles = "Admin, EnterForms")]
         public async Task<IActionResult> Download(int id)
         {
             var file = _sc.Forms.Where(m => m.Code == id).FirstOrDefault();
