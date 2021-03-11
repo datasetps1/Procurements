@@ -137,19 +137,29 @@
                                     <a class="nav-link" asp-controller="User" asp-action="Create"> <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div> @Localizer["User"]</a>
                                     <a class="nav-link" asp-controller="AmountSitting" asp-action="Create"> <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>@Localizer["Amount Settings"]</a>
                                     <a class="nav-link" asp-controller="Department" asp-action="Create"> <div class="sb-nav-link-icon"><i class="fas fa-building"></i></div>@Localizer["Department"]</a>
+                                    <a class="nav-link" asp-controller="GeneralPref" asp-action="index"> <div class="sb-nav-link-icon"><i class="fas fa-building"></i></div>General Preference</a>
                                 </nav>
                             </div>
                         }
 
-                        <a class="nav-link" asp-controller="SalesQouteHeader" asp-action="Create">
-                            <div class="sb-nav-link-icon"><i class="fas fa-plus"></i></div>
-                            Create Price Quote
-                        </a>
+                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#PriceQuote_collapse" aria-expanded="false" aria-controls="PriceQuote_collapse">
+                        <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                        Price Quote
+                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                    </a>
+                        <div class="collapse" id="PriceQuote_collapse" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link" asp-controller="SalesQouteHeader" asp-action="Create">
+                                    <div class="sb-nav-link-icon"><i class="fas fa-plus"></i></div>
+                                    Create
+                                </a>
 
-                        <a class="nav-link" asp-controller="SalesQouteHeader" asp-action="Search">
-                            <div class="sb-nav-link-icon"><i class="fas fa-search"></i></div>
-                            Price Quote Report
-                        </a>
+                                <a class="nav-link" asp-controller="SalesQouteHeader" asp-action="Search">
+                                    <div class="sb-nav-link-icon"><i class="fas fa-search"></i></div>
+                                    Report
+                                </a>
+                            </nav>
+                        </div>
 
                         <a class="nav-link" asp-controller="Forms" asp-action="Create">
                             <div class="sb-nav-link-icon"><i class="fas fa-building"></i></div>
@@ -158,6 +168,10 @@
                         <a class="nav-link" asp-controller="Contracts" asp-action="Create">
                             <div class="sb-nav-link-icon"><i class="fas fa-search"></i></div>
                             Contracts
+                        </a>
+                        <a class="nav-link" asp-controller="Criteria" asp-action="Create">
+                            <div class="sb-nav-link-icon"><i class="fas fa-search"></i></div>
+                            Criterias
                         </a>
                         <a class="nav-link" asp-controller="orderview" asp-action="editProjectBudget">
                             <div class="sb-nav-link-icon"><i class="fas fa-key"></i></div>

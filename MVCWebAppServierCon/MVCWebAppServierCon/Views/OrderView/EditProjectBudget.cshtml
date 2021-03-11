@@ -14,27 +14,11 @@
             <div class="input_container">
                 <input type="hidden" id="selected_OrderHeader" asp-for="selected_OrderHeader_code" />
                 <input id="My_drop_down_input-OrderHeader" type="text" class="My_drop_down_input ddc"
-                       placeholder="Search here ..."  asp-for="selected_OrderHeader_Name" />
+                       placeholder="Search here ..." asp-for="selected_OrderHeader_Name" />
                 <i class="fas fa-chevron-circle-down input_icon"></i>
             </div>
             <div id="My_drop_down_container-OrderHeader" class="My_drop_down_container ddc">
                 <div id="My_drop_down_list_result_OrderHeader" class="My_drop_down_list_result ddc">
-
-                </div>
-            </div>
-
-        </div>
-
-        <div id="budgetLines_dropdown" style="position:relative;    margin-top: 10px;">
-            <div class="My_drop_down_title ddc">Budget Line</div>
-            <div class="input_container">
-                <input type="hidden" id="selected_budgetLines" asp-for="selected_budgetLines_code" />
-                <input id="My_drop_down_input-budgetLines" type="text" class="My_drop_down_input ddc"
-                       placeholder="Search here ..."  asp-for="selected_budgetLines_Name"/>
-                <i class="fas fa-chevron-circle-down input_icon"></i>
-            </div>
-            <div id="My_drop_down_container-budgetLines" class="My_drop_down_container ddc">
-                <div id="My_drop_down_list_result_budgetLines" class="My_drop_down_list_result ddc">
 
                 </div>
             </div>
@@ -56,6 +40,23 @@
             </div>
 
         </div>
+
+        <div id="budgetLines_dropdown" style="position:relative;    margin-top: 10px;">
+            <div class="My_drop_down_title ddc">Budget Line</div>
+            <div class="input_container">
+                <input type="hidden" id="selected_budgetLines" asp-for="selected_budgetLines_code" />
+                <input id="My_drop_down_input-budgetLines" type="text" class="My_drop_down_input ddc"
+                       placeholder="Search here ..." asp-for="selected_budgetLines_Name" />
+                <i class="fas fa-chevron-circle-down input_icon"></i>
+            </div>
+            <div id="My_drop_down_container-budgetLines" class="My_drop_down_container ddc">
+                <div id="My_drop_down_list_result_budgetLines" class="My_drop_down_list_result ddc">
+
+                </div>
+            </div>
+
+        </div>
+
 
         <div class="form-group">
             <input type="submit" value="Save" class="btn btn-primary form_submit_btn" style="border-radius: 30px; width: 94% !important; margin-left: 3%;    margin-top: 27px;" />
@@ -82,8 +83,7 @@
 
 
         //serialize array from viewBag
-        var options_list_budgetLines = @Json.Serialize(ViewBag.BudgetLine);
-        console.log(options_list_budgetLines.length)
+        var options_list_budgetLines = [];
         //serialize array from viewBag
         var options_list_OrderHeader = @Json.Serialize(ViewBag.OrderHeaders);
         var OrderHeaders_full_list = @Json.Serialize(ViewBag.OrderHeaders_full_list);
@@ -91,13 +91,13 @@
         var options_list_ProjectName = @Json.Serialize(ViewBag.ProjectName);
 
         //initialize the result list
-        options_list_budgetLines.forEach(current => {
-            My_drop_down_list_result_BudgetLines.innerHTML += `
-                            <div class="My_drop_down_list_result_item ddc" onclick="select_option('${current.id}' ,'${current.name}' , 'budgetLines')">
-                                ${current.name}
-                            </div>
-                    `;
-        });
+        //options_list_budgetLines.forEach(current => {
+        //    My_drop_down_list_result_BudgetLines.innerHTML += `
+        //                    <div class="My_drop_down_list_result_item ddc" onclick="select_option('${current.id}' ,'${current.name}' , 'budgetLines')">
+        //                        ${current.name}
+        //                    </div>
+        //            `;
+        //});
 
         //initialize the result list
         options_list_OrderHeader.forEach(current => {
@@ -117,6 +117,7 @@
                     `;
         });
 
+        //for searching
         window.addEventListener("keyup", function (e) {
             //reset the result element
             //if the event applied on dropdown input :
@@ -142,16 +143,17 @@
                     if (current.name.includes(e.target.value)) {
                         console.log(true);
                         My_drop_down_list_result.innerHTML += `
-                                                        <div class="My_drop_down_list_result_item ddc" onclick="select_option('${current.id}' ,'${current.name}','${unique_word}')">
-                                                               ${current.name}
-                                                        </div>
-                                          `;
+                                      <div class="My_drop_down_list_result_item ddc" onclick="select_option('${current.id}' ,'${current.name}','${unique_word}')">
+                                             ${current.name}
+                                      </div>
+                        `;
                     }
                 });
             }
 
         });
 
+        //to open dropdown
         window.addEventListener("click", function (e) {
             console.log(e.target.id)
             var clicked_element_id = e.target.id;
@@ -188,6 +190,7 @@
 
         });
 
+        //to close dropdown
         window.addEventListener("click", function (e) {
             //if the cliced element is not related to any dropdown
             if (!e.target.classList.contains("ddc")) {
@@ -206,6 +209,7 @@
             }
         });
 
+        //when select options
         const select_option = (id, name, unique_word) => {
             // close_dropdown :
             if (document.getElementById("My_drop_down_container-" + unique_word).classList.contains("show_dropdown")) {
@@ -216,6 +220,9 @@
             document.getElementById('selected_' + unique_word).value = id;
             //change input value
             document.getElementById('My_drop_down_input-' + unique_word).value = name;
+
+
+            //custom code : ------------------------------------------------------------------
 
             //if this is an order header : search for project and budgetlines if the exist
             if (unique_word == "OrderHeader") {
@@ -228,25 +235,106 @@
                     }
                 }
 
+                //result inputs:
+                My_drop_down_input_ProjectName.value = "";
+                selected_ProjectName.value = "";
+                var theres_projectName = false;
                 //if order have project -> then get its name :
                 for (var i = 0; i < options_list_ProjectName.length; i++) {
                     if (options_list_ProjectName[i].id == order.orderHeaderProjectCode) {
+                        theres_projectName = true;
                         My_drop_down_input_ProjectName.value = options_list_ProjectName[i].name;
                         selected_ProjectName.value = options_list_ProjectName[i].id;
                         break;
                     }
                 }
 
-                //if order have budgetline -> then get its name :
-                for (var i = 0; i < options_list_budgetLines.length; i++) {
-                    if (options_list_budgetLines[i].id == order.orderHeaderBudgetLineCode) {
-                        My_drop_down_input_budgetLines.value = options_list_budgetLines[i].name;
-                        selected_budgetLines.value = options_list_budgetLines[i].id;
-                        break;
-                    }
+                //if there is a project name => get the related budgetlines and update budgetline resluts , and get budgetline if it exist :
+                if (theres_projectName) {
+                    $.ajax({
+                        url: '@Url.Action("GetBudgetLineByFunderData", "orderview")',
+                        type: 'POST',
+                        data: { "Fundercode": order.orderHeaderProjectCode },
+                        success: (response) => {
+                            var edited_array = response.data.map(current => (
+                                {
+                                    id: current.code,
+                                    name:current.name
+                                }
+                            ));
+                            options_list_budgetLines = edited_array;
+                            console.log(edited_array)
+
+                            //update budget line dropdown :
+                            var My_drop_down_list_result_budgetLines = document.getElementById('My_drop_down_list_result_budgetLines');
+                            My_drop_down_list_result_budgetLines.innerHTML = "";
+                            //update ui result list:
+                            options_list_budgetLines.forEach(current => {
+                                My_drop_down_list_result_budgetLines.innerHTML += `
+                                 <div class="My_drop_down_list_result_item ddc" onclick="select_option('${current.id}' ,'${current.name}','budgetLines')">
+                                        ${current.name}
+                                 </div>
+                            `;
+                            });
+                            //get budgetline if it exist and display it : 
+                            //result inputs:
+                            My_drop_down_input_budgetLines.value = "";
+                            selected_budgetLines.value = "";
+                            //if order have budgetline -> then get its name :
+                            for (var i = 0; i < options_list_budgetLines.length; i++) {
+                                if (options_list_budgetLines[i].id == order.orderHeaderBudgetLineCode) {
+                                    My_drop_down_input_budgetLines.value = options_list_budgetLines[i].name;
+                                    selected_budgetLines.value = options_list_budgetLines[i].id;
+                                    break;
+                                }
+                            }
+                        },
+                        error: (response) => {
+                            console.log(response)
+                        }
+                    });
                 }
 
 
+
+            } else if (unique_word == "ProjectName") {
+                //if project name changes then clean budget line inputs
+
+                My_drop_down_input_budgetLines.value = "";
+                selected_budgetLines.value = "";
+
+                //get budgetlines which are related to the project name
+
+                $.ajax({
+                    url: '@Url.Action("GetBudgetLineByFunderData", "orderview")',
+                    type: 'POST',
+                    data: { "Fundercode": id },
+                    success: (response) => {
+                        var edited_array = response.data.map(current => (
+                            {
+                                id: current.code,
+                                name: current.name
+                            }
+                        ));
+                        options_list_budgetLines = edited_array;
+                        console.log(edited_array)
+
+                        //update budget line dropdown :
+                        var My_drop_down_list_result_budgetLines = document.getElementById('My_drop_down_list_result_budgetLines');
+                        My_drop_down_list_result_budgetLines.innerHTML = "";
+                        //update ui result list:
+                        options_list_budgetLines.forEach(current => {
+                            My_drop_down_list_result_budgetLines.innerHTML += `
+                                 <div class="My_drop_down_list_result_item ddc" onclick="select_option('${current.id}' ,'${current.name}','budgetLines')">
+                                        ${current.name}
+                                 </div>
+                            `;
+                        });
+                    },
+                    error: (response) => {
+                        console.log(response)
+                    }
+                })
             }
 
         }
