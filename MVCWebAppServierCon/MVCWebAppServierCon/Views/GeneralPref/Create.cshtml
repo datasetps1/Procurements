@@ -22,7 +22,33 @@
                 <input asp-for="DeductionAmount" class="form-control" />
                 <span asp-validation-for="DeductionAmount" class="text-danger"></span>
             </div>
-            
+            <div class="form-group">
+                <label asp-for="ConnecWith">finpack</label><br>
+
+                <input id="finpack" type="radio" asp-for="ConnecWith" value="finpack">
+                <label for="finpack">finpack</label><br>
+
+                <input id="audit" type="radio" asp-for="ConnecWith" value="audit">
+                <label for="audit">audit</label><br>
+
+                <span asp-validation-for="ConnecWith" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ActivitiyTable" class="control-label"></label>
+                <input asp-for="ActivitiyTable" class="form-control" />
+                <span asp-validation-for="ActivitiyTable" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProjectTable" class="control-label"></label>
+                <input asp-for="ProjectTable" class="form-control" />
+                <span asp-validation-for="ProjectTable" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="link_view_name" class="control-label"></label>
+                <input asp-for="link_view_name" class="form-control" placeholder="type link view name here ..." />
+                <span asp-validation-for="link_view_name" class="text-danger"></span>
+            </div>
+
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>

@@ -22,5 +22,8 @@ namespace MVCWebAppServierCon.Models
         public string ProjectTable { get; set; }
         [Display(Name = "Activitiy Table")]
         public string ActivitiyTable { get; set; }
+
+        [Display(Name = "link view name")]
+        public string link_view_name { get; set; }
     }
 }

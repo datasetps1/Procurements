@@ -38,6 +38,10 @@ namespace MVCWebAppServierCon.Controllers
             {
                 Gpref.QouteAmount = model.QouteAmount;
                 Gpref.DeductionAmount = model.DeductionAmount;
+                Gpref.ConnecWith = model.ConnecWith;
+                Gpref.ProjectTable = model.ProjectTable;
+                Gpref.ActivitiyTable = model.ActivitiyTable;
+                Gpref.link_view_name = model.link_view_name;
                 _context.SaveChanges();
             }
             else
@@ -69,7 +73,7 @@ namespace MVCWebAppServierCon.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(GeneralPreferenceClass model)
-            {
+        {
             if (!ModelState.IsValid)
             {
                 return View(model);
