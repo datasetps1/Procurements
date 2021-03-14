@@ -17,7 +17,7 @@ namespace MVCWebAppServierCon.Models
         [Display(Name = "Deduction Amount")]
         public float DeductionAmount { get; set; }
         [Display(Name = "Connect With")]
-        public string ConnecWith { get; set; }
+        public string ConnecWith { get; set; } // finpack or audit
         [Display(Name = "Project Table")]
         public string ProjectTable { get; set; }
         [Display(Name = "Activitiy Table")]

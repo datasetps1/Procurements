@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using MVCWebAppServierCon.Models;
 using MVCWebAppServierCon.ViewModels;
@@ -36,7 +37,7 @@ namespace MVCWebAppServierCon.Controllers
             connection = new SqlConnection(conString);
             this.hostingEnviroment = hostingEnviroment;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {/*first select the logged user then get its rank then by the rank get its amount sitting range to use the range the view his orders*/
             //var x = User.Identity.Name;
             //(amountTo >= 600) AND(amountFrom <= 600)
@@ -105,9 +106,9 @@ namespace MVCWebAppServierCon.Controllers
                             try
                             {
                                 t.OrderTypeName = _sc.TblOrderType.Where(u => u.orderTypeCode == t.OrderHeaderOrderTypeCode).FirstOrDefault().orderTypeName;
-                                t.ProjectName = getData.getTblCodeName("TBLCost2", t.OrderHeaderProjectCode.ToString(), connection);
+                                t.ProjectName = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ProjectTable).FirstOrDefaultAsync(), t.OrderHeaderProjectCode.ToString(), connection);
 
-                                t.BudgetLine = getData.getTblCodeName("TBLCost8", t.OrderHeaderBudgetLineCode.ToString(), connection);
+                                t.BudgetLine = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ActivitiyTable).FirstOrDefaultAsync(), t.OrderHeaderBudgetLineCode.ToString(), connection);
                                 t.Currency = getData.getTblCodeName("TblCurrency", t.OrderHeaderCurrencey.ToString(), connection);
                                 t.UserName = _sc.TblUser.Where(u => u.userCode == t.OrderHeaderUserId).FirstOrDefault().userName;
                                 t.StatusName = GetStatusName(lastApproval.ApprovalIsApproved);
@@ -162,7 +163,7 @@ namespace MVCWebAppServierCon.Controllers
         }
 
 
-        public IActionResult StuckOrders()
+        public async Task<IActionResult> StuckOrders()
         {
 
             var user = _sc.TblUser.Where(u => u.userName.Equals(User.Identity.Name)).FirstOrDefault();
@@ -189,9 +190,9 @@ namespace MVCWebAppServierCon.Controllers
                 {
 
                     t.OrderTypeName = _sc.TblOrderType.Where(u => u.orderTypeCode == t.OrderHeaderOrderTypeCode).FirstOrDefault().orderTypeName;
-                    t.ProjectName = getData.getTblCodeName("TBLCost2", t.OrderHeaderProjectCode.ToString(), connection);
+                    t.ProjectName = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ProjectTable).FirstOrDefaultAsync(), t.OrderHeaderProjectCode.ToString(), connection);
 
-                    t.BudgetLine = getData.getTblCodeName("TBLCost8", t.OrderHeaderBudgetLineCode.ToString(), connection);
+                    t.BudgetLine = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ActivitiyTable).FirstOrDefaultAsync(), t.OrderHeaderBudgetLineCode.ToString(), connection);
                     t.Currency = getData.getTblCodeName("TblCurrency", t.OrderHeaderCurrencey.ToString(), connection);
                     t.UserName = _sc.TblUser.Where(u => u.userCode == t.OrderHeaderUserId).FirstOrDefault().userName;
                     t.StatusName = GetStatusName(lastApproval.ApprovalIsApproved);
@@ -268,7 +269,7 @@ namespace MVCWebAppServierCon.Controllers
             return costLst;
         }
 
-        public IActionResult MyOrders()
+        public async Task<IActionResult> MyOrders()
         {
             var user = _sc.TblUser.Where(u => u.userName.Equals(User.Identity.Name)).FirstOrDefault();
             var orders = new List<OrderHeaderClass>();
@@ -286,9 +287,9 @@ namespace MVCWebAppServierCon.Controllers
 
 
                 t.OrderTypeName = _sc.TblOrderType.Where(u => u.orderTypeCode == t.OrderHeaderOrderTypeCode).FirstOrDefault().orderTypeName;
-                t.ProjectName = getData.getTblCodeName("TBLCost2", t.OrderHeaderProjectCode.ToString(), connection);
+                t.ProjectName = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ProjectTable).FirstOrDefaultAsync(), t.OrderHeaderProjectCode.ToString(), connection);
 
-                t.BudgetLine = getData.getTblCodeName("TBLCost8", t.OrderHeaderBudgetLineCode.ToString(), connection);
+                t.BudgetLine = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ActivitiyTable).FirstOrDefaultAsync(), t.OrderHeaderBudgetLineCode.ToString(), connection);
                 t.Currency = getData.getTblCodeName("TblCurrency", t.OrderHeaderCurrencey.ToString(), connection);
                 t.UserName = _sc.TblUser.Where(u => u.userCode == t.OrderHeaderUserId).FirstOrDefault().userName;
                 t.StatusName = GetStatusName(lastApproval.ApprovalIsApproved);
@@ -306,7 +307,7 @@ namespace MVCWebAppServierCon.Controllers
             return View(orders2);
         }
 
-        public IActionResult GetAllOrders()
+        public async Task<IActionResult> GetAllOrders()
         {
             var user = _sc.TblUser.Where(u => u.userName.Equals(User.Identity.Name)).FirstOrDefault();
             if (user.userTypeCode == 1 || user.userTypeCode == 2 || user.userTypeCode == 3 || user.userTypeCode == 4 || user.userTypeCode == 5)
@@ -317,7 +318,7 @@ namespace MVCWebAppServierCon.Controllers
                 ViewBag.DepartmentName = _sc.TblDepartment.Where(x => x.departmentGeneralManagerCode == user.userCode || x.departmentManagerCode == user.userCode || x.departmentFinancialCode == user.userCode || x.departmentProcurementSectionCode == user.userCode || x.departmentHeadCode == user.userCode).ToList();
                 ViewBag.OrderType = _sc.TblOrderType.ToList();
 
-                ViewBag.Project = getData.getTableData("TBLCost2", "", connection);
+                ViewBag.Project = getData.getTableData(await _sc.TblGeneralPreference.Select(gp => gp.ProjectTable).FirstOrDefaultAsync(), "", connection);
                 ViewBag.Employee = _sc.TblUser.OrderBy(x => x.userName).ToList();
                 // ViewBag.BudgetLine = getData.getTableData("TBLCost8", connection);
                 ViewBag.Supplier = getData.getTableData("VAccountSuppliers", "", connection);
@@ -342,7 +343,7 @@ namespace MVCWebAppServierCon.Controllers
         }
 
 
-        public IActionResult MyFollowUp()
+        public async Task<IActionResult> MyFollowUp()
         {
             var user = _sc.TblUser.Where(u => u.userName.Equals(User.Identity.Name)).FirstOrDefault();
             var orders = new List<OrderHeaderClass>();
@@ -359,9 +360,9 @@ namespace MVCWebAppServierCon.Controllers
 
                 var t = _sc.TblOrderHeader.Where(x => x.OrderHeaderCode == a.ApprovalHeaderCode).FirstOrDefault();
                 t.OrderTypeName = _sc.TblOrderType.Where(u => u.orderTypeCode == t.OrderHeaderOrderTypeCode).FirstOrDefault().orderTypeName;
-                t.ProjectName = getData.getTblCodeName("TBLCost2", t.OrderHeaderProjectCode.ToString(), connection);
+                t.ProjectName = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ProjectTable).FirstOrDefaultAsync(), t.OrderHeaderProjectCode.ToString(), connection);
 
-                t.BudgetLine = getData.getTblCodeName("TBLCost8", t.OrderHeaderBudgetLineCode.ToString(), connection);
+                t.BudgetLine = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ActivitiyTable).FirstOrDefaultAsync()", t.OrderHeaderBudgetLineCode.ToString(), connection);
                 t.Currency = getData.getTblCodeName("TblCurrency", t.OrderHeaderCurrencey.ToString(), connection);
                 t.UserName = _sc.TblUser.Where(u => u.userCode == t.OrderHeaderUserId).FirstOrDefault().userName;
                 t.StatusName = GetStatusName(a.ApprovalIsApproved);
@@ -378,7 +379,7 @@ namespace MVCWebAppServierCon.Controllers
         }
 
 
-        public IActionResult GetAllOrdersBydate(DateTime FromDate, DateTime ToDate, string Project, string BudgetLine, int Department, bool ShowStuckOrdersOnly, string Employee, string Supplier, bool ShowExecutedOnly, bool ShowUnderExecutedOnly, bool ShowRejectedOnly, double FromAmount, double ToAmount)
+        public async Task<IActionResult> GetAllOrdersBydate(DateTime FromDate, DateTime ToDate, string Project, string BudgetLine, int Department, bool ShowStuckOrdersOnly, string Employee, string Supplier, bool ShowExecutedOnly, bool ShowUnderExecutedOnly, bool ShowRejectedOnly, double FromAmount, double ToAmount)
         {
             if (FromDate.ToString() == "01/01/0001 12:00:00 AM")
             {
@@ -398,12 +399,12 @@ namespace MVCWebAppServierCon.Controllers
 
             if (Project != null && Project != "0")
             {
-                var ProjectCode = getData.getCodeByName("TBLCost2", Project.ToString(), connection);
+                var ProjectCode = getData.getCodeByName(await _sc.TblGeneralPreference.Select(gp => gp.ProjectTable).FirstOrDefaultAsync(), Project.ToString(), connection);
                 orders = orders.Where(o => o.OrderHeaderProjectCode == ProjectCode).ToList();
             }
             if (BudgetLine != null && BudgetLine != "0")
             {
-                var BudgetLineCode = getData.getCodeByName("TBLCost8", BudgetLine.ToString(), connection);
+                var BudgetLineCode = getData.getCodeByName(await _sc.TblGeneralPreference.Select(gp => gp.ActivitiyTable).FirstOrDefaultAsync(), BudgetLine.ToString(), connection);
                 orders = orders.Where(o => o.OrderHeaderBudgetLineCode == BudgetLineCode).ToList();
             }
             if (Department != 0) { orders = orders.Where(o => o.OrderHeaderdepartmentCode == Department).ToList(); }
@@ -432,9 +433,9 @@ namespace MVCWebAppServierCon.Controllers
 
 
                 t.OrderTypeName = _sc.TblOrderType.Where(u => u.orderTypeCode == t.OrderHeaderOrderTypeCode).FirstOrDefault().orderTypeName;
-                t.ProjectName = getData.getTblCodeName("TBLCost2", t.OrderHeaderProjectCode.ToString(), connection);
+                t.ProjectName = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ProjectTable).FirstOrDefaultAsync(), t.OrderHeaderProjectCode.ToString(), connection);
 
-                t.BudgetLine = getData.getTblCodeName("TBLCost8", t.OrderHeaderBudgetLineCode.ToString(), connection);
+                t.BudgetLine = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ActivitiyTable).FirstOrDefaultAsync(), t.OrderHeaderBudgetLineCode.ToString(), connection);
 
                 t.Currency = getData.getTblCodeName("TblCurrency", t.OrderHeaderCurrencey.ToString(), connection);
 
@@ -1061,15 +1062,15 @@ namespace MVCWebAppServierCon.Controllers
         }
 
         [HttpGet]
-        public ContentResult PrintOrder(int OrderId)
+        public async Task<ContentResult> PrintOrder(int OrderId)
         {
             var getData = new getAuditData();
             var order = _sc.TblOrderHeader.Where(x => x.OrderHeaderCode == OrderId).FirstOrDefault();
             var LstTrans = _sc.TblTransaction.Where(x => x.TransactionOrderHeaderCode == OrderId).ToList();
             var DepartmentName = _sc.TblDepartment.Where(x => x.departmentCode == order.OrderHeaderdepartmentCode).Select(x => x.departmentName).FirstOrDefault();
             var OrderTypeName = _sc.TblOrderType.Where(x => x.orderTypeCode == order.OrderHeaderOrderTypeCode).Select(x => x.orderTypeName).FirstOrDefault();
-            var ProjectName = getData.getTblCodeName("TBLCost2", order.OrderHeaderProjectCode.ToString(), connection);
-            var BudgetLine = getData.getTblCodeName("TBLCost8", order.OrderHeaderBudgetLineCode.ToString(), connection);
+            var ProjectName = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ProjectTable).FirstOrDefaultAsync(), order.OrderHeaderProjectCode.ToString(), connection);
+            var BudgetLine = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ActivitiyTable).FirstOrDefaultAsync(), order.OrderHeaderBudgetLineCode.ToString(), connection);
             var Currency = getData.getTblCodeName("TblCurrency", order.OrderHeaderCurrencey.ToString(), connection);
             var UserName = _sc.TblUser.Where(u => u.userCode == order.OrderHeaderUserId).FirstOrDefault().userName;
             var SupplierName = order.SupplierName;

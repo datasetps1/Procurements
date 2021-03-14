@@ -28,9 +28,20 @@ namespace MVCWebAppServierCon.Controllers
 
         public OrderViewController(SecondConnClass sc, IConfiguration config, IHostingEnvironment hostingEnviroment)
         {
+
             _sc = sc;
+            var GPref = _sc.TblGeneralPreference.FirstOrDefault();
             configuration = config;
+
             conString = configuration.GetConnectionString("Myconnection");
+            //if (GPref.ConnecWith == "audit")//connect with audit connections string
+            //{
+            //}
+            //else //connect with finpack connections string
+            //{
+
+            //}
+
             connection = new SqlConnection(conString);
             this.hostingEnviroment = hostingEnviroment;
         }
@@ -183,7 +194,7 @@ namespace MVCWebAppServierCon.Controllers
 
 
                     var getData = new getAuditData();
-                    BudgetLineCode = getData.getCodeByName("TblCost8", BudgetLineName, connection);
+                    BudgetLineCode = getData.getCodeByName(await _sc.TblGeneralPreference.Select(gp => gp.ActivitiyTable).FirstOrDefaultAsync(), BudgetLineName, connection);
                 }
                 SqlCommand command = new SqlCommand("SELECT Budget FROM TblBudgetCNTran  WHERE (FirstCost=2 and SecondCost=8 and  FirstCostCode= '" + ProjectCode + "' and SecondCostCode = '" + BudgetLineCode + "');", connection);
 
@@ -273,7 +284,7 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
             }
 
         }
-        public ActionResult Create()
+        public async Task<ActionResult> Create()
         {
 
             var user = _sc.TblUser.Where(u => u.userName.Equals(User.Identity.Name)).FirstOrDefault();
@@ -292,8 +303,8 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
             ViewBag.Rate = 1;
             ViewBag.OrderDate = DateTime.Today;
             ViewBag.Currency = getCurrency("TBLCurrency");
-            ViewBag.ProjectName = projLoad("TBLCost2");
-            ViewBag.BudgetLine = projLoad("TBLCost8");
+            ViewBag.ProjectName = projLoad(await _sc.TblGeneralPreference.Select(gp => gp.ProjectTable).FirstOrDefaultAsync());
+            ViewBag.BudgetLine = projLoad(await _sc.TblGeneralPreference.Select(gp => gp.ActivitiyTable).FirstOrDefaultAsync());
             ViewBag.DepartmentName = _sc.TblDepartment.ToList();
             ViewBag.OrderType = _sc.TblOrderType.ToList();
             ViewBag.ItemName = _sc.TblItem.ToList();
@@ -303,7 +314,7 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
         }
         //string[] headerlst,
         [HttpPost]
-        public JsonResult PostOrder(OrderHeaderClass headerlst, List<TransactionClass> transLst)
+        public async Task<JsonResult> PostOrder(OrderHeaderClass headerlst, List<TransactionClass> transLst)
         {
             // return new JsonResult(new { success = true });
             var getData = new getAuditData();
@@ -315,7 +326,7 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
                 ohc.OrderHeaderProjectCode = headerlst.OrderHeaderProjectCode;
                 ohc.OrderHeaderdate = headerlst.OrderHeaderdate;
                 ohc.OrderHeaderOrderTypeCode = headerlst.OrderHeaderOrderTypeCode;
-                ohc.OrderHeaderBudgetLineCode = getData.getCodeByName("TblCost8", headerlst.OrderHeaderBudgetLineCode, connection);
+                ohc.OrderHeaderBudgetLineCode = getData.getCodeByName(await _sc.TblGeneralPreference.Select(gp => gp.ActivitiyTable).FirstOrDefaultAsync(), headerlst.OrderHeaderBudgetLineCode, connection);
                 ohc.OrderHeaderCurrencey = headerlst.OrderHeaderCurrencey;
                 ohc.OrderHeaderRate = headerlst.OrderHeaderRate;
                 // ohc.OrderHeaderRealTotal = float.Parse(headerlst[7]);
@@ -421,14 +432,14 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
         }
 
         [HttpGet]
-        public IActionResult Edit(int id, bool IsPreview = false)
+        public async Task<IActionResult> Edit(int id, bool IsPreview = false)
         {/*make a view model to set all properites that come from Audit DB and ours and send them as one object to the veiw*/
             var model = new OrderViewModel();
             model.headerClass = _sc.TblOrderHeader.Where(h => h.OrderHeaderCode == id).FirstOrDefault();
             model.transClass = _sc.TblTransaction.Where(t => t.TransactionOrderHeaderCode == id).ToList();
-            model.projectName = projName("TBLCost2", model.headerClass.OrderHeaderProjectCode);
+            model.projectName = projName(await _sc.TblGeneralPreference.Select(gp => gp.ProjectTable).FirstOrDefaultAsync(), model.headerClass.OrderHeaderProjectCode);
             model.TotalInbasic = model.headerClass.OrderHeaderRate * model.headerClass.OrderHeaderRealTotal;
-            model.budgetName = projName("TBLCost8", model.headerClass.OrderHeaderBudgetLineCode);
+            model.budgetName = projName(await _sc.TblGeneralPreference.Select(gp => gp.ActivitiyTable).FirstOrDefaultAsync(), model.headerClass.OrderHeaderBudgetLineCode);
             model.departmentName = _sc.TblDepartment.Where(d => d.departmentCode == model.headerClass.OrderHeaderdepartmentCode).Select(d => d.departmentName).FirstOrDefault();
             model.orderType = _sc.TblOrderType.Where(o => o.orderTypeCode == model.headerClass.OrderHeaderOrderTypeCode).Select(o => o.orderTypeName).FirstOrDefault();
 
@@ -464,7 +475,7 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
 
             ViewBag.orderView = model;
             ViewBag.Currency = getCurrency("TBLCurrency");
-            ViewBag.ProjectName = projLoad("TBLCost2");
+            ViewBag.ProjectName = projLoad(await _sc.TblGeneralPreference.Select(gp => gp.ProjectTable).FirstOrDefaultAsync());
             // ViewBag.BudgetLine = projLoad("TBLCost8");
             List<CodeNameModel> lst = new List<CodeNameModel>();
             ViewBag.BudgetLine = getData.getTableData("VRelationalBudgetLineWithFunder", "  WHERE (FirstCostCenterCode = '" + model.headerClass.OrderHeaderProjectCode + "' ) ", connection);
@@ -493,8 +504,8 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
         [Authorize(Roles = "Admin, EnterProjAdmin")]
         public async Task<IActionResult> EditProjectBudget()
         {
-            List<CostsViewModel> ProjectNames = projLoad("TBLCost2");
-            List<CostsViewModel> BudgetLines = projLoad("TBLCost8");
+            List<CostsViewModel> ProjectNames = projLoad(await _sc.TblGeneralPreference.Select(gp => gp.ProjectTable).FirstOrDefaultAsync());
+            List<CostsViewModel> BudgetLines = projLoad(await _sc.TblGeneralPreference.Select(gp => gp.ActivitiyTable).FirstOrDefaultAsync());
             List<OrderHeaderClass> OrderHeaders = _sc.TblOrderHeader.ToList();
             ViewBag.OrderHeaders_full_list = OrderHeaders;
 
