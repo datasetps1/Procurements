@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -162,7 +163,7 @@ namespace MVCWebAppServierCon.Controllers
             return View(orders2);
         }
 
-
+        [Authorize(Roles = "Admin, EnterStuckOrders")]
         public async Task<IActionResult> StuckOrders()
         {
 
@@ -307,6 +308,7 @@ namespace MVCWebAppServierCon.Controllers
             return View(orders2);
         }
 
+        [Authorize(Roles = "Admin, EnterGetAllOrders")]
         public async Task<IActionResult> GetAllOrders()
         {
             var user = _sc.TblUser.Where(u => u.userName.Equals(User.Identity.Name)).FirstOrDefault();
@@ -362,7 +364,7 @@ namespace MVCWebAppServierCon.Controllers
                 t.OrderTypeName = _sc.TblOrderType.Where(u => u.orderTypeCode == t.OrderHeaderOrderTypeCode).FirstOrDefault().orderTypeName;
                 t.ProjectName = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ProjectTable).FirstOrDefaultAsync(), t.OrderHeaderProjectCode.ToString(), connection);
 
-                t.BudgetLine = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ActivitiyTable).FirstOrDefaultAsync()", t.OrderHeaderBudgetLineCode.ToString(), connection);
+                t.BudgetLine = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ActivitiyTable).FirstOrDefaultAsync(), t.OrderHeaderBudgetLineCode.ToString(), connection);
                 t.Currency = getData.getTblCodeName("TblCurrency", t.OrderHeaderCurrencey.ToString(), connection);
                 t.UserName = _sc.TblUser.Where(u => u.userCode == t.OrderHeaderUserId).FirstOrDefault().userName;
                 t.StatusName = GetStatusName(a.ApprovalIsApproved);
