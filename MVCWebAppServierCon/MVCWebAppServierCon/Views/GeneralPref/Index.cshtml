@@ -30,6 +30,12 @@
             <th>
                 @Html.DisplayNameFor(model => model.link_view_name)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Company_Logo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Company_Name)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -53,6 +59,12 @@
             </th>
             <th>
                 @Html.DisplayFor(modelItem => item.link_view_name)
+            </th>
+            <th>
+                @(item.Company_Logo != null ? "added" : "not added")
+            </th>
+            <th>
+                @Html.DisplayFor(model => item.Company_Name)
             </th>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.code">Edit</a>

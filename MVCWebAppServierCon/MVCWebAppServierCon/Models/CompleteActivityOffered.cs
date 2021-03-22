@@ -16,6 +16,6 @@ namespace MVCWebAppServierCon.Models
 
         [ForeignKey("CompleteActivity")]
         public int CompleteActivityId { get; set; }
-        public CompleteActivity CompleteActivity { get; set; }
+        //public CompleteActivity CompleteActivity { get; set; }
     }
 }

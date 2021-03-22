@@ -25,5 +25,8 @@ namespace MVCWebAppServierCon.Models
         [Required]
         public DateTime userCreationDate { get; set; }
         public String userNote { get; set; }
+
+        public bool Excutable { get; set; }
+
     }
 }

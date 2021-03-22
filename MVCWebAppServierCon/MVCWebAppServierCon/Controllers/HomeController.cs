@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using MVCWebAppServierCon.Helpers;
 using MVCWebAppServierCon.Models;
 using MVCWebAppServierCon.ViewModels;
 
@@ -28,6 +29,10 @@ namespace MVCWebAppServierCon.Controllers
         SqlConnection connection;
         //private readonly ConnnectionStringClass _sc;
 
+        private string rate_table = "";
+        private string currency_table = "";
+        private string accounts_table = "";
+        private string connect_with = "";
 
         public HomeController(SecondConnClass sc, IConfiguration config, IHostingEnvironment hostingEnviromen)
         {
@@ -36,6 +41,21 @@ namespace MVCWebAppServierCon.Controllers
             conString = configuration.GetConnectionString("Myconnection");
             connection = new SqlConnection(conString);
             this.hostingEnviroment = hostingEnviroment;
+
+            // specify the tables according to genereal preference (finpack or audit)
+            connect_with = _sc.TblGeneralPreference.Select(g => g.ConnecWith).FirstOrDefault();
+            if (connect_with == Constants.audit)
+            {
+                rate_table = Constants_Audit.Rate;
+                currency_table = Constants_Audit.TBLCurrency;
+                accounts_table = Constants_Audit.VAccountSuppliers;
+            }
+            else
+            {
+                rate_table = Constants_Finpack.rateTable;
+                currency_table = Constants_Finpack.Curr;
+                accounts_table = Constants_Finpack.accounts;
+            }
         }
         public async Task<IActionResult> Index()
         {/*first select the logged user then get its rank then by the rank get its amount sitting range to use the range the view his orders*/
@@ -109,7 +129,7 @@ namespace MVCWebAppServierCon.Controllers
                                 t.ProjectName = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ProjectTable).FirstOrDefaultAsync(), t.OrderHeaderProjectCode.ToString(), connection);
 
                                 t.BudgetLine = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ActivitiyTable).FirstOrDefaultAsync(), t.OrderHeaderBudgetLineCode.ToString(), connection);
-                                t.Currency = getData.getTblCodeName("TblCurrency", t.OrderHeaderCurrencey.ToString(), connection);
+                                //t.Currency = getData.getTblCodeName(currency_table, t.OrderHeaderCurrencey.ToString(), connection);
                                 t.UserName = _sc.TblUser.Where(u => u.userCode == t.OrderHeaderUserId).FirstOrDefault().userName;
                                 t.StatusName = GetStatusName(lastApproval.ApprovalIsApproved);
                                 t.StatusCode = lastApproval.ApprovalIsApproved;
@@ -193,7 +213,7 @@ namespace MVCWebAppServierCon.Controllers
                     t.ProjectName = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ProjectTable).FirstOrDefaultAsync(), t.OrderHeaderProjectCode.ToString(), connection);
 
                     t.BudgetLine = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ActivitiyTable).FirstOrDefaultAsync(), t.OrderHeaderBudgetLineCode.ToString(), connection);
-                    t.Currency = getData.getTblCodeName("TblCurrency", t.OrderHeaderCurrencey.ToString(), connection);
+                    t.Currency = getData.getTblCodeName(currency_table, t.OrderHeaderCurrencey.ToString(), connection);
                     t.UserName = _sc.TblUser.Where(u => u.userCode == t.OrderHeaderUserId).FirstOrDefault().userName;
                     t.StatusName = GetStatusName(lastApproval.ApprovalIsApproved);
                     t.StatusCode = lastApproval.ApprovalIsApproved;
@@ -203,15 +223,15 @@ namespace MVCWebAppServierCon.Controllers
                     t.NotesFromLastAction = lastApproval.ApprovalNote;
                     if (t.SupplierCode != null)
                     {
-                        t.PriceQuoteAmount = getData.GetPriceQouteAmountForSupplier(t.SupplierCode.ToString(), connection);
+                        //t.PriceQuoteAmount = getData.GetPriceQouteAmountForSupplier(t.SupplierCode.ToString(), connection);
 
-                        if (t.PriceQuoteAmount > 0)
-                        {
-                            if ((t.ActualTotalAmount * t.OrderHeaderRate) >= t.PriceQuoteAmount)
-                            {
-                                t.IsNeedPriceQuote = true;
-                            }
-                        }
+                        //if (t.PriceQuoteAmount > 0)
+                        //{
+                        //    if ((t.ActualTotalAmount * t.OrderHeaderRate) >= t.PriceQuoteAmount)
+                        //    {
+                        //        t.IsNeedPriceQuote = true;
+                        //    }
+                        //}
                     }
                     var dud = _sc.TblGeneralPreference.FirstOrDefault();
                     if ((t.ActualTotalAmount * t.OrderHeaderRate) >= dud.DeductionAmount)
@@ -238,36 +258,42 @@ namespace MVCWebAppServierCon.Controllers
             }
             return View();
         }
-        public List<LoginViewModel> CompanyDefinition()
-
-        {// use sql command to make new query to get data from cost table that needed in the order
-
-
-            connection.Open();
-
-            SqlCommand command = new SqlCommand("SELECT street2, LogoExt, LogoPath from CompanyDefinition where flag = 1;", connection);
-            var reader = command.ExecuteReader();
-            List<LoginViewModel> costLst = new List<LoginViewModel>();
-            reader.Read();
-
-            LoginViewModel costs = new LoginViewModel();
-            costs.Name = reader.GetValue(0).ToString();
-            costs.LogoExt = reader.GetValue(1).ToString();
-            costs.logosting = reader.GetValue(2).ToString();
-            costs.LogoPath = System.Text.Encoding.UTF8.GetBytes(reader.GetValue(2).ToString());
-            costs.LogoPath = (byte[])reader["LogoPath"];
-
-            //  ViewBag.Base64String = "data:image/png;base64," + Convert.ToBase64String(image.Data, 0, image.Data.Length);
-            ViewBag.Base64String = "data:image/jpg;base64," + Convert.ToBase64String(costs.LogoPath);
-            ViewBag.CompName = costs.Name;
-            costLst.Add(costs);
-
-
-            // do something with 'value'
-
-            connection.Close();
-            return costLst;
+        public void CompanyDefinition()
+        {
+            ViewBag.Base64String = _sc.TblGeneralPreference.Select(g => g.Company_Logo).FirstOrDefault();
+            ViewBag.CompName = _sc.TblGeneralPreference.Select(g => g.Company_Name).FirstOrDefault();
         }
+
+        //public List<LoginViewModel> CompanyDefinition()
+
+        //{// use sql command to make new query to get data from cost table that needed in the order
+
+
+        //    connection.Open();
+
+        //    SqlCommand command = new SqlCommand("SELECT street2, LogoExt, LogoPath from CompanyDefinition where flag = 1;", connection);
+        //    var reader = command.ExecuteReader();
+        //    List<LoginViewModel> costLst = new List<LoginViewModel>();
+        //    reader.Read();
+
+        //    LoginViewModel costs = new LoginViewModel();
+        //    costs.Name = reader.GetValue(0).ToString();
+        //    costs.LogoExt = reader.GetValue(1).ToString();
+        //    costs.logosting = reader.GetValue(2).ToString();
+        //    costs.LogoPath = System.Text.Encoding.UTF8.GetBytes(reader.GetValue(2).ToString());
+        //    costs.LogoPath = (byte[])reader["LogoPath"];
+
+        //    //  ViewBag.Base64String = "data:image/png;base64," + Convert.ToBase64String(image.Data, 0, image.Data.Length);
+        //    ViewBag.Base64String = "data:image/jpg;base64," + Convert.ToBase64String(costs.LogoPath);
+        //    ViewBag.CompName = costs.Name;
+        //    costLst.Add(costs);
+
+
+        //    // do something with 'value'
+
+        //    connection.Close();
+        //    return costLst;
+        //}
 
         public async Task<IActionResult> MyOrders()
         {
@@ -290,7 +316,7 @@ namespace MVCWebAppServierCon.Controllers
                 t.ProjectName = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ProjectTable).FirstOrDefaultAsync(), t.OrderHeaderProjectCode.ToString(), connection);
 
                 t.BudgetLine = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ActivitiyTable).FirstOrDefaultAsync(), t.OrderHeaderBudgetLineCode.ToString(), connection);
-                t.Currency = getData.getTblCodeName("TblCurrency", t.OrderHeaderCurrencey.ToString(), connection);
+                t.Currency = getData.getTblCodeName(currency_table, t.OrderHeaderCurrencey.ToString(), connection);
                 t.UserName = _sc.TblUser.Where(u => u.userCode == t.OrderHeaderUserId).FirstOrDefault().userName;
                 t.StatusName = GetStatusName(lastApproval.ApprovalIsApproved);
                 t.LastUserName = _sc.TblUser.Where(u => u.userCode == lastApproval.ApprovalUserId).FirstOrDefault().userName;
@@ -312,8 +338,6 @@ namespace MVCWebAppServierCon.Controllers
             var user = _sc.TblUser.Where(u => u.userName.Equals(User.Identity.Name)).FirstOrDefault();
             if (user.userTypeCode == 1 || user.userTypeCode == 2 || user.userTypeCode == 3 || user.userTypeCode == 4 || user.userTypeCode == 5)
             {
-
-
                 var getData = new getAuditData();
                 ViewBag.DepartmentName = _sc.TblDepartment.Where(x => x.departmentGeneralManagerCode == user.userCode || x.departmentManagerCode == user.userCode || x.departmentFinancialCode == user.userCode || x.departmentProcurementSectionCode == user.userCode || x.departmentHeadCode == user.userCode).ToList();
                 ViewBag.OrderType = _sc.TblOrderType.ToList();
@@ -321,7 +345,7 @@ namespace MVCWebAppServierCon.Controllers
                 ViewBag.Project = getData.getTableData(await _sc.TblGeneralPreference.Select(gp => gp.ProjectTable).FirstOrDefaultAsync(), "", connection);
                 ViewBag.Employee = _sc.TblUser.OrderBy(x => x.userName).ToList();
                 // ViewBag.BudgetLine = getData.getTableData("TBLCost8", connection);
-                ViewBag.Supplier = getData.getTableData("VAccountSuppliers", "", connection);
+                ViewBag.Supplier = getData.getTableData(accounts_table, "", connection);
                 ViewBag.UserDepartmentName = _sc.TblDepartment.Where(x => x.departmentCode == user.userDepartmentCode).Select(u => u.departmentName).FirstOrDefault();
                 ViewBag.UserDepartmentCode = user.userDepartmentCode;
                 //if(user.userTypeCode == 4 || user.userTypeCode == 5)
@@ -362,8 +386,8 @@ namespace MVCWebAppServierCon.Controllers
                 t.OrderTypeName = _sc.TblOrderType.Where(u => u.orderTypeCode == t.OrderHeaderOrderTypeCode).FirstOrDefault().orderTypeName;
                 t.ProjectName = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ProjectTable).FirstOrDefaultAsync(), t.OrderHeaderProjectCode.ToString(), connection);
 
-                t.BudgetLine = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ActivitiyTable).FirstOrDefaultAsync()", t.OrderHeaderBudgetLineCode.ToString(), connection);
-                t.Currency = getData.getTblCodeName("TblCurrency", t.OrderHeaderCurrencey.ToString(), connection);
+                t.BudgetLine = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ActivitiyTable).FirstOrDefaultAsync(), t.OrderHeaderBudgetLineCode.ToString(), connection);
+                t.Currency = getData.getTblCodeName(currency_table, t.OrderHeaderCurrencey.ToString(), connection);
                 t.UserName = _sc.TblUser.Where(u => u.userCode == t.OrderHeaderUserId).FirstOrDefault().userName;
                 t.StatusName = GetStatusName(a.ApprovalIsApproved);
 
@@ -417,7 +441,7 @@ namespace MVCWebAppServierCon.Controllers
             }
             if (Supplier != "" && Supplier != "0" && Supplier != null)
             {
-                var SupplierCode = getData.getCodeByName("VAccountSuppliers", Supplier.ToString(), connection);
+                var SupplierCode = getData.getCodeByName(accounts_table, Supplier.ToString(), connection);
                 orders = orders.Where(o => o.SupplierCode == SupplierCode).ToList();
 
             }
@@ -437,7 +461,7 @@ namespace MVCWebAppServierCon.Controllers
 
                 t.BudgetLine = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ActivitiyTable).FirstOrDefaultAsync(), t.OrderHeaderBudgetLineCode.ToString(), connection);
 
-                t.Currency = getData.getTblCodeName("TblCurrency", t.OrderHeaderCurrencey.ToString(), connection);
+                t.Currency = getData.getTblCodeName(currency_table, t.OrderHeaderCurrencey.ToString(), connection);
 
                 t.UserName = _sc.TblUser.Where(u => u.userCode == t.OrderHeaderUserId).FirstOrDefault().userName;
                 t.StatusName = GetStatusName(lastApproval.ApprovalIsApproved);
@@ -810,7 +834,7 @@ namespace MVCWebAppServierCon.Controllers
 
             // get  today Rate of CurrencyPriceQoute form Audit 
             var AuditData = new getAuditData();
-            float Rate = AuditData.GetRate(CurrncyCode, connection);
+            float Rate = AuditData.GetRate(CurrncyCode, connection, connect_with);
 
             if (Rate != 0)
             {
@@ -1007,7 +1031,7 @@ namespace MVCWebAppServierCon.Controllers
         {
             var getData = new getAuditData();
             List<CodeNameModel> lst = new List<CodeNameModel>();
-            lst = getData.getTableData("VAccountSuppliers", "", connection);
+            lst = getData.getTableData(accounts_table, "", connection);
             ViewBag.lstsuppliers = lst;
 
             return PartialView();
@@ -1017,7 +1041,7 @@ namespace MVCWebAppServierCon.Controllers
         {
 
             List<UserClass> lst = new List<UserClass>();
-            lst = _sc.TblUser.Where(u => u.userTypeCode == 6).ToList();
+            lst = _sc.TblUser.Where(u => u.userTypeCode == 6 || u.Excutable == true).ToList();
 
             ViewBag.lstEmps = lst;
 
@@ -1071,7 +1095,7 @@ namespace MVCWebAppServierCon.Controllers
             var OrderTypeName = _sc.TblOrderType.Where(x => x.orderTypeCode == order.OrderHeaderOrderTypeCode).Select(x => x.orderTypeName).FirstOrDefault();
             var ProjectName = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ProjectTable).FirstOrDefaultAsync(), order.OrderHeaderProjectCode.ToString(), connection);
             var BudgetLine = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ActivitiyTable).FirstOrDefaultAsync(), order.OrderHeaderBudgetLineCode.ToString(), connection);
-            var Currency = getData.getTblCodeName("TblCurrency", order.OrderHeaderCurrencey.ToString(), connection);
+            var Currency = getData.getTblCodeName(currency_table, order.OrderHeaderCurrencey.ToString(), connection);
             var UserName = _sc.TblUser.Where(u => u.userCode == order.OrderHeaderUserId).FirstOrDefault().userName;
             var SupplierName = order.SupplierName;
             order.TotalInbasic = order.ActualTotalAmount * order.OrderHeaderRate;

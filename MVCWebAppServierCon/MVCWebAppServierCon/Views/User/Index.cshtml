@@ -19,11 +19,11 @@
                 @Html.DisplayNameFor(model => model.userEmail)
             </th>
             @*<th>
-                @Html.DisplayNameFor(model => model.userPassword)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.userConfirmPassword)
-            </th>*@
+            @Html.DisplayNameFor(model => model.userPassword)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.userConfirmPassword)
+        </th>*@
             <th>
                 @Html.DisplayNameFor(model => model.userTypeCode)
             </th>
@@ -31,14 +31,14 @@
                 @Html.DisplayNameFor(model => model.userDepartmentCode)
             </th>
             @*<th>
-                @Html.DisplayNameFor(model => model.managmentAccesstanceCode)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.sectionManagerCode)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.finacnceDepartmentCode)
-            </th>*@
+            @Html.DisplayNameFor(model => model.managmentAccesstanceCode)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.sectionManagerCode)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.finacnceDepartmentCode)
+        </th>*@
             <th>
                 @Html.DisplayNameFor(model => model.userActive)
             </th>
@@ -50,6 +50,9 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.userNote)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Excutable)
             </th>
             <th></th>
         </tr>
@@ -64,11 +67,11 @@
                 @Html.DisplayFor(modelItem => item.userEmail)
             </td>
             @*<td>
-                @Html.DisplayFor(modelItem => item.userPassword)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.userConfirmPassword)
-            </td>*@
+            @Html.DisplayFor(modelItem => item.userPassword)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.userConfirmPassword)
+        </td>*@
             <td>
                 @Html.DisplayFor(modelItem => item.userTypeCode)
             </td>
@@ -76,14 +79,14 @@
                 @Html.DisplayFor(modelItem => item.userDepartmentCode)
             </td>
             @*<td>
-                @Html.DisplayFor(modelItem => item.managmentAccesstanceCode)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.sectionManagerCode)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.finacnceDepartmentCode)
-            </td>*@
+            @Html.DisplayFor(modelItem => item.managmentAccesstanceCode)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.sectionManagerCode)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.finacnceDepartmentCode)
+        </td>*@
             <td>
                 @Html.DisplayFor(modelItem => item.userActive)
             </td>
@@ -97,9 +100,12 @@
                 @Html.DisplayFor(modelItem => item.userNote)
             </td>
             <td>
+                @Html.DisplayFor(modelItem => item.Excutable)
+            </td>
+            <td>
                 <a asp-action="Edit" asp-route-id="@item.userCode">Edit</a> |
                 @*<a asp-action="Details" asp-route-id="@item.userCode">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.userCode">Delete</a>*@
+            <a asp-action="Delete" asp-route-id="@item.userCode">Delete</a>*@
             </td>
         </tr>
 }

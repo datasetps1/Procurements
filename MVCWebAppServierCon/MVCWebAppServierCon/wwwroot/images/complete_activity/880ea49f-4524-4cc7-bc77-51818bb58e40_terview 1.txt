@@ -1,0 +1,15 @@
+sql , join , and so on , create procedure
+no sql , cassindra
+cyclic linked list : linked list types
+linux commands , top , touch , chmop , mkdir , ls
+
+why c is faster than java_
+
+_________________
+data structures questions
+-----
+what is the difference between arra and linked list
+how to add new element to array at run time
+what are the ypes of linkedlist and differnce between them
+differnece between ciclic and circular linked list
+------------- 

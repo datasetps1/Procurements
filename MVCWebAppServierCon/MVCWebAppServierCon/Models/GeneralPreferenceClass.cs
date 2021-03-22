@@ -1,14 +1,15 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace MVCWebAppServierCon.Models
 {
     public class GeneralPreferenceClass
-    {
-
+    { 
         [Key]
         public int code { get; set; }
         [Required]
@@ -25,5 +26,16 @@ namespace MVCWebAppServierCon.Models
 
         [Display(Name = "link view name")]
         public string link_view_name { get; set; }
+
+
+        [Display(Name = "Company Name")]
+        public string Company_Name { get; set; }
+
+
+        [Display(Name = "Company Logo")]
+        public string Company_Logo { get; set; }
+
+        [NotMapped]
+        public List<IFormFile> Logo_Files { get; set; }
     }
 }

@@ -13,6 +13,7 @@ using System.IO;
 using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using MVCWebAppServierCon.Helpers;
 
 namespace MVCWebAppServierCon.Controllers
 {
@@ -26,6 +27,11 @@ namespace MVCWebAppServierCon.Controllers
         SqlConnection connection;
         //private readonly ConnnectionStringClass _sc;
 
+        private string rate_table = "";
+        private string currency_table = "";
+        private string accounts_table = "";
+        private string connect_with = "";
+
         public OrderViewController(SecondConnClass sc, IConfiguration config, IHostingEnvironment hostingEnviroment)
         {
 
@@ -34,16 +40,24 @@ namespace MVCWebAppServierCon.Controllers
             configuration = config;
 
             conString = configuration.GetConnectionString("Myconnection");
-            //if (GPref.ConnecWith == "audit")//connect with audit connections string
-            //{
-            //}
-            //else //connect with finpack connections string
-            //{
-
-            //}
 
             connection = new SqlConnection(conString);
             this.hostingEnviroment = hostingEnviroment;
+
+            // specify the tables according to genereal preference (finpack or audit)
+            connect_with = _sc.TblGeneralPreference.Select(g => g.ConnecWith).FirstOrDefault();
+            if (connect_with == Constants.audit)
+            {
+                rate_table = Constants_Audit.Rate;
+                currency_table = Constants_Audit.TBLCurrency;
+                accounts_table = Constants_Audit.VAccountSuppliers;
+            }
+            else
+            {
+                rate_table = Constants_Finpack.rateTable;
+                currency_table = Constants_Finpack.Curr;
+                accounts_table = Constants_Finpack.accounts;
+            }
         }
 
         public IActionResult Index()
@@ -73,7 +87,17 @@ namespace MVCWebAppServierCon.Controllers
         {// use sql command to make new query to get data from cost table that needed in the order
             connection.Open();
 
-            SqlCommand command = new SqlCommand("SELECT Code,Name,isnull(Budget,0) as Budget  FROM " + tblName + " Where freeze=0;", connection);
+            SqlCommand command = new SqlCommand();
+            if (connect_with == Constants.audit)
+            {
+                command = new SqlCommand("SELECT Code,Name,isnull(Budget,0) as Budget  FROM " + tblName + " Where freeze=0;", connection);
+            }
+            else if (connect_with == Constants.finpack)
+            {
+                command = new SqlCommand("SELECT Code,Name  FROM " + tblName + " Where Status=1;", connection);
+            }
+
+
             var reader = command.ExecuteReader();
             List<CostsViewModel> costLst = new List<CostsViewModel>();
             while (reader.Read())
@@ -81,7 +105,7 @@ namespace MVCWebAppServierCon.Controllers
                 CostsViewModel costs = new CostsViewModel();
                 costs.costCode = reader.GetValue(0).ToString();
                 costs.costName = reader.GetValue(1).ToString();
-                costs.costBudget = float.Parse(reader.GetValue(2).ToString());
+                //costs.costBudget = float.Parse(reader.GetValue(2).ToString());
                 costLst.Add(costs);
 
                 // do something with 'value'
@@ -154,7 +178,17 @@ namespace MVCWebAppServierCon.Controllers
         {
             connection.Open();
             var date = DateTime.Now.ToString("yyyy-MM-dd");  //'2020-02-24'
-            SqlCommand command = new SqlCommand("SELECT Rate FROM Rate WHERE (Code = '" + rateId + "' and RateDate = '" + date + "');", connection); // + "' and RateDate = '" + DateTime.Today.Date.ToString("yyyy-MM-dd")
+
+            SqlCommand command = new SqlCommand();
+            if (connect_with == Constants.audit)
+            {
+                command = new SqlCommand("SELECT Rate FROM " + rate_table + " WHERE (Code = '" + rateId + "' and RateDate = '" + date + "');", connection); // + "' and RateDate = '" + DateTime.Today.Date.ToString("yyyy-MM-dd")            }
+            }
+            else if (connect_with == Constants.finpack)
+            {
+                command = new SqlCommand("SELECT Rate FROM " + rate_table + " WHERE (Code = '" + rateId + "' and RDate = '" + date + "');", connection); // + "' and RateDate = '" + DateTime.Today.Date.ToString("yyyy-MM-dd")            }
+            }
+
             var reader = command.ExecuteReader();
             float rate = 0;
             while (reader.Read())
@@ -164,13 +198,15 @@ namespace MVCWebAppServierCon.Controllers
             connection.Close();
             return Json(new { data = rate });
         }
-        public ActionResult getBudget(string ProjectCode, string BudgetLineName, bool byName)
+
+
+        public async Task<ActionResult> getBudget(string ProjectCode, string BudgetLineName, bool byName)
         {
             string Budget = "";
 
             try
             {
-                Budget = calculateBuddget(ProjectCode, BudgetLineName, byName);
+                Budget = await calculateBuddget(ProjectCode, BudgetLineName, byName);
                 return Json(new { data = Budget });
 
             }
@@ -181,7 +217,7 @@ namespace MVCWebAppServierCon.Controllers
             }
 
         }
-        private string calculateBuddget(string ProjectCode, string BudgetLineName, bool byName)
+        private async Task<string> calculateBuddget(string ProjectCode, string BudgetLineName, bool byName)
         {
             string Budget = "";
             string BudgetLineCode = BudgetLineName;
@@ -302,7 +338,7 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
             }
             ViewBag.Rate = 1;
             ViewBag.OrderDate = DateTime.Today;
-            ViewBag.Currency = getCurrency("TBLCurrency");
+            ViewBag.Currency = getCurrency(currency_table);
             ViewBag.ProjectName = projLoad(await _sc.TblGeneralPreference.Select(gp => gp.ProjectTable).FirstOrDefaultAsync());
             ViewBag.BudgetLine = projLoad(await _sc.TblGeneralPreference.Select(gp => gp.ActivitiyTable).FirstOrDefaultAsync());
             ViewBag.DepartmentName = _sc.TblDepartment.ToList();
@@ -444,7 +480,7 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
             model.orderType = _sc.TblOrderType.Where(o => o.orderTypeCode == model.headerClass.OrderHeaderOrderTypeCode).Select(o => o.orderTypeName).FirstOrDefault();
 
             var getData = new getAuditData();
-            model.headerClass.Currency = getData.getTblCodeName("TblCurrency", model.headerClass.OrderHeaderCurrencey.ToString(), connection);
+            model.headerClass.Currency = getData.getTblCodeName(currency_table, model.headerClass.OrderHeaderCurrencey.ToString(), connection);
             List<TransactionViewModel> transactions = new List<TransactionViewModel>();
 
             foreach (TransactionClass tc in model.transClass)
@@ -474,7 +510,7 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
             }
 
             ViewBag.orderView = model;
-            ViewBag.Currency = getCurrency("TBLCurrency");
+            ViewBag.Currency = getCurrency(currency_table);
             ViewBag.ProjectName = projLoad(await _sc.TblGeneralPreference.Select(gp => gp.ProjectTable).FirstOrDefaultAsync());
             // ViewBag.BudgetLine = projLoad("TBLCost8");
             List<CodeNameModel> lst = new List<CodeNameModel>();

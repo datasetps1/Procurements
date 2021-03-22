@@ -9,6 +9,7 @@ using MVCWebAppServierCon.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
 using System.Data;
+using MVCWebAppServierCon.Helpers;
 
 namespace MVCWebAppServierCon.Controllers
 {
@@ -18,13 +19,21 @@ namespace MVCWebAppServierCon.Controllers
 
 
 
-        public List<CostsViewModel> projLoad(string tblName, SqlConnection connection)
+        public List<CostsViewModel> projLoad(string tblName, SqlConnection connection, string connect_with)
         {// use sql command to make new query to get data from cost table that needed in the order
 
 
             connection.Open();
+            SqlCommand command = new SqlCommand();
+            if (connect_with == Constants.audit)
+            {
+                command = new SqlCommand("SELECT Code,Name FROM " + tblName + " Where freeze=0;", connection);
+            }
+            else if (connect_with == Constants.finpack)
+            {
+                command = new SqlCommand("SELECT Code,Name FROM " + tblName + " Where Status=1;", connection);
+            }
 
-            SqlCommand command = new SqlCommand("SELECT Code,Name,Budget FROM " + tblName + " Where freeze=0;", connection);
             var reader = command.ExecuteReader();
             List<CostsViewModel> costLst = new List<CostsViewModel>();
             while (reader.Read())
@@ -32,7 +41,7 @@ namespace MVCWebAppServierCon.Controllers
                 CostsViewModel costs = new CostsViewModel();
                 costs.costCode = reader.GetValue(0).ToString();
                 costs.costName = reader.GetValue(1).ToString();
-                costs.costBudget = float.Parse(reader.GetValue(2).ToString());
+                costs.costBudget = -1; //float.Parse(reader.GetValue(2).ToString());
                 costLst.Add(costs);
 
                 // do something with 'value'
@@ -57,12 +66,12 @@ namespace MVCWebAppServierCon.Controllers
             connection.Close();
             return name;
         }
-        public int GetPriceQouteAmountForSupplier( string Suppliercode, SqlConnection connection)
+        public int GetPriceQouteAmountForSupplier(string Suppliercode, SqlConnection connection)
         {// use sql command to make new query to get data from cost table that needed in the order
             connection.Open();
             SqlCommand command = new SqlCommand("SELECT CreditLimit FROM Extra " + " Where Code= '" + Suppliercode + "';", connection);
             var reader = command.ExecuteReader();
-            int PriceQouteAmount =0;
+            int PriceQouteAmount = 0;
             while (reader.Read())
             {
                 PriceQouteAmount = (int)reader.GetValue(0);
@@ -100,9 +109,7 @@ namespace MVCWebAppServierCon.Controllers
             {
                 connection.Open();
             }
-          
-          
-        
+
             SqlCommand command = new SqlCommand("SELECT code FROM " + tblName + " Where name= @Name", connection);
             command.Parameters.AddWithValue("@Name", name);
             var reader = command.ExecuteReader();
@@ -118,12 +125,24 @@ namespace MVCWebAppServierCon.Controllers
         }
 
 
-        public float GetRate(string CurrencyCode, SqlConnection connection)
+        public float GetRate(string CurrencyCode, SqlConnection connection, string connect_with)
         {
-
             connection.Open();
             var date = DateTime.Now.ToString("yyyy-MM-dd");  //'2020-02-24'
-            SqlCommand command = new SqlCommand("SELECT Rate FROM Rate WHERE (Code = '" + CurrencyCode + "' and RateDate = '" + date + "');", connection); // + "' and RateDate = '" + DateTime.Today.Date.ToString("yyyy-MM-dd")
+
+            //decide finpack or audit
+
+            SqlCommand command = new SqlCommand();
+            if (connect_with == Constants.audit)
+            {
+                command = new SqlCommand("SELECT Rate FROM Rate WHERE (Code = '" + CurrencyCode + "' and RateDate = '" + date + "');", connection); // + "' and RateDate = '" + DateTime.Today.Date.ToString("yyyy-MM-dd")
+            }
+            else if (connect_with == Constants.finpack)
+            {
+                command = new SqlCommand("SELECT Rate FROM " + Constants_Finpack.rateTable + " WHERE (Code = '" + CurrencyCode + "' and RDate = '" + date + "');", connection); // + "' and RateDate = '" + DateTime.Today.Date.ToString("yyyy-MM-dd")
+            }
+
+
             var reader = command.ExecuteReader();
             float rate = 0;
             while (reader.Read())

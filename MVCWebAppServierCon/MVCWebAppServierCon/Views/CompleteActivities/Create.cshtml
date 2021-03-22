@@ -4,10 +4,22 @@
     ViewData["Title"] = "Create";
 }
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.min.js"></script>
+
+<script src="https://cdn.rawgit.com/simonbengtsson/jsPDF/requirejs-fix-dist/dist/jspdf.debug.js"></script>
+<script src="https://unpkg.com/jspdf-autotable@2.3.2"></script>
+
+@*<link rel="stylesheet"  href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />*@
+<script src="https://raw.githack.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
+
 <h5>Complete Activity</h5>
 <hr />
 <div class="form_container row">
-    <form id="form" asp-action="Create" class="form_style col-md-6 col-lg-6 col-sm-8 col-12">
+    <form asp-action="Create" class="form_style col-md-6 col-lg-6 col-sm-8 col-12">
         <div class="row" style="margin:0; margin-bottom:16px;">
             <div class="btn btn-info" style="width: 100%;" data-toggle="modal" data-target="#attachmentsModal">
                 Attachments
@@ -19,6 +31,24 @@
             </div>
         </div>
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <!--_________________________________________________Suppliers dropdown ___________________________________________________-->
+
+        <div id="Supplier_dropdown" style="position:relative;">
+            <div class="My_drop_down_title ddc" style="padding-top: 0;">Supplier</div>
+            <div class="input_container" style="margin-bottom: 25px;">
+                <input type="hidden" id="selected_Supplier" />
+                <input id="My_drop_down_input-Supplier" type="text" class="My_drop_down_input ddc" placeholder="Search here ..." style="border-radius: 6px;margin-left: 0%;width: 100%;" />
+                <i class="fas fa-chevron-circle-down input_icon"></i>
+            </div>
+            <div id="My_drop_down_container-Supplier" class="My_drop_down_container ddc" style="top: -16px; padding: 120px 10px 10px 10px;">
+                <div id="My_drop_down_list_result_Supplier" class="My_drop_down_list_result ddc">
+
+                </div>
+            </div>
+
+        </div>
+
         <input asp-for="SupplierId" type="hidden" value="@ViewBag.OrderHeader.SupplierCode" />
         <div class="form-group">
             <label class="control-label">Supplier Name</label>
@@ -62,11 +92,11 @@
             <input id="CoordinatorName_input" asp-for="CoordinatorName" class="form-control" placeholder="Type Coordinator Name here ..." />
             <span asp-validation-for="CoordinatorName" class="text-danger"></span>
         </div>
-        <div class="form-group">
-            <label asp-for="ProjectName" class="control-label"></label>
-            <input id="ProjectName_input" asp-for="ProjectName" class="form-control" placeholder="Type Project Name here ..." />
-            <span asp-validation-for="ProjectName" class="text-danger"></span>
-        </div>
+        @*<div class="form-group">
+                <label asp-for="ProjectName" class="control-label"></label>
+                <input id="ProjectName_input" asp-for="ProjectName" class="form-control" placeholder="Type Project Name here ..." />
+                <span asp-validation-for="ProjectName" class="text-danger"></span>
+            </div>*@
         <div class="form-group">
             <label asp-for="Date" class="control-label"></label>
             <input id="Date_input" asp-for="Date" class="form-control" />
@@ -146,17 +176,92 @@
     </div>
 </div>
 
+
+<!-- success Modal -->
+<div class="modal fade" id="successModal" role="dialog">
+    <div class="modal-dialog  modal-dialog-centered modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Success</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div>Do you want to print acopy of close activiy !</div>
+
+            </div>
+            <div class="modal-footer">
+                <button onclick="print_and_redirect()" type="button" class="btn btn-outline-info" style="width:100%;" data-dismiss="modal">print</button>
+                <button onclick="redirect()" type="button" class="btn btn-info" style="width:100%;" data-dismiss="modal">don't print</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div style="display:none;">
+    <div id="complete-activity-print-element" style="width:600px;margin-top:50px; width:100%; width:100%;font-family: system-ui;">
+        <div style="text-align: center;">
+            <div style="font-size: 22px;font-weight: 600;" id="company_name_report">
+                المركز الفلسطيني لإلرشاد
+            </div>
+            <div style="font-size: 22px;font-weight: 600;    margin-top: 10px;">
+                نموذج مصادقة عن اتمام نشاط/فعالية,خدمة
+            </div>
+        </div>
+        <div style=" direction: rtl;  text-align: right; padding: 25px 83px;">
+            <div style="margin-top: 30px; font-size:16px;"><span style="font-weight:600;">أسم المورد أو المنفذ </span><span id="SupplierName_report"></span></div>
+            <div style="margin-top: 30px; font-size:16px;"><span style="font-weight:600;">وصف النشاط </span> <span id="Description"></span></div>
+            <div style="margin-top: 30px; font-size:16px;"><span style="font-weight:600;">رقم الطلبية الخاصة بالنشاط </span> <span id="OrderCode"></span> <span style="font-weight:600;">رقم الدفتر </span> <span id="BookNumber_report"></span> </div>
+            <div style="margin-top: 30px; font-size:16px;"><span style="font-weight:600;">مكان انعقاد النشاط </span> <span id="ActivityVenue"></span></div>
+            <div style="margin-top: 30px; font-size:16px;"><span style="font-weight:600;">تاريخ النشاط أو فعالية </span> <span id="ActivityDate"></span></div>
+            <div style="margin-top: 30px; font-size:16px;"><span style="font-weight:600;">لقذ قدم أو اًنجز المورد المذكور اعلاه المهمة التالية  </span> <span id="DoneTasks"></span> </div>
+
+            <div style="margin-top: 30px; font-size:16px; margin-bottom: 15px; font-weight:600;">ووفر  لنا</div>
+            <div style="border:1px solid; padding: 10px; font-size:16px;background-color: #eeeeee; border-radius: 4px 4px 0 0;">الوصف</div>
+            <div id="offered_list_report">
+
+            </div>
+
+
+
+            <div style="margin-top: 45px; font-size:16px;font-weight:600;"><span>أسم المنسق أو المركز المسؤول عن النشاط أو فعالية </span> <span id="CoordinatorName"></span></div>
+            @*<div style="margin-top: 15px; font-size:16px;"><span>أسم البرنامج / المشروع:</span> <span id="CoordinatorName"></span></div>*@
+
+            <div style="margin-top: 45px; font-size:16px; display:flex;justify-content:space-between;">
+                <div>
+                    <span style="font-weight:600;">تاريخ </span> <span id="Date"></span>
+                </div>
+                <div>
+                    <span style="font-weight:600;">توقيع </span> _______
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
 @section scripts{
+
+
     <script>
+
         var attachment_input = document.getElementById("attachment_input");
         var attachment_error_element = document.getElementById("attachment_error_element");
         var files_list_element = document.getElementById("files_list_element");
         var files_list = [];
+        var deleted_files_list = [];
+
+
+        var redirect_url = "";
+        var complete_activity_obj = null;
+        var offered_list_report = [];
+
+        var company_name = @Json.Serialize(ViewBag.CompName)
 
         var offered_input = document.getElementById("offered_input");
         var offered_error_element = document.getElementById("offered_error_element");
         var Offered_list_element = document.getElementById("Offered_list_element");
         var offered_list = [];
+        var deleted_offered_list = [];
 
         var fileName;
 
@@ -168,6 +273,66 @@
             });
         });
 
+        const refill_files = () => {
+            files_list_element.innerHTML = "<h6>files list : </h6>";
+
+            files_list.forEach((current, index) => {
+                var file_path;
+                var file_name;
+                if (current.id != null) {
+                    file_path = current.file_path;
+                    file_name = file_path.split('_')[1];
+
+                    files_list_element.innerHTML += `
+                            <div class="list_item" style="display: flex;justify-content: space-between;">
+                                <div>${file_name}</div>
+                                <div>
+                                    <a style="text-decoration:none;" href="${'http://localhost:2657/images/complete_activity/' + file_path}" download>
+                                        <i class="fas fa-file-download" style="font-size: 20px;color: #17a2b8;" title="تنزيل"></i>
+                                    </a>
+                                    <i onclick="delete_file(${index})" class="fas fa-trash-alt" style="color:red;font-size: 20px; cursor:pointer; margin:0 5px;" title="حذف"></i>
+                                </div>
+                            </div>
+                        `;
+                } else{
+                    file_name = current.fileName;
+
+
+                    files_list_element.innerHTML += `
+                            <div class="list_item" style="display: flex;justify-content: space-between;">
+                                <div>${file_name}</div>
+                                <div>
+                                    <i onclick="delete_file(${index})" class="fas fa-trash-alt" style="color:red;font-size: 20px; cursor:pointer; margin:0 5px;" title="حذف"></i>
+                                </div>
+                            </div>
+                        `;
+                }
+
+
+            });
+        }
+
+        const delete_file = (i) => {
+            files_list = files_list.filter((current, index) => {
+                if (index == i) {
+                    if (current.id != null) {
+                        deleted_files_list.push(/*{
+                            Id: */current.id@*,
+                            File_path: current.file_path,
+                            CompleteActivityId:@Model.Id
+                        })*@)
+                    }
+                } else {
+                    return current;
+                }
+            });
+
+            console.log(files_list);
+            console.log(deleted_files_list);
+            ////refill_files
+            refill_files();
+        }
+
         document.getElementById("add_file_btn").addEventListener("click", function () {
             if (attachment_input.files.length == 0) {
                 attachment_error_element.innerHTML = "you have to select file !";
@@ -177,13 +342,21 @@
 
                 //add file to list
                 files_list.push({
-                    File_path: attachment_input.files[0]
+                    File_path: attachment_input.files[0],
+                    fileName: fileName
                 });
                 console.log(files_list)
                 //update html file list
 
+                var current_index = files_list.length - 1;
+
                 files_list_element.innerHTML += `
-                            <div class="list_item">${fileName}</div>
+                            <div class="list_item" style="display: flex;justify-content: space-between;">
+                                <div>${fileName}</div>
+                                <div>
+                                    <i onclick="delete_file(${current_index})" class="fas fa-trash-alt" style="color:red;font-size: 20px; cursor:pointer; margin:0 5px;" title="حذف"></i>
+                                </div>
+                            </div>
                         `;
 
                 //set file to null
@@ -191,6 +364,39 @@
                 document.getElementById("attachment_input_label").innerHTML = "choose a file ...";
             }
         });
+
+        const refill_offers = () => {
+            Offered_list_element.innerHTML = "<h6>Offered list : </h6>";
+
+            offered_list.forEach((current, index) => {
+                Offered_list_element.innerHTML += `
+                            <div class="list_item" style="display: flex;justify-content: space-between; align-items:center;">
+                                <div>${current.offered_to_us}</div>
+                                <div>
+                                    <i onclick="delete_offer(${index})" class="fas fa-trash-alt" style="color:red;font-size: 20px; cursor:pointer; margin:0 5px;" title="حذف"></i>
+                                </div>
+                            </div>
+                        `;
+            })
+        }
+
+        const delete_offer = (i) => {
+            //offered_list.splice(index, 1);
+            offered_list = offered_list.filter((current, index) => {
+                if (index == i) {
+                    if (offered_list[i].id != null) {
+                        deleted_offered_list.push(current);
+                    }
+                } else {
+                    return offered_list[i];
+                }
+            });
+
+            console.log(offered_list);
+            console.log(deleted_offered_list);
+            //refill_offers
+            refill_offers();
+        }
 
         document.getElementById("add_Offered_btn").addEventListener("click", function () {
             if (offered_input.value.length == 0) {
@@ -201,13 +407,19 @@
 
                 //add value to list
                 offered_list.push({
-                    Offered_to_us: offered_input.value
+                    offered_to_us: offered_input.value
                 });
                 console.log(offered_list)
                 //update html file list
+                var current_index = offered_list.length - 1;
 
                 Offered_list_element.innerHTML += `
-                            <div class="list_item">${offered_input.value}</div>
+                            <div class="list_item" style="display: flex;justify-content: space-between; align-items:center;">
+                                <div>${offered_input.value}</div>
+                                <div>
+                                    <i onclick="delete_offer(${current_index})" class="fas fa-trash-alt" style="color:red;font-size: 20px; cursor:pointer; margin:0 5px;" title="حذف"></i>
+                                </div>
+                            </div>
                         `;
 
                 //set input to empty state
@@ -216,11 +428,43 @@
             }
         });
 
+        const redirect = () => {
+            window.location.href = redirect_url;
+        }
 
-         async function submit() {
+        const print_and_redirect = () => {
+            debugger
+            console.log(complete_activity_obj)
+            console.log(document.getElementById('BookNumber_report'))
+            console.log(document.getElementById('ActivityVenue'))
+            //fill the report
+            document.getElementById('company_name_report').innerHTML = company_name;
+            document.getElementById('SupplierName_report').innerHTML = ": " + selected_Supplier_name;
+            document.getElementById('Description').innerHTML = ": "+ complete_activity_obj.Description;
+            document.getElementById('OrderCode').innerHTML = ": "+ complete_activity_obj.OrderCode;
+            document.getElementById('BookNumber_report').innerHTML = ": "+ complete_activity_obj.BookNumber;
+            document.getElementById('ActivityVenue').innerHTML = ": "+ complete_activity_obj.ActivityVenue;
+            document.getElementById('ActivityDate').innerHTML = ": " + display_date_object(complete_activity_obj.ActivityDate, 2);
+            document.getElementById('DoneTasks').innerHTML = ": "+ complete_activity_obj.DoneTasks;
+            document.getElementById('Date').innerHTML = ": " + display_date_object(complete_activity_obj.Date , 2);
+
+
+            offered_list_report.map(current => {
+                document.getElementById('offered_list_report').innerHTML += `
+                        <div style="border:1px solid; padding: 10px; font-size:16px;border-top: 0;">${current.offered_to_us}</div>
+                `;
+            })
+
+            var div = document.getElementById("complete-activity-print-element");
+            html2pdf().from(div).save();
+
+            window.location.href = redirect_url;
+        }
+
+        async function submit() {
              //prepare data :
             var completeActivity = {
-                SupplierId:@(ViewBag.OrderHeader.SupplierCode == null ? "null" : ViewBag.OrderHeader.SupplierCode),
+                SupplierId: selected_Supplier,
                 Description: document.getElementById("Description_input").value,
                 OrderCode: document.getElementById("OrderCode_input").value,
                 BookNumber: document.getElementById("BookNumber_input").value,
@@ -228,14 +472,15 @@
                 ActivityDate: document.getElementById("ActivityDate_input").value,
                 DoneTasks: document.getElementById("DoneTasks_input").value,
                 CoordinatorName: document.getElementById("CoordinatorName_input").value,
-                ProjectName: document.getElementById("ProjectName_input").value,
+                //ProjectName: document.getElementById("ProjectName_input").value,
                 Date: document.getElementById("Date_input").value,
             }
-
+            complete_activity_obj = completeActivity;
+            offered_list_report = offered_list;
             //fill files array
             var formData = new FormData();
 
-            for (var i = 0; i < files_list.length; i++) {                
+            for (var i = 0; i < files_list.length; i++) {
                 console.log(files_list[i].File_path)
                 formData.append(`file${i}`, files_list[i].File_path);
             }
@@ -256,11 +501,6 @@
                  },
              });
 
-            ////append completeActivity object to formdata
-            //formData.append("completeActivity", completeActivity);
-
-            ////append offered_list object to formdata
-             //formData.append("offered_list", offered_list);
               await $.ajax({
                 url: "@Url.Action("Create")",
                 data: {offered_list:offered_list , completeActivity:completeActivity ,paths_array:paths_array},
@@ -268,16 +508,342 @@
                 dataType:'json',
                 success: function (response) {
                     console.log(response);
-                    window.location.href = response.direct_urk;
+                    //open successModal
+                    $('#successModal').modal('show');
+                    redirect_url = response.direct_urk
+                    //window.location.href = response.direct_urk;
                 },
                 error: function (response) {
                     console.log(response)
                 },
             });
 
-            
+
         }
 
-        document.getElementById("submit_btn").addEventListener("click", submit)
+        async function update() {
+            //prepare data
+            var files_list_to_add = files_list.filter(current => {
+                if (current.id == null) {
+                    return current
+                }
+            })
+
+            var offered_list_to_add = offered_list.filter(current => {
+                if (current.id == null) {
+                    return {
+                        ...current,
+                        CompleteActivityId:@(Model != null ? Model.Id : -1),
+                    }
+                }
+            })
+
+            var completeActivity = {
+                Id:@(Model != null ? Model.Id : -1),
+                SupplierId: selected_Supplier,
+                Description: document.getElementById("Description_input").value,
+                OrderCode: document.getElementById("OrderCode_input").value,
+                BookNumber: document.getElementById("BookNumber_input").value,
+                ActivityVenue: document.getElementById("ActivityVenue_input").value,
+                ActivityDate: document.getElementById("ActivityDate_input").value,
+                DoneTasks: document.getElementById("DoneTasks_input").value,
+                CoordinatorName: document.getElementById("CoordinatorName_input").value,
+                //ProjectName: document.getElementById("ProjectName_input").value,
+                Date: document.getElementById("Date_input").value,
+            }
+
+            complete_activity_obj = completeActivity;
+            offered_list_report = offered_list;
+
+            //fill files array
+            var formData = new FormData();
+
+            for (var i = 0; i < files_list_to_add.length; i++) {
+                console.log(files_list_to_add[i].File_path)
+                formData.append(`file${i}`, files_list_to_add[i].File_path);
+            }
+
+            debugger
+            //start ajax request
+            var paths_array = [];
+            await $.ajax({
+                url: "@Url.Action("CreateFiles")",
+                data: formData,
+                type: 'POST',
+                contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
+                processData: false, // NEEDED, DON'T OMIT THIS
+                success: function (response) {
+                    console.log(response);
+                    paths_array = response.paths_array;
+                },
+                error: function (response) {
+                    console.log(response)
+                },
+            });
+            var post_data = {
+                offered_list: offered_list_to_add,
+                completeActivity: completeActivity,
+                paths_array: paths_array,
+                deleted_files_list: deleted_files_list,
+                deleted_offered_list: deleted_offered_list
+            }
+            debugger
+            await $.ajax({
+                url: "@Url.Action("Update")",
+                data: post_data,
+                type: 'POST',
+                dataType: 'json',
+                success: function (response) {
+                    console.log(response);//open successModal
+                    $('#successModal').modal('show');
+                    redirect_url = response.direct_urk
+                    //window.location.href = response.direct_urk;
+                },
+                error: function (response) {
+                    console.log(response)
+                },
+            });
+        }
+
+
+        if (@Json.Serialize(ViewBag.update_status) == true) {
+            document.getElementById("submit_btn").addEventListener("click", update);
+        } else {
+            document.getElementById("submit_btn").addEventListener("click", submit);
+        }
+
+        //if there is data : __________________________________________________________________________________________________________________
+
+        var complete_activity_files = @Json.Serialize(ViewBag.CompleteActivityFiles);
+        console.log(complete_activity_files);
+
+        var complete_activity_offereds = @Json.Serialize(ViewBag.CompleteActivityOffered);
+        console.log(complete_activity_offereds);
+
+        //fill offered
+        offered_list = complete_activity_offereds != null ? complete_activity_offereds : [];
+        Offered_list_element.innerHTML = "<h6>Offered list : </h6>";
+
+        offered_list.forEach((current,index) => {
+            Offered_list_element.innerHTML += `
+                            <div class="list_item" style="display: flex;justify-content: space-between; align-items:center;">
+                                <div>${current.offered_to_us}</div>
+                                <div>
+                                    <i onclick="delete_offer(${index})" class="fas fa-trash-alt" style="color:red;font-size: 20px; cursor:pointer; margin:0 5px;" title="حذف"></i>
+                                </div>
+                            </div>
+                        `;
+        })
+
+        //file files
+        files_list = complete_activity_files != null ? complete_activity_files : [];
+        files_list_element.innerHTML = "<h6>files list : </h6>";
+
+        files_list.forEach((current, index) => {
+            var file_path = current.file_path;
+            var file_name = file_path.split('_')[1];
+
+            files_list_element.innerHTML += `
+                            <div class="list_item" style="display: flex;justify-content: space-between;">
+                                <div>${file_name}</div>
+                                <div>
+                                    <a style="text-decoration:none;" href="${'http://localhost:2657/images/complete_activity/' + file_path}" download>
+                                        <i class="fas fa-file-download" style="font-size: 20px;color: #17a2b8;" title="تنزيل"></i>
+                                    </a>
+                                    <i onclick="delete_file(${index})" class="fas fa-trash-alt" style="color:red;font-size: 20px; cursor:pointer; margin:0 5px;" title="حذف"></i>
+                                </div>
+                            </div>
+                        `;
+        });
+
+        
+        var selected_Supplier = -1;
+        var selected_Supplier_name = "not added";
+
+        //serialize array from viewBag
+        var options_list_Supplier = @Json.Serialize(ViewBag.supplier);
+        console.log(options_list_Supplier)
+
+        //fill supplier array :
+        var model = @Json.Serialize(Model);
+        console.log(model);
+        if (model != null &&  model.supplierId != null) {
+            selected_Supplier = model.supplierId;
+            for (var i = 0; i < options_list_Supplier.length; i++) {
+
+                if (options_list_Supplier[i].code == model.supplierId) {
+                    debugger
+                    selected_Supplier = options_list_Supplier[i].code
+                    selected_Supplier_name = options_list_Supplier[i].name
+                    //change input value
+                    document.getElementById('My_drop_down_input-Supplier').value = options_list_Supplier[i].name;
+                }
+            }
+        }
+
+        //supplier drop dowm: __________________________________________________________________________________________________________________
+
+
+        var My_drop_down_container_Supplier = document.getElementById("My_drop_down_container-Supplier");
+        var My_drop_down_list_result_Supplier = document.getElementById("My_drop_down_list_result_Supplier");
+        var My_drop_down_input_Supplier = document.getElementById("My_drop_down_input-Supplier");
+        //var selected_Supplier = document.getElementById("selected_Supplier");
+
+        //initialize the result list
+        options_list_Supplier.forEach(current => {
+            My_drop_down_list_result_Supplier.innerHTML += `
+                            <div class="My_drop_down_list_result_item ddc" onclick="select_option('${current.code}' ,'${current.name}', 'Supplier')">
+                                ${current.name}
+                            </div>
+                    `;
+        });
+
+        //for searching
+        window.addEventListener("keyup", function (e) {
+            //reset the result element
+            //if the event applied on dropdown input :
+            if (e.target.id.includes("My_drop_down_input")) {
+                //get the element unique word
+                var unique_word = e.target.id.split('-')[1]
+
+                //array to search in
+                var option_list_to_search = options_list_Supplier;
+
+
+                var My_drop_down_list_result = document.getElementById('My_drop_down_list_result_' + unique_word);
+                My_drop_down_list_result.innerHTML = "";
+                //update ui result list:
+                option_list_to_search.forEach(current => {
+                    if (current.name.includes(e.target.value)) {
+                        console.log(true);
+                        My_drop_down_list_result.innerHTML += `
+                                      <div class="My_drop_down_list_result_item ddc" onclick="select_option('${current.code}' ,'${current.name}','${unique_word}')">
+                                             ${current.name}
+                                      </div>
+                        `;
+                    }
+                });
+
+
+            }
+
+        });
+
+        //to open dropdown
+        window.addEventListener("click", function (e) {
+            console.log(e.target.id)
+            var clicked_element_id = e.target.id;
+            //if clicked_element is dropdown input open the related dropdown
+            if (clicked_element_id.includes("My_drop_down_input")) {
+                //get the element unique word
+                var unique_word = clicked_element_id.split("-")[1]
+
+                //get the dropdown container to open it
+                var My_drop_down_container = document.getElementById(`My_drop_down_container-${unique_word}`)
+
+                if (!My_drop_down_container.classList.contains("show_dropdown")) {
+                    //close other dropdowns if they are opened
+
+                    //get all dropdown containers
+                    var dropdown_containers_list = document.querySelectorAll('[id*="My_drop_down_container"]')
+                    //close them excpt the one we will open
+                    dropdown_containers_list.forEach(current => {
+                        if (!current.id.includes(unique_word)) {//if this dropdown is not the one we will open => colse it
+                            if (current.classList.contains("show_dropdown")) {
+                                //set z-index to default
+                                document.getElementById(current.id.split("-")[1] + "_dropdown").style.zIndex = '';
+                                //remove show class
+                                current.classList.remove("show_dropdown");
+                            }
+                        }
+                    });
+
+                    //make dropdown appeare on top of others
+                    document.getElementById(unique_word + "_dropdown").style.zIndex = '100';
+                    My_drop_down_container.classList.add("show_dropdown");
+                }
+            }
+
+        });
+
+        //to close dropdown
+        window.addEventListener("click", function (e) {
+            //if the cliced element is not related to any dropdown
+            if (!e.target.classList.contains("ddc")) {
+                //close opened dropdown
+                //get all dropdown containers
+                var dropdown_containers_list = document.querySelectorAll('[id*="My_drop_down_container"]')
+                //close them excpt the one we will open
+                dropdown_containers_list.forEach(current => {
+                    if (current.classList.contains("show_dropdown")) {
+                        //set z-index to default
+                        document.getElementById(current.id.split("-")[1] + "_dropdown").style.zIndex = '';
+                        //remove show class
+                        current.classList.remove("show_dropdown");
+                    }
+                });
+            }
+        });
+
+        //when select options
+        const select_option = (id, name, unique_word) => {
+            debugger
+            // close_dropdown :
+            if (document.getElementById("My_drop_down_container-" + unique_word).classList.contains("show_dropdown")) {
+                document.getElementById(unique_word + "_dropdown").style.zIndex = '';
+                document.getElementById("My_drop_down_container-" + unique_word).classList.remove("show_dropdown");
+            }
+            //change selected_option
+            selected_Supplier = id;
+            selected_Supplier_name = name;
+            console.log(selected_Supplier);
+            //change input value
+            document.getElementById('My_drop_down_input-' + unique_word).value = name;
+
+        }
+
+
+        const display_date_object = (date_obj, format = 0) => {
+            //format variable is to specify the format of returned date ,
+            // 0 => with day,
+            // 1=> for basic without day,
+            // 2=> full date
+            // 3=> time hh:mm
+
+            if (date_obj != null && date_obj != undefined && date_obj != "") {
+                date_obj = new Date(date_obj)
+
+                var date = date_obj.getDate();
+                var month = date_obj.getMonth() + 1; // Since getMonth() returns month from 0-11 not 1-12
+                var year = date_obj.getFullYear();
+
+                var hours = date_obj.getHours()
+                var minutes = date_obj.getMinutes()
+
+                //to display time in 12 hour format
+                //صباحا او مساء
+                var AM_or_PM = hours >= 12 ? ('مساءا')
+                    : ('صباحا');
+                hours = hours % 12;
+                hours = hours ? hours : 12; // the hour '0' should be '12'
+                minutes = minutes < 10 ? '0' + minutes : minutes; //to put 0 before minute if it less than 10
+
+
+                var time = hours + ":" + minutes + " " + AM_or_PM
+
+                var day = date_obj.getDay()
+
+                if (format == 0) {
+                    return  year + "/" + month + "/" + date
+                } else if (format == 1) {
+                    return year + "-" + month + "-" + date
+                } else if (format == 2) {// full format
+                    return  year + "/" + month + "/" + date + " - " + time
+                } else if (format == 3) {
+                    return time
+                }
+            }
+
+        }
     </script>
 }

@@ -28,6 +28,7 @@
   <ItemGroup>
     <Folder Include="Views\Test2\" />
     <Folder Include="wwwroot\images\complete_activity\" />
+    <Folder Include="wwwroot\images\Logo\" />
     <Folder Include="wwwroot\SalesSupplier\" />
   </ItemGroup>
 

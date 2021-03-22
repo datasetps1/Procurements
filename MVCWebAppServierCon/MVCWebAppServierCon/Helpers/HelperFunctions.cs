@@ -38,5 +38,23 @@ namespace MVCWebAppServierCon.Helpers
 
             return file_name;
         }
+
+
+        //to delete file from the path "wwwroot/images/obligation"
+        public static void Delete_file(IHostingEnvironment hostingEnviroment, string folders_path, String file_path)
+        {
+            var webRootPath = hostingEnviroment.WebRootPath;
+
+            var filePath = Path.Combine($"{webRootPath}/{folders_path}/");
+
+            //delete the existing image
+            filePath += file_path;
+
+            if (System.IO.File.Exists(filePath))
+            {
+                System.IO.File.Delete(filePath);
+            }
+
+        }
     }
 }

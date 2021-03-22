@@ -28,5 +28,8 @@ namespace MVCWebAppServierCon.ViewModels
         public String userNote { get; set; }
 
         public string userCode { get; set; }
+
+        public string Excutable { get; set; }
+
     }
 }

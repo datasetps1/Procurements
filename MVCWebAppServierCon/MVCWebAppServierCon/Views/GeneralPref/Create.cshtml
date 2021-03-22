@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="QouteAmount" class="control-label"></label>
@@ -50,13 +50,36 @@
             </div>
 
             <div class="form-group">
+                <label asp-for="Company_Name" class="control-label"></label>
+                <input asp-for="Company_Name" class="form-control" placeholder="type Company Name here ..." />
+                <span asp-validation-for="Company_Name" class="text-danger"></span>
+            </div>
+            <div class="form-group input_group_style " style="margin-bottom:15px; padding-left:0;">
+
+                <label class="control-label"> Company Logo</label>
+                <div class="custom-file">
+                    <input asp-for="Logo_Files" id="logo_input" type="file" class="form-control custom-file-input" />
+                    <label id="logo_input_label" class="custom-file-label" style="overflow: hidden;">Choose File ...</label>
+                    <span id="logo_error_element" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
 
+@section scripts{
+    <script>
+        var logo_input = document.getElementById("logo_input");
+
+        logo_input.addEventListener('change', () => {
+            //set the label
+            document.getElementById("logo_input_label").innerHTML = logo_input.files[0].name;
+            console.log()
+        })
+    </script>
+}

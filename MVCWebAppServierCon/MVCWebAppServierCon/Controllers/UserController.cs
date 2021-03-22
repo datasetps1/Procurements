@@ -139,6 +139,7 @@ namespace MVCWebAppServierCon.Controllers
                     uc.userCreationDate = DateTime.Now;
                     uc.userDepartmentCode = uvc.userDepartment;
                     uc.userName = uvc.userName;
+                    uc.Excutable = uvc.Excutable == "true" ? true : false;
 
                     uc.userActive = uvc.userActive;
                     uc.userEmail = uvc.userEmail;

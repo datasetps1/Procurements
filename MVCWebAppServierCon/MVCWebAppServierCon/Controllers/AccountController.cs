@@ -200,7 +200,7 @@ namespace MVCWebAppServierCon.Controllers
                     //logger.Log(LogLevel.Warning, passwordResetLink);
                     SendEmail(passwordResetLink, model.Email);
                     // Send the user to Forgot Password Confirmation view
-                   // return View("ForgotPasswordConfirmation");
+                    // return View("ForgotPasswordConfirmation");
                 }
 
                 // To avoid account enumeration and brute force attacks, don't
@@ -301,35 +301,10 @@ namespace MVCWebAppServierCon.Controllers
 
         }
 
-        public List<LoginViewModel> CompanyDefinition()
-            
-        {// use sql command to make new query to get data from cost table that needed in the order
-
-            
-            connection.Open();
-
-            SqlCommand command = new SqlCommand("SELECT street2, LogoExt, LogoPath from CompanyDefinition where flag = 1;", connection);
-            var reader = command.ExecuteReader();
-            List<LoginViewModel> costLst = new List<LoginViewModel>();
-            reader.Read();
-            
-            LoginViewModel costs = new LoginViewModel();
-            costs.Name = reader.GetValue(0).ToString();
-            costs.LogoExt = reader.GetValue(1).ToString();
-            costs.logosting = reader.GetValue(2).ToString();
-            costs.LogoPath = System.Text.Encoding.UTF8.GetBytes(reader.GetValue(2).ToString());
-            costs.LogoPath = (byte[])reader["LogoPath"];
-
-          //  ViewBag.Base64String = "data:image/png;base64," + Convert.ToBase64String(image.Data, 0, image.Data.Length);
-            ViewBag.Base64String = "data:image/jpg;base64," + Convert.ToBase64String(costs.LogoPath);
-            ViewBag.CompName = costs.Name;
-            costLst.Add(costs);
-            
-
-                // do something with 'value'
-            
-            connection.Close();
-            return costLst;
+        public void CompanyDefinition()
+        {
+            ViewBag.Base64String = _sc.TblGeneralPreference.Select(g => g.Company_Logo).FirstOrDefault();
+            ViewBag.CompName = _sc.TblGeneralPreference.Select(g => g.Company_Name).FirstOrDefault();
         }
 
     }

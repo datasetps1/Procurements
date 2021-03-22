@@ -40,6 +40,8 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/js/all.min.js" crossorigin="anonymous"></script>
     <link href="~/css/Common.css" rel="stylesheet" />
+
+    </script>
 </head>
 <body dir="@Localizer["ltr"]" class="sb-nav-fixed" id="bod">
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark mynav">
@@ -49,7 +51,7 @@
 
         <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
             <div class="input-group">
-                <img alt="" src="@ViewBag.Base64String" style="height:50px;width:80px; margin-left: 34px;" />
+                <img alt="" src="http://localhost:2657/images/Logo/@ViewBag.Base64String" style="height:50px;width:80px; margin-left: 34px;" />
                 <hr />
                 <h6 style="font-size: large; color: white; line-height: 45px; font-weight:bold">@ViewBag.CompName</h6>
             </div>

@@ -1,0 +1,177 @@
+ls : 	 	list the files and directories stored in the current directory
+ls -l : 	get more information about the listed files
+ls dirname : 	to list files and directories of the passed dirname
+ls ch*.doc 	displays all those files the names of which start with ch and end with .doc
+ls ch*.doc & 	start the process in the background
+__________
+
+cat filename : 		Display Content of a File
+cat -b filename : 	display the line numbers
+_____
+
+wc filename : (word count)
+	output : 2  19 103 filename (2:# of lines | 19:# of words| 103:# of bytes in the file)
+
+______________
+
+cp source_file destination_file : Copying Files
+	used to create a copy of existing file
+__________________
+
+mv old_file new_file : 	Renaming Files
+	the mv command will move the existing file completely into the new file. In this case, 
+	you will find only newfile in your current directory.
+mv olddir newdir : 	Renaming Directories
+___________________
+
+rm filename : remove Files
+	 remove an existing file
+
+rm filename1 filename2 filename3 : remove multiple files
+____________
+
+cd ~ : 		go to your home directory (user)
+cd dirname : 	Changing Directory
+cd - : Change to the previous directory
+_____________
+
+pwd : return a path of where you are within the filesystem
+	$pwd
+	/user0/home/amrood
+__________
+
+mkdir dirname : 	  Creating Directories
+mkdir /tmp/amrood/test :  create a dir inside tmp inside amrood (throw error if the not exist)
+rmdir dirname : 	  Removing Directories
+	Note − To remove a directory, make sure it is empty which 
+	means there should not be any file or sub-directory inside this directory. 
+________________
+
+File Permissions : 
+$ls -l /home/amrood
+-rwxr-xr--  1 amrood   users 1024  Nov 2 00:10  myfile
+drwxr-xr--- 1 amrood   users 1024  Nov 2 00:10  mydir
+
+	read (r), write (w), execute (x) 
+	** how to specify the permisions : -rwxr-xr--
+	1 - ) The first three characters (2-4) represent the permissions for the file's owner.
+ 	For example, -rwxr-xr-- represents that the owner has read (r),
+	 write (w) and execute (x) permission.
+
+	2 - ) The second group of three characters (5-7) consists of the permissions
+	 for the group to which the file belongs. For example, -rwxr-xr-- represents
+	 that the group has read (r) and execute (x) permission, but no write permission.
+
+	3 - ) The last group of three characters (8-10) represents the permissions 
+	for everyone else. For example, -rwxr-xr-- represents that there is 
+	read (r) only permission.
+
+_____
+chmod (change mode) : 	
+chown change owner
+chgrp change group
+__________
+
+pr (print) to print the file in more pretty way not like cat
+________
+
+mail : Sending Email
+$mail [-s subject] [-c cc-addr] [-b bcc-addr] to-addr
+	$mail -s "Test Message" admin@yahoo.com : -s means subject
+____________
+
+sort :  arranges lines of text alphabetically or numerically
+	$sort food
+	Afghani Cuisine
+	Bangkok Wok
+	Big Apple Deli
+	Isle of Java
+______________
+
+Processes Management :
+
+ps (process status) : Listing Running Processes
+	$ps
+	PID       TTY      TIME        CMD
+	18358     ttyp3    00:00:00    sh
+	18361     ttyp3    00:01:31    abiword
+	18789     ttyp3    00:00:00    ps
+$ps -f 	: -f ( f for full)  provides more information 
+	$ps -f
+	UID      PID  PPID C STIME    TTY   TIME CMD
+	amrood   6738 3662 0 10:23:03 pts/6 0:00 first_one
+	amrood   6739 3662 0 10:22:54 pts/6 0:00 second_one
+______
+
+kill :  terminates the process.
+	$kill 6738
+	Terminated
+______
+
+top : 	show the Linux processes 
+	provides a dynamic real-time view of the running system. 
+	shows information about physical and virtual memory, 
+	CPU usage, 
+	load averages, 
+	and your busy processes
+____________
+
+ping : you can check if your remote host is responding well or not.
+	$ping hostname or ip-address
+	$ping google.com
+______
+
+touch :
+	touch test1.txt 	(To create a file)
+	ls - l test1.txt  	(list the information of the created file)
+	touch test1.txt test2.txt test3.txt  (create multiple files)
+	--------------
+	If we pass the name of an existing file, it will change the timestamp of that file.
+	--Every Linux file has three timestamps: 	
+	1) the access timestamp (atime), 
+	2) the modified timestamp (mtime), 
+	3) the changed timestamp (ctime). 
+	The access timestamp is the last time a file was read. This means someone 
+	used a program to display the contents of the file or read some values from it.
+____________
+
+man (manual)
+	man ls  :  display all the information about 'ls' command 
+____________
+
+File Contents : 
+	commands to look at the contents of a file
+	head 	(It displays the beginning of a file)
+	tail 	(It displays the last last part of a file)
+	cat 	(versatile)
+		1)cat > [fileName] : (To create a file)
+		2)cat [oldfile] > [newfile] : (To copy content from older to new file)
+		3)cat -b [fileName] : (To display line numbers)
+__________
+
+ctrl + alt + T : open the terminal
+_________
+
+pwd : current path
+______
+
+mkdir new\ directory (for multi words)
+______
+
+echo hello, my name is alok >> new.txt (insert some data to a file)
+_____
+
+Writing and Compiling C++ on Linux : 
+	https://hackernoon.com/writing-and-compiling-c-on-linux-a-how-to-guide-ddi032di
+________
+
+
+
+
+
+
+
+
+	
+
+
