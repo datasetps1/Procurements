@@ -230,7 +230,7 @@ namespace MVCWebAppServierCon.Controllers
 
 
                     var getData = new getAuditData();
-                    BudgetLineCode = getData.getCodeByName(await _sc.TblGeneralPreference.Select(gp => gp.ActivitiyTable).FirstOrDefaultAsync(), BudgetLineName, connection);
+                   // BudgetLineCode = getData.getCodeByName(await _sc.TblGeneralPreference.Select(gp => gp.ActivitiyTable).FirstOrDefaultAsync(), BudgetLineName, connection);
                 }
                 SqlCommand command = new SqlCommand("SELECT Budget FROM TblBudgetCNTran  WHERE (FirstCost=2 and SecondCost=8 and  FirstCostCode= '" + ProjectCode + "' and SecondCostCode = '" + BudgetLineCode + "');", connection);
 

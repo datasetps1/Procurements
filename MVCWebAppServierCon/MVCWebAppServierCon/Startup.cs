@@ -23,6 +23,7 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.Owin;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
+using PathString = Microsoft.AspNetCore.Http.PathString;
 
 namespace MVCWebAppServierCon
 {
@@ -95,6 +96,12 @@ namespace MVCWebAppServierCon
             //  //Localization Ends here
             ////  till here
             ///
+
+
+            services.ConfigureApplicationCookie(Options =>
+
+                Options.AccessDeniedPath = new PathString("/Home/Privacy")
+            );
 
 
             services.AddDbContext<SecondConnClass>(options => options.UseSqlServer(Configuration.GetConnectionString("ProcurementConn")));
