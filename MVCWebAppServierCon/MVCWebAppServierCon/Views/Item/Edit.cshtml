@@ -9,13 +9,13 @@
 
 <h1>Edit</h1>
 
-<div class="rowPage"  style="@Localizer["text-align: left  ;direction: ltr"]">
+<div class="rowPage" style="@Localizer["text-align: left  ;direction: ltr"]">
     <h4>@Localizer["Item Class"]</h4>
 </div>
 <hr />
 <div class="rowPage">
     <div class="col-md-4">
-        <form asp-action="Edit"  style="@Localizer["text-align: left  ;direction: ltr"]">
+        <form asp-action="Edit" style="@Localizer["text-align: left  ;direction: ltr"]">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="itemName" class="control-label">@Localizer["Item Name"]</label>
@@ -37,6 +37,24 @@
                 <input asp-for="itemNote" class="form-control" />
                 <span asp-validation-for="itemNote" class="text-danger"></span>
             </div>
+            @if (ViewBag.Show_Unit)
+            {
+                <div class="row">
+                    <div class="form-group col-md-12">
+                        <label style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Unit"]</label>
+                        <select asp-for="Unit_Id" id="Unit_input" class="form-control">
+                            <option selected></option>
+                            @* asp-items="" *@
+                            @foreach (var unit in ViewBag.Units)
+                            {
+                                <option value="@unit.Id">@unit.Name</option>
+
+                            }
+                        </select>
+                    </div>
+                </div>
+
+            }
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>

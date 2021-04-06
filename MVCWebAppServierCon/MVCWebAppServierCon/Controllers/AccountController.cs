@@ -19,6 +19,7 @@ using System.Net.Mail;
 using System.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 [assembly: log4net.Config.XmlConfigurator(Watch = true)]
 
@@ -55,6 +56,14 @@ namespace MVCWebAppServierCon.Controllers
         }
         //public AccountController()
         //{
+
+
+        public override void OnActionExecuting(ActionExecutingContext filterContext)
+        {
+
+            ViewBag.Base64String = _sc.TblGeneralPreference.Select(g => g.Company_Logo).FirstOrDefault();
+            ViewBag.CompName = _sc.TblGeneralPreference.Select(g => g.Company_Name).FirstOrDefault();
+        }
 
         //}
         [HttpGet]

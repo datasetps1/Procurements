@@ -37,5 +37,35 @@ namespace MVCWebAppServierCon.Models
 
         [NotMapped]
         public List<IFormFile> Logo_Files { get; set; }
+
+        [Display(Name = "Show Unit")]
+        public bool Show_Unit { get; set; }
+
+        [Display(Name = "Show Doner2")]
+        public bool Show_Doner2 { get; set; }
+
+        [Display(Name = "Display Name Doner2")]
+        public string Display_Name_Doner2 { get; set; }
+
+        [Display(Name = "Table Name Doner2")]
+        public string Table_Name_Doner2 { get; set; }
+
+        [Display(Name = "Show cost3")]
+        public bool Show_cost3 { get; set; }
+
+        [Display(Name = "Display Name cost3")]
+        public string Display_Name_cost3 { get; set; }
+
+        [Display(Name = "Table Name cost3")]
+        public string Table_Name_cost3 { get; set; }
+
+        [Display(Name = "Show cost4")]
+        public bool Show_cost4 { get; set; }
+
+        [Display(Name = "DispTablelay Name cost4")]
+        public string Display_Name_cost4 { get; set; }
+
+        [Display(Name = "Table Name cost4")]
+        public string Table_Name_cost4 { get; set; }
     }
 }

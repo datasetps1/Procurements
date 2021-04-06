@@ -24,15 +24,16 @@ namespace MVCWebAppServierCon.Controllers
         }
 
         [HttpGet]
-        public IActionResult CreateRole()
+        public async Task<IActionResult> CreateRole()
         {
+            await CreateRolesIfNotExist();
             return View();
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateRole(CreateRoleViewModel model)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 IdentityRole identityRole = new IdentityRole
                 {
@@ -49,11 +50,29 @@ namespace MVCWebAppServierCon.Controllers
                 foreach (IdentityError error in result.Errors)
                 {
                     ModelState.AddModelError("", error.Description);
-                }   
+                }
             }
             return View(model);
+        }
 
-           
+
+        public async Task<bool> CreateRolesIfNotExist()
+        {
+            string[] roles_names = {"EnterMyFollowUp" , "EnterGeneralPref" };
+            foreach(var name in roles_names)
+            {
+                if (!roleManager.RoleExistsAsync((name)).Result)
+                {
+                    IdentityRole identityRole = new IdentityRole
+                    {
+                        Name = name
+                    };
+                    IdentityResult result = await roleManager.CreateAsync(identityRole);
+
+                    return result.Succeeded;
+                }
+            }
+            return true;
         }
 
         [HttpGet]

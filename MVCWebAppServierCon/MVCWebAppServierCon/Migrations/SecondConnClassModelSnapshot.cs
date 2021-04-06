@@ -275,9 +275,29 @@ namespace MVCWebAppServierCon.Migrations
 
                     b.Property<float>("DeductionAmount");
 
+                    b.Property<string>("Display_Name_Doner2");
+
+                    b.Property<string>("Display_Name_cost3");
+
+                    b.Property<string>("Display_Name_cost4");
+
                     b.Property<string>("ProjectTable");
 
                     b.Property<float>("QouteAmount");
+
+                    b.Property<bool>("Show_Doner2");
+
+                    b.Property<bool>("Show_Unit");
+
+                    b.Property<bool>("Show_cost3");
+
+                    b.Property<bool>("Show_cost4");
+
+                    b.Property<string>("Table_Name_Doner2");
+
+                    b.Property<string>("Table_Name_cost3");
+
+                    b.Property<string>("Table_Name_cost4");
 
                     b.Property<string>("link_view_name");
 
@@ -291,6 +311,8 @@ namespace MVCWebAppServierCon.Migrations
                     b.Property<int>("itemCode")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("Unit_Id");
 
                     b.Property<DateTime>("itemCreationDate");
 
@@ -339,6 +361,12 @@ namespace MVCWebAppServierCon.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<float>("ActualTotalAmount");
+
+                    b.Property<string>("Cost3");
+
+                    b.Property<string>("Cost4");
+
+                    b.Property<string>("Doner");
 
                     b.Property<DateTime?>("ExpectedDate");
 
@@ -452,6 +480,8 @@ namespace MVCWebAppServierCon.Migrations
                     b.Property<string>("OfferName")
                         .IsRequired();
 
+                    b.Property<int>("OrderHeaderCode");
+
                     b.Property<string>("userCode");
 
                     b.HasKey("Id");
@@ -464,34 +494,38 @@ namespace MVCWebAppServierCon.Migrations
                         new
                         {
                             Id = -4,
-                            CreationDate = new DateTime(2021, 3, 21, 9, 26, 32, 187, DateTimeKind.Local).AddTicks(7715),
+                            CreationDate = new DateTime(2021, 4, 6, 10, 28, 53, 982, DateTimeKind.Local).AddTicks(1825),
                             ExpierDate = new DateTime(2022, 10, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             OfferDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            OfferName = "شراء قرطاسية"
+                            OfferName = "شراء قرطاسية",
+                            OrderHeaderCode = 0
                         },
                         new
                         {
                             Id = -3,
-                            CreationDate = new DateTime(2021, 3, 21, 9, 26, 32, 191, DateTimeKind.Local).AddTicks(2773),
+                            CreationDate = new DateTime(2021, 4, 6, 10, 28, 53, 985, DateTimeKind.Local).AddTicks(5660),
                             ExpierDate = new DateTime(2021, 1, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             OfferDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            OfferName = "شراء شي"
+                            OfferName = "شراء شي",
+                            OrderHeaderCode = 0
                         },
                         new
                         {
                             Id = -2,
-                            CreationDate = new DateTime(2021, 3, 21, 9, 26, 32, 191, DateTimeKind.Local).AddTicks(2809),
+                            CreationDate = new DateTime(2021, 4, 6, 10, 28, 53, 985, DateTimeKind.Local).AddTicks(5700),
                             ExpierDate = new DateTime(2022, 10, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             OfferDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            OfferName = "something"
+                            OfferName = "something",
+                            OrderHeaderCode = 0
                         },
                         new
                         {
                             Id = -1,
-                            CreationDate = new DateTime(2021, 3, 21, 9, 26, 32, 191, DateTimeKind.Local).AddTicks(2815),
+                            CreationDate = new DateTime(2021, 4, 6, 10, 28, 53, 985, DateTimeKind.Local).AddTicks(5706),
                             ExpierDate = new DateTime(2022, 10, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             OfferDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            OfferName = "another thing"
+                            OfferName = "another thing",
+                            OrderHeaderCode = 0
                         });
                 });
 
@@ -612,6 +646,41 @@ namespace MVCWebAppServierCon.Migrations
                     b.HasKey("TransactionCode");
 
                     b.ToTable("TblTransaction");
+                });
+
+            modelBuilder.Entity("MVCWebAppServierCon.Models.Unit", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Units");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = -4,
+                            Name = "كيلو"
+                        },
+                        new
+                        {
+                            Id = -3,
+                            Name = "اوقية"
+                        },
+                        new
+                        {
+                            Id = -2,
+                            Name = "علبة"
+                        },
+                        new
+                        {
+                            Id = -1,
+                            Name = "دزينة"
+                        });
                 });
 
             modelBuilder.Entity("MVCWebAppServierCon.Models.UploadClass", b =>

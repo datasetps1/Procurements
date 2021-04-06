@@ -41,6 +41,14 @@ namespace MVCWebAppServierCon.Controllers
             this.hostingEnviroment = hostingEnviroment;
         }
 
+
+        public override void OnActionExecuting(Microsoft.AspNetCore.Mvc.Filters.ActionExecutingContext filterContext)
+        {
+
+            ViewBag.Base64String = _sc.TblGeneralPreference.Select(g => g.Company_Logo).FirstOrDefault();
+            ViewBag.CompName = _sc.TblGeneralPreference.Select(g => g.Company_Name).FirstOrDefault();
+        }
+
         // GET: User
         [Authorize(Roles = "Admin, EnterSet")]
         public ActionResult Index()
@@ -371,6 +379,7 @@ namespace MVCWebAppServierCon.Controllers
             uvc.userName = res.userName;
             uvc.userCode = res.userCode;
             uvc.userEmail = res.userEmail;
+            uvc.Excutable = res.Excutable == true ? "true" : "false";
             return View(uvc);
 
         }
@@ -411,6 +420,7 @@ namespace MVCWebAppServierCon.Controllers
                 res.userCode = res.userCode;
                 res.userCreationDate = DateTime.Now;
                 res.userNote = uvc.userNote;
+                res.Excutable = uvc.Excutable == "true" ? true : false;
                 _sc.SaveChanges();
                 return RedirectToAction(nameof(Create));
             }

@@ -10,6 +10,10 @@
 
 }
 
+
+<script src="~/lib/jquery/selectbox/dist/jquery-editable-select.js"></script>
+<link href="~/lib/jquery/selectbox/dist/jquery-editable-select.css" rel="stylesheet" />
+
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
@@ -17,7 +21,20 @@
 <br />
 <br />
 <br />
-
+<style>
+    .col-1, .col-2, .col-3, .col-4, .col-5, .col-6, .col-7, .col-8, .col-9, .col-10, .col-11, .col-12, .col, .col-auto, .col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm, .col-sm-auto, .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-md-10, .col-md-11, .col-md-12, .col-md, .col-md-auto, .col-lg-1, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg, .col-lg-auto, .col-xl-1, .col-xl-2, .col-xl-3, .col-xl-4, .col-xl-5, .col-xl-6, .col-xl-7, .col-xl-8, .col-xl-9, .col-xl-10, .col-xl-11, .col-xl-12, .col-xl, .col-xl-auto {
+        position: relative;
+        width: auto;
+        padding-right: 15px;
+        padding-left: 15px;
+    }
+    .col-xl, .col-xl-auto, .col-xl-12, .col-xl-11, .col-xl-10, .col-xl-9, .col-xl-8, .col-xl-7, .col-xl-6, .col-xl-5, .col-xl-4, .col-xl-3, .col-xl-2, .col-xl-1, .col-lg, .col-lg-auto, .col-lg-12, .col-lg-11, .col-lg-10, .col-lg-9, .col-lg-8, .col-lg-7, .col-lg-6, .col-lg-5, .col-lg-4, .col-lg-3, .col-lg-2, .col-lg-1, .col-md, .col-md-auto, .col-md-12, .col-md-11, .col-md-10, .col-md-9, .col-md-8, .col-md-7, .col-md-6, .col-md-5, .col-md-4, .col-md-3, .col-md-2, .col-md-1, .col-sm, .col-sm-auto, .col-sm-12, .col-sm-11, .col-sm-10, .col-sm-9, .col-sm-8, .col-sm-7, .col-sm-6, .col-sm-5, .col-sm-4, .col-sm-3, .col-sm-2, .col-sm-1, .col, .col-auto, .col-12, .col-11, .col-10, .col-9, .col-8, .col-7, .col-6, .col-5, .col-4, .col-3, .col-2, .col-1 {
+        position: relative;
+        width: auto;
+        padding-right: 0.75rem;
+        padding-left: 0.75rem;
+    }
+</style>
 
 
 <div class="row">
@@ -29,11 +46,11 @@
 
             var NextOrdercode = @viewModel.headerClass.OrderHeaderCode + 1;
             var PrevOrdercode = @viewModel.headerClass.OrderHeaderCode - 1;
-        }  
+        }
 
         <form onkeydown="return event.key != 'Enter';">
 
-            <div class="container card" style=" box-shadow: 0 0 10px 0 rgba(0, 0, 0, .1);">
+            <div class="container card" style=" box-shadow: 0 0 10px 0 rgba(0, 0, 0, .1);padding: 30px;padding-top: 19px;">
                 <div class="form-row" style="margin-top:15px ; ">
                     <div class="form-group col-md-10">
                         @if (ViewBag.IsPreview == false)
@@ -43,137 +60,186 @@
                     </div>
                     @if (ViewBag.userTypeCode == 1 || ViewBag.userTypeCode == 2 || ViewBag.userTypeCode == 3)
                     {
-                    <div class="form-group col-md-2">
-                        <div style="margin-top:15px ;">
-                            <a asp-action="Edit" asp-controller="OrderView" asp-route-id="@PrevOrdercode" asp-route-IsPreview="true"> Prev</a> |
-                            <a asp-action="Edit" asp-controller="OrderView" asp-route-id="@NextOrdercode" asp-route-IsPreview="true"> Next</a>
-                        </div>
+                        <div class="form-group col-md-2">
+                            <div style="margin-top:15px ;">
+                                <a asp-action="Edit" asp-controller="OrderView" asp-route-id="@PrevOrdercode" asp-route-IsPreview="true"> Prev</a> |
+                                <a asp-action="Edit" asp-controller="OrderView" asp-route-id="@NextOrdercode" asp-route-IsPreview="true"> Next</a>
+                            </div>
                         </div>
                     }
-                    </div>
-                    <div style="margin-top:-8px ; ">
-                        <hr />
-                    </div>
+                </div>
+                <div style="margin-top:-8px ; ">
+                    <hr />
+                </div>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <input type="hidden" asp-for="headerClass.OrderHeaderCode" id="id1" />
+
+                <div class="row">
+                    <input value="@viewModel.headerClass.OrderHeaderCode" type="hidden" id="hi">
+
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group col-md-3">
+                        <label class="control-label">order type</label>
+                        <br />
+                        <select name="headerLst" class="form-control" id="orderType">
+                            <option value="@viewModel.headerClass.OrderHeaderOrderTypeCode">@viewModel.orderType</option>
 
-                    <input type="hidden" asp-for="headerClass.OrderHeaderCode" id="id1" />
-
-                    <div class="row">
-                        <input value="@viewModel.headerClass.OrderHeaderCode" type="hidden" id="hi">
-
-                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                        <div class="form-group col-md-3">
-                            <label class="control-label">order type</label>
-                            <br />
-                            <select name="headerLst" class="form-control" id="orderType">
-                                <option value="@viewModel.headerClass.OrderHeaderOrderTypeCode">@viewModel.orderType</option>
-
-                                @* asp-items="" *@
-                                @foreach (OrderTypeClass ord in ViewBag.OrderType)
+                            @* asp-items="" *@
+                            @foreach (OrderTypeClass ord in ViewBag.OrderType)
+                            {
+                                <option value="@ord.orderTypeCode" onclick="getOrderType(@ord.orderTypeCode)">@ord.orderTypeName</option>
+                            }
+                            @*@foreach (String item in ViewBag.uType)
                                 {
-                                    <option value="@ord.orderTypeCode" onclick="getOrderType(@ord.orderTypeCode)">@ord.orderTypeName</option>
-                                }
-                                @*@foreach (String item in ViewBag.uType)
-                    {
-                        <option> @Html.DisplayFor(modelItem => item)</option>
-                    }*@
-                            </select>
-                            <span class="text-danger"></span>
-                        </div>
-
-                        <div class="form-group col-md-3">
-                            <label class="control-label">Department Name</label>
-                            <br />
-                            <select name="headerLst" class="form-control" disabled>
-                                <option value="@viewModel.headerClass.OrderHeaderdepartmentCode"> @viewModel.departmentName </option>
-
-                                @* asp-items="" *@
-                                @foreach (DepartmentClass dep in ViewBag.DepartmentName)
-                                {
-                                    <option value="@dep.departmentCode">@dep.departmentName</option>
-                                }
-                            </select>
-                            <span class="text-danger"></span>
-                        </div>
-
-                        <div class="form-group col-md-3">
-                            <label class="control-label">currency</label>
-                            <select name="headerLst" class="form-control" id="cmbCurrency">
-                                <option value="@viewModel.headerClass.OrderHeaderCurrencey">@viewModel.headerClass.Currency</option>
-
-                                @foreach (CurrencyViewModel item in ViewBag.Currency)
-                                {
-                                    <option value="@item.currencyCode" onclick="getRate(@item.currencyCode)">@item.currencyName</option>
-                                }
-                            </select>
-                            <span class="text-danger"></span>
-                        </div>
-
-
-                        <div class="form-group col-md-3">
-                            <label class="control-label">order date</label>
-                            <input class="form-control" id="date" disabled name="headerLst" value="@viewModel.headerClass.OrderHeaderdate.ToString("yyyy-MM-dd")" maxlength="10" type="date" id="datePicker" />
-                            <span class="text-danger"></span>
-                        </div>
-
-
+                                    <option> @Html.DisplayFor(modelItem => item)</option>
+                                }*@
+                        </select>
+                        <span class="text-danger"></span>
                     </div>
-                    <div class="row">
-                        <div class="form-group col-md-3">
-                            <label class="control-label">Project Name</label>
-                            <br />
 
-                            <select name="headerLst" class="form-control" id="project"  onchange = "SelectedIndexChanged()" >
+                    <div class="form-group col-md-3">
+                        <label class="control-label">Department Name</label>
+                        <br />
+                        <select name="headerLst" class="form-control" disabled>
+                            <option value="@viewModel.headerClass.OrderHeaderdepartmentCode"> @viewModel.departmentName </option>
+
+                            @* asp-items="" *@
+                            @foreach (DepartmentClass dep in ViewBag.DepartmentName)
+                            {
+                                <option value="@dep.departmentCode">@dep.departmentName</option>
+                            }
+                        </select>
+                        <span class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group col-md-3">
+                        <label class="control-label">currency</label>
+                        <select name="headerLst" class="form-control" id="cmbCurrency">
+                            <option value="@viewModel.headerClass.OrderHeaderCurrencey">@viewModel.headerClass.Currency</option>
+
+                            @foreach (CurrencyViewModel item in ViewBag.Currency)
+                            {
+                                <option value="@item.currencyCode" onclick="getRate(@item.currencyCode)">@item.currencyName</option>
+                            }
+                        </select>
+                        <span class="text-danger"></span>
+                    </div>
+
+
+                    <div class="form-group col-md-3">
+                        <label class="control-label">order date</label>
+                        <input class="form-control" id="date" disabled name="headerLst" value="@viewModel.headerClass.OrderHeaderdate.ToString("yyyy-MM-dd")" maxlength="10" type="date" id="datePicker" />
+                        <span class="text-danger"></span>
+                    </div>
+
+
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-3">
+                        <label class="control-label">Project Name</label>
+                        <br />
+
+                        <select name="headerLst" class="form-control" id="project" onchange="SelectedIndexChanged()">
+                            @* asp-items="" *@
+                            <option value="@viewModel.headerClass.OrderHeaderProjectCode">@viewModel.projectName</option>
+
+                            @foreach (CostsViewModel costs in ViewBag.ProjectName)
+                            {
+                                <option value="@costs.costCode">@costs.costName</option>
+                            }
+                        </select>
+                        <span class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group col-md-3">
+                        <label class="control-label">Budget Line</label>
+                        <br />
+                        <select name="headerLst" class="form-control" id="cmbBudgetLine" onchange="CmbBudgeLineSelectedIndexChanged()">
+                            @* asp-items="" *@
+                            <option value="@viewModel.headerClass.OrderHeaderBudgetLineCode">@viewModel.budgetName</option>
+
+                            @foreach (CodeNameModel costs in ViewBag.BudgetLine)
+                            {
+                                <option value="@costs.Code">@costs.Name</option>
+                            }
+                            @*@foreach (String item in ViewBag.uType)
+                                {
+                                    <option> @Html.DisplayFor(modelItem => item)</option>
+                                }*@
+                        </select>
+                        <div style="margin-top:5px">
+                            <label id="LblTotalBudget" for="" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Total Budget:"]</label>
+                            <label id="TxtTotalBudget" for="" style="@Localizer["text-align: left  ;direction: ltr"]">@ViewBag.Budget</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-3">
+                        <label class="control-label">Rate</label>
+                        <input type="number" step="any" class="form-control" name="headerLst" value="@viewModel.headerClass.OrderHeaderRate" id="rateText" />
+                        <span class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label class="control-label">Expected Date</label>
+                        <input class="form-control" id="txtExpectedDate" name="headerLst" value="@viewModel.headerClass.ExpectedDate?.ToString("yyyy-MM-dd")" maxlength="10" type="date" id="datePicker" />
+                        <span class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    @if (ViewBag.Show_Doner2)
+                    {
+                        <div class="form-group col-md-4">
+                            <label id="Doner2_label" for="Doner2_input" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer[ViewBag.Display_Name_Doner2]</label>
+                            <select id="Doner2_input" class="form-control" name="headerLst">
+                                <option selected></option>
                                 @* asp-items="" *@
-                                <option value="@viewModel.headerClass.OrderHeaderProjectCode">@viewModel.projectName</option>
-
-                                @foreach (CostsViewModel costs in ViewBag.ProjectName)
+                                @foreach (CostsViewModel costs in ViewBag.Doner_List)
                                 {
                                     <option value="@costs.costCode">@costs.costName</option>
                                 }
                             </select>
                             <span class="text-danger"></span>
                         </div>
-
-                        <div class="form-group col-md-3">
-                            <label class="control-label">Budget Line</label>
-                            <br />
-                            <select name="headerLst" class="form-control" id="cmbBudgetLine" onchange = "CmbBudgeLineSelectedIndexChanged()">
-                                @* asp-items="" *@
-                                <option value="@viewModel.headerClass.OrderHeaderBudgetLineCode">@viewModel.budgetName</option>
-
-                                @foreach (CodeNameModel costs in ViewBag.BudgetLine)
-                                {
-                                    <option value="@costs.Code">@costs.Name</option>
-                                }
-                                @*@foreach (String item in ViewBag.uType)
-            {
-                <option> @Html.DisplayFor(modelItem => item)</option>
-            }*@
-                            </select>
-                            <div style="margin-top:5px">
-                                <label id="LblTotalBudget" for="" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Total Budget:"]</label>
-                                <label id="TxtTotalBudget" for="" style="@Localizer["text-align: left  ;direction: ltr"]">@ViewBag.Budget</label>
-                            </div>
-                        </div>
-                      
-                        <div class="form-group col-md-3">
-                            <label class="control-label">Rate</label>
-                            <input type="number" step="any" class="form-control" name="headerLst" value="@viewModel.headerClass.OrderHeaderRate" id="rateText" />
-                            <span class="text-danger"></span>
-                        </div>
-                        <div class="form-group col-md-3">
-                            <label class="control-label">Expected Date</label>
-                            <input class="form-control" id="txtExpectedDate" name="headerLst" value="@viewModel.headerClass.ExpectedDate?.ToString("yyyy-MM-dd")" maxlength="10" type="date" id="datePicker" />
-                            <span class="text-danger"></span>
-                        </div>
-                    </div>
-
-
-
-                    <div class="row " style=" box-shadow: 0 0 10px 0 rgba(0, 0, 0, .1); margin-right:1px; margin-left:1px;margin-bottom:4px;margin-top:-4px">
-
+                    }
+                    @if (ViewBag.Show_cost3)
+                    {
                         <div class="form-group col-md-4">
+
+                            <label id="cost3_label" for="cost3_input" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer[ViewBag.Display_Name_cost3]</label>
+                            <select id="cost3_input" class="form-control" name="headerLst">
+                                <option selected></option>
+                                @* asp-items="" *@
+                                @foreach (CostsViewModel costs in ViewBag.cost3_List)
+                                {
+                                    <option value="@costs.costCode">@costs.costName</option>
+                                }
+                            </select>
+                            <span class="text-danger"></span>
+                        </div>
+                    }
+                    @if (ViewBag.Show_cost4)
+                    {
+                        <div class="form-group col-md-4">
+
+                            <label id="cost4_label" for="cost4_input" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer[ViewBag.Display_Name_cost4]</label>
+                            <select id="cost4_input" class="form-control" name="headerLst">
+                                <option selected></option>
+                                @* asp-items="" *@
+                                @foreach (CostsViewModel costs in ViewBag.cost4_List)
+                                {
+                                    <option value="@costs.costCode">@costs.costName</option>
+                                }
+                            </select>
+                            <span class="text-danger"></span>
+                        </div>
+                    }
+                </div>
+
+                <div class="" style="    border-radius: 6px;    border: 2px solid #46688a;     margin-top: 9px;">
+                    <div class="row " style="margin: 0 1px -2px 1px;  padding: 12px 0 0 0;">
+
+                        <div class="form-group col-md-2">
 
                             <label style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Item"]</label>
                             <select id="itemName" class="form-control">
@@ -188,14 +254,23 @@
 
                             </select>
                         </div>
-                        <div class="form-group col-md-1">
+
+                        @if (ViewBag.Show_Unit)
+                        {
+                            <div class="form-group col-md-2">
+                                <label class="control-label" style="@Localizer["text-align: left  ;dm irection: ltr"]">@Localizer["Unit"]</label>
+                                <input class="form-control" type="text" id="Unit_input" disabled />
+                            </div>
+                        }
+
+                        <div class="form-group @(ViewBag.Show_Unit ? "col-md-1":"col-md-2")">
                             <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Quantity"]</label>
-                            <input type="number" step="any" class="form-control" name="transLst" id="qty" style="width:80px ;" />
+                            <input type="number" step="any" class="form-control" name="transLst" id="qty" />
                             <span class="text-danger"></span>
                         </div>
-                        <div class="form-group col-md-1">
+                        <div class="form-group @(ViewBag.Show_Unit ? "col-md-1":"col-md-2")">
                             <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Price"]</label>
-                            <input type="number" step="any" class="form-control" name="transLst" id="price" style="width:80px ;" />
+                            <input type="number" step="any" class="form-control" name="transLst" id="price" />
                             <span class="text-danger"></span>
                         </div>
                         <div class="form-group col-md-3">
@@ -218,46 +293,77 @@
                         </div>
                     </div>
 
-                    <div style="width:100%;height:200px ;border-style: solid; border-color: #f1f0f0;border-width: thin;overflow-y:scroll" id="itemRowTbl">
+                    <div style="width:100%;height:200px ; overflow-y:auto" id="itemRowTbl">
                         <table class="table">
                             <thead style="background-color:#46688a;">
-                                <tr>
-                                    <th scope="col" style="color:#fff;">@Localizer["Item Name"]</th>
-                                    <th scope="col" style="color:#fff;">@Localizer["Quantity"]</th>
-                                    <th scope="col" style="color:#fff;">@Localizer["Price"]</th>
-                                    <th scope="col" style="color:#fff;">@Localizer["Total"]</th>
-                                    <th scope="col" style="color:#fff;">@Localizer["Item Note"]</th>
-                                    <th scope="col" style="color:#fff;">@Localizer["Date"]</th>
-                                    <th scope="col" style="color:#fff;">@Localizer["Edit"]/ @Localizer["Remove"]</th>
+                                <tr style="width: 100%; margin: 0;">
+                                    <th scope="col" style="color:#fff; display:none ;">@Localizer["Item code"]</th>
+                                    <th class="col-md-2" style="color:#fff;">@Localizer["Item Name"]</th>
+                                    @if (ViewBag.Show_Unit)
+                                    {
+                                        <th class="col-md-1" style="color:#fff;">@Localizer["Unit"]</th>
+                                    }
+                                    <th class="col-md-1" style="color:#fff;">@Localizer["Quantity"]</th>
+                                    <th class="col-md-1" style="color:#fff;">@Localizer["Price"]</th>
+                                    <th class="col-md-1" style="color:#fff;">@Localizer["Total"]</th>
+                                    <th class="col-md-2" style="color:#fff;">@Localizer["Item Note"]</th>
+                                    <th class="col-md-2" style="color:#fff;">@Localizer["Date"]</th>
+                                    <th class="@(ViewBag.Show_Unit ? "col-md-1":"col-md-2")" style="color:#fff;">@Localizer["Edit"]/ @Localizer["Remove"]</th>
                                 </tr>
                             </thead>
                             @* this body used to display the item for the user when add an item *@
                             <tbody id="myTable">
                                 @foreach (TransactionViewModel item in viewModel.transViewModel)
                                 {
-                                    <tr>
+                                    <tr style="width: 100%; margin: 0;">
                                         @*<td style="display:none;">
                                 @item.TransactionCode
                             </td>*@
                                         <td style="display:none;">
                                             @item.TransactionItemCode
                                         </td>
-                                        <td>
+                                        <td class="col-md-2">
                                             @item.ItemName
                                         </td>
-                                        <td>
+
+                                        @*var items = @Json.Serialize(ViewBag.ItemName);*@
+                                        @*var units = @Json.Serialize(ViewBag.Units);*@
+                                        @if (ViewBag.Show_Unit)
+                                        {
+                                            @foreach (var item_obj in ViewBag.ItemName)
+                                            {
+                                                if (item_obj.itemCode == item.TransactionItemCode)
+                                                {
+                                                    var unit_id = item_obj.Unit_Id;
+                                                    var unit_name = "";
+
+                                                    foreach (var unit in ViewBag.Units)
+                                                    {
+                                                        if (unit.Id == unit_id)
+                                                        {
+                                                            unit_name = unit.Name;
+                                                            break;
+                                                        }
+                                                    }
+                                                    //alert(unit_name)
+                                                    <td class="col-md-2">@unit_name</td>
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        <td class="col-md-1">
                                             @item.TransactionQty
                                         </td>
-                                        <td>
+                                        <td class="col-md-1">
                                             @item.TransactionPrice
                                         </td>
-                                        <td>
+                                        <td class="col-md-1">
                                             @{var x = @item.TransactionPrice * item.TransactionQty; } @x
                                         </td>
-                                        <td>
+                                        <td class="col-md-3">
                                             @item.TransactionNote
                                         </td>
-                                        <td>
+                                        <td class="col-md-2">
                                             @{ if (@item.TransactionDate.ToString("yyyy-MM-dd") != "0001-01-01")
                                                 {
                                                     @item.TransactionDate.ToString("yyyy-MM-dd")
@@ -265,7 +371,7 @@
                                             }
 
                                         </td>
-                                        <td>
+                                        <td class="@(ViewBag.Show_Unit ? "col-md-1":"col-md-2")">
                                             <a class="Editbtn" href="#">
                                                 <span class="Editbtn fa fa-pen"></span>
                                             </a>
@@ -284,132 +390,133 @@
                         </table>
 
                     </div>
-                    <br />
+                </div>
+                <br />
 
-                    <div class="row">
+                <div class="row" style="margin-top: 20px;">
 
-                        <div class="form-group col-md-2">
-                            <label class="control-label">Total</label>
-                            <input type="number" step="any" class="form-control" name="headerLst" value="@viewModel.headerClass.OrderHeaderRealTotal" id="realTot" />
-                            <span class="text-danger"></span>
-                        </div>
-                        <div class="form-group col-md-2">
-                            <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["TotalInBasic"]</label>
-                            <input type="number" step="any" class="form-control" name="realBasicTot" value="@viewModel.TotalInbasic" id="realBasicTot" value="0" />
-                            <span class="text-danger"></span>
-                        </div>
-                        <div class="form-group col-md-2">
-                            <label class="control-label">Actual Amount</label>
-                            <input type="number" step="any" class="form-control" name="headerLst" value="@viewModel.headerClass.ActualTotalAmount" id="ActualTotalAmount" disabled />
-                            <span class="text-danger"></span>
-                        </div>
-                        <div class="form-group col-md-3">
-                            <label class="control-label">General Note</label>
-                            <input type="text" class="form-control" name="headerLst" value="@viewModel.headerClass.OrderHeaderNote" id="txtNote" />
-                            <span class="text-danger"></span>
-                        </div>
-                        <div class="form-group col-md-3">
-                            <label class="control-label">Sending Note</label>
-                            <input type="text" class="form-control" name="headerLst" value="" id="txtStatusNote" />
-                            <span class="text-danger"></span>
-                        </div>
-
-
-
+                    <div class="form-group col-md-2">
+                        <label class="control-label">Total</label>
+                        <input type="number" step="any" class="form-control" name="headerLst" value="@viewModel.headerClass.OrderHeaderRealTotal" id="realTot" />
+                        <span class="text-danger"></span>
                     </div>
-                    <div class="row">
-                        <div class="col-md-5">
-
-                            <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]"></label>
-                            <div class="custom-file">
-                                <input type="file" class="form-control custom-file-input" id="ufile" />
-                                <label class="custom-file-label " style="@Localizer["text-align: left  ;direction: ltr"]">Choose File ...</label>
-                            </div>
-
-
-                            @*<div class="col-md-3">
-                    <button class="btn btn-primary cursor btnUploadFiles" onclick="UploadFile()"> @Localizer["Upload File"]</button>
-                </div>*@
-                        </div>
+                    <div class="form-group col-md-2">
+                        <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["TotalInBasic"]</label>
+                        <input type="number" step="any" class="form-control" name="realBasicTot" value="@viewModel.TotalInbasic" id="realBasicTot" value="0" />
+                        <span class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label class="control-label">Actual Amount</label>
+                        <input type="number" step="any" class="form-control" name="headerLst" value="@viewModel.headerClass.ActualTotalAmount" id="ActualTotalAmount" disabled />
+                        <span class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label class="control-label">General Note</label>
+                        <input type="text" class="form-control" name="headerLst" value="@viewModel.headerClass.OrderHeaderNote" id="txtNote" />
+                        <span class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label class="control-label">Sending Note</label>
+                        <input type="text" class="form-control" name="headerLst" value="" id="txtStatusNote" />
+                        <span class="text-danger"></span>
                     </div>
 
-                    @ViewBag.message
-                    @section Scripts{
-                        <script>
 
-
-                            $('.btnDelete').on("click", function () {
-
-                                DeleteOrder()
-                            });
-                            $('.btnUploadFiles').on("click", function () {
-
-                                UploadFile()
-                            });
-
-                            $('.custom-file-input').on("change", function () {
-                                var fileName = $(this).val().split("\\").pop();
-                                $(this).next('.custom-file-label').html(fileName);
-                            });
-
-
-
-                            $('.Editbtn').on('click', function () {
-                                var total;
-                                 debugger
-                                var $row = $(this).closest('tr');
-                                var $columns = $row.find('td');
-                                $.each($columns, function (i, item) {
-
-                                    if (i == 0) {
-
-                                        $('#itemName').val(parseInt(item.innerHTML));
-
-                                    }
-                                    if (i == 2) {
-                                        $("#qty").val(parseFloat(item.innerHTML));
-                                    }
-                                    if (i == 3) {
-                                        $("#price").val(parseFloat(item.innerHTML));
-                                        //alert(item.innerHTML)
-                                    }
-                                    if (i == 4) {
-                                        total = item.innerHTML
-
-                                    }
-
-                                    if (i == 5) {
-                                        $("#note").val(item.innerHTML);
-
-                                    }
-                                    if (i == 6) {
-                                        //
-                                        var msec = Date.parse(item.innerHTML.replace(/\s+/g, '').concat("T12:00:00-06:30"));
-
-                                        var d = new Date(msec);
-
-                                        document.getElementById("TransDate").value = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
-
-
-                                    }
-
-
-                                });
-                                $(this).parent().parent().remove();
-                                var realTotal = parseFloat(document.getElementById("realTot").value) - (total);
-                                if (parseFloat(realTotal) < 0) {
-                                    document.getElementById("realTot").value = 0;
-                                      document.getElementById("realBasicTot").value = 0;
-                                } else {
-                                    document.getElementById("realTot").value = realTotal;
-                                    document.getElementById("realBasicTot").value = realTotal * parseFloat(document.getElementById("rateText").value);
-                                }
-
-                            });
-                        </script>
-                    }
 
                 </div>
+                <div class="row">
+                    <div class="col-md-5">
+
+                        <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]"></label>
+                        <div class="custom-file">
+                            <input type="file" class="form-control custom-file-input" id="ufile" />
+                            <label class="custom-file-label " style="@Localizer["text-align: left  ;direction: ltr"]">Choose File ...</label>
+                        </div>
+
+
+                        @*<div class="col-md-3">
+                                <button class="btn btn-primary cursor btnUploadFiles" onclick="UploadFile()"> @Localizer["Upload File"]</button>
+                            </div>*@
+                    </div>
+                </div>
+
+                @ViewBag.message
+                @section Scripts{
+                    <script>
+
+
+                        $('.btnDelete').on("click", function () {
+
+                            DeleteOrder()
+                        });
+                        $('.btnUploadFiles').on("click", function () {
+
+                            UploadFile()
+                        });
+
+                        $('.custom-file-input').on("change", function () {
+                            var fileName = $(this).val().split("\\").pop();
+                            $(this).next('.custom-file-label').html(fileName);
+                        });
+
+
+
+                        $('.Editbtn').on('click', function () {
+                            var total;
+                            debugger
+                            var $row = $(this).closest('tr');
+                            var $columns = $row.find('td');
+                            $.each($columns, function (i, item) {
+
+                                if (i == 0) {
+
+                                    $('#itemName').val(parseInt(item.innerHTML));
+
+                                }
+                                if (i == 2) {
+                                    $("#qty").val(parseFloat(item.innerHTML));
+                                }
+                                if (i == 3) {
+                                    $("#price").val(parseFloat(item.innerHTML));
+                                    //alert(item.innerHTML)
+                                }
+                                if (i == 4) {
+                                    total = item.innerHTML
+
+                                }
+
+                                if (i == 5) {
+                                    $("#note").val(item.innerHTML);
+
+                                }
+                                if (i == 6) {
+                                    //
+                                    var msec = Date.parse(item.innerHTML.replace(/\s+/g, '').concat("T12:00:00-06:30"));
+
+                                    var d = new Date(msec);
+
+                                    document.getElementById("TransDate").value = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+
+
+                                }
+
+
+                            });
+                            $(this).parent().parent().remove();
+                            var realTotal = parseFloat(document.getElementById("realTot").value) - (total);
+                            if (parseFloat(realTotal) < 0) {
+                                document.getElementById("realTot").value = 0;
+                                document.getElementById("realBasicTot").value = 0;
+                            } else {
+                                document.getElementById("realTot").value = realTotal;
+                                document.getElementById("realBasicTot").value = realTotal * parseFloat(document.getElementById("rateText").value);
+                            }
+
+                        });
+                    </script>
+                }
+
+            </div>
         </form>
         <div class="col-md-3">
 
@@ -457,68 +564,68 @@
 <script>
 
     function CheckExpectedDate() {
-if ($('#NumberOfDayesAfter').val() == '0' || $('#NumberOfDayesAfter').val() == '') {
-    return true
-}
-var excepteddate = new Date($('#txtExpectedDate').val());
-var now = new Date(Date.now());
-var diffTime = Math.abs(excepteddate - now);
-var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-if (diffDays < $('#NumberOfDayesAfter').val()) {
-    var now3 = new Date();
-    now3.setDate(now3.getDate() - 4);
+        if ($('#NumberOfDayesAfter').val() == '0' || $('#NumberOfDayesAfter').val() == '') {
+            return true
+        }
+        var excepteddate = new Date($('#txtExpectedDate').val());
+        var now = new Date(Date.now());
+        var diffTime = Math.abs(excepteddate - now);
+        var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        if (diffDays < $('#NumberOfDayesAfter').val()) {
+            var now3 = new Date();
+            now3.setDate(now3.getDate() - 4);
 
-    Swal.fire({
-        icon: 'error',
-    title: 'خطأ',
-    text: ' يجب ان يكون التاريخ المتوقع للنشاط بعد  ' + $('#NumberOfDayesAfter').val() + ' ايام ',
-    footer: 'PostOrderStatus'
-})
-return false
-}
-return true
+            Swal.fire({
+                icon: 'error',
+                title: 'خطأ',
+                text: ' يجب ان يكون التاريخ المتوقع للنشاط بعد  ' + $('#NumberOfDayesAfter').val() + ' ايام ',
+                footer: 'PostOrderStatus'
+            })
+            return false
+        }
+        return true
 
-}
+    }
 
 
 
     function CheckOrderDate() {
-     if ($('#txtExpectedDate').val() == '') {
-             Swal.fire({
-                    icon: 'error',
-                    title: 'خطأ',
-                     text: ' يجب ادخال التاريخ المتوقع للنشاط   '  ,
-                    footer: 'PostOrder'
-                 })
+        if ($('#txtExpectedDate').val() == '') {
+            Swal.fire({
+                icon: 'error',
+                title: 'خطأ',
+                text: ' يجب ادخال التاريخ المتوقع للنشاط   ',
+                footer: 'PostOrder'
+            })
             return false
         }
-if ($('#NumberOfDayesBefore').val() == '0' || $('#NumberOfDayesBefore').val() == '') {
-    return true
-}
-var orderddate = new Date($('#date').val());
-var now = new Date(Date.now());
-var diffTime = Math.abs(now - orderddate);
-var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-if (diffDays > $('#NumberOfDayesBefore').val()) {
-    var now3 = new Date();
-    now3.setDate(now3.getDate() - 4);
+        if ($('#NumberOfDayesBefore').val() == '0' || $('#NumberOfDayesBefore').val() == '') {
+            return true
+        }
+        var orderddate = new Date($('#date').val());
+        var now = new Date(Date.now());
+        var diffTime = Math.abs(now - orderddate);
+        var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        if (diffDays > $('#NumberOfDayesBefore').val()) {
+            var now3 = new Date();
+            now3.setDate(now3.getDate() - 4);
 
-    Swal.fire({
-        icon: 'error',
-    title: 'خطأ',
-    text: ' يجب ان يكون تاريخ الطلبيه اقل من ' + $('#NumberOfDayesBefore').val() + ' ايام ',
-    footer: 'PostOrderStatus'
-})
-return false
-}
-return true
+            Swal.fire({
+                icon: 'error',
+                title: 'خطأ',
+                text: ' يجب ان يكون تاريخ الطلبيه اقل من ' + $('#NumberOfDayesBefore').val() + ' ايام ',
+                footer: 'PostOrderStatus'
+            })
+            return false
+        }
+        return true
 
-  }
+    }
 
 
-  
+
      function CheckData(val, msg) {
-       
+
         var IsError=true;
          if (val == 0 || val == '' || val==undefined) {
             Swal.fire({
@@ -562,7 +669,7 @@ return true
             })
             IsError = false;
         }
-        
+
           if ($("#txtNote").val() == 0 || $("#txtNote").val() == '') {
             Swal.fire({
                     icon: 'error',
@@ -572,178 +679,186 @@ return true
             })
             IsError = false;
         }
-        
+
 
         return IsError
     }
 
-function GetOrder(status) {
-debugger
+    function GetOrder(status) {
+        debugger
 
 
-    //check ExpectaionDate and dayes before
+        //check ExpectaionDate and dayes before
 
-    if (CheckExpectedDate() == false) {
-    return ;
-}
-if (CheckOrderDate() == false) {
-    return ;
-    }
-    if (CheckForm() == false) {
+        if (CheckExpectedDate() == false) {
+            return;
+        }
+        if (CheckOrderDate() == false) {
+            return;
+        }
+        if (CheckForm() == false) {
             return;
         }
 
-var HeaderList = new Array();
-var TransList = new Array();
-var id = document.getElementById("hi").value;
-//$("[name='headerLst']").each(function (index, data) {
-//    HeaderList.push(data.value);
-//});
+        var HeaderList = new Array();
+        var TransList = new Array();
+        var id = document.getElementById("hi").value;
+        //$("[name='headerLst']").each(function (index, data) {
+        //    HeaderList.push(data.value);
+        //});
 
 
 
 
-var OrderHeaderProjectCode = "0";
+        var OrderHeaderProjectCode = "0";
 
-    var ProjectCode = document.getElementById('project');
-if (ProjectCode != null) {
+        var ProjectCode = document.getElementById('project');
+        if (ProjectCode != null) {
 
-        OrderHeaderProjectCode = ProjectCode.value;
-    }
-
-   if (document.getElementById("project").style.visibility  == "visible") {
-            if (CheckData(OrderHeaderProjectCode,"يجب ادخال المشروع") == false) { return;}
+            OrderHeaderProjectCode = ProjectCode.value;
         }
-    var OrderTypeCode = document.getElementById('orderType');
-    var OrderHeaderOrderTypeCode = OrderTypeCode.value;
-    var BudgetLineCode = document.getElementById('cmbBudgetLine');
-    // BudgetLineCode != 'undefined' ||
-if (BudgetLineCode != null) {
-    var OrderHeaderBudgetLineCode = BudgetLineCode.value;
-}
 
- if (document.getElementById("cmbBudgetLine").hidden == false && document.getElementById("project").style.visibility  == "visible") {
+        if (document.getElementById("project").style.visibility == "visible") {
+            if (CheckData(OrderHeaderProjectCode, "يجب ادخال المشروع") == false) { return; }
+        }
+        var OrderTypeCode = document.getElementById('orderType');
+        var OrderHeaderOrderTypeCode = OrderTypeCode.value;
+        var BudgetLineCode = document.getElementById('cmbBudgetLine');
+        // BudgetLineCode != 'undefined' ||
+        if (BudgetLineCode != null) {
+            var OrderHeaderBudgetLineCode = BudgetLineCode.value;
+        }
+
+        if (document.getElementById("cmbBudgetLine").hidden == false && document.getElementById("project").style.visibility == "visible") {
 
             if (CheckData(OrderHeaderBudgetLineCode, "يجب ادخال بند الموازنه") == false) { return; }
         }
-var currencey = document.getElementById('cmbCurrency');
-var OrderHeaderCurrencey = currencey.value;
+        var currencey = document.getElementById('cmbCurrency');
+        var OrderHeaderCurrencey = currencey.value;
 
-     if (CheckData(OrderHeaderCurrencey,"يجب ادخال العمله") == false) { return;}
-           if (CheckData(OrderHeaderOrderTypeCode, "يجب ادخال نوع الطلبيه ") == false) { return;}
+        if (CheckData(OrderHeaderCurrencey, "يجب ادخال العمله") == false) { return; }
+        if (CheckData(OrderHeaderOrderTypeCode, "يجب ادخال نوع الطلبيه ") == false) { return; }
 
-var headerModel = {
+        var headerModel = {
 
-        //  OrderHeaderdepartmentCode: OrderHeaderdepartmentCode,
-        OrderHeaderProjectCode: OrderHeaderProjectCode,
-    OrderHeaderdate: $('#date').val(),
-    OrderHeaderOrderTypeCode: OrderHeaderOrderTypeCode,
-    OrderHeaderBudgetLineCode: OrderHeaderBudgetLineCode,
-    OrderHeaderCurrencey: OrderHeaderCurrencey,
-    OrderHeaderRate: $("#rateText").val(),
-    OrderHeaderNote: $("#txtNote").val(),
-    OrderHeaderRealTotal: $('#realTot').val(),
-    ExpectedDate: $('#txtExpectedDate').val(),
-};
+            //  OrderHeaderdepartmentCode: OrderHeaderdepartmentCode,
+            OrderHeaderProjectCode: OrderHeaderProjectCode,
+            OrderHeaderdate: $('#date').val(),
+            OrderHeaderOrderTypeCode: OrderHeaderOrderTypeCode,
+            OrderHeaderBudgetLineCode: OrderHeaderBudgetLineCode,
+            OrderHeaderCurrencey: OrderHeaderCurrencey,
+            OrderHeaderRate: $("#rateText").val(),
+            OrderHeaderNote: $("#txtNote").val(),
+            OrderHeaderRealTotal: $('#realTot').val(),
+            ExpectedDate: $('#txtExpectedDate').val(),
+        };
 
-
-
-
-var TableData = new Array();
-
-
-$('#myTable tr').each(function (row, tr) {
-        TableData[row] = {
-            "TransactionItemCode": $(tr).find('td:eq(0)').text()
-            , "TransactionQty": $(tr).find('td:eq(2)').text()
-            , "TransactionPrice": $(tr).find('td:eq(3)').text()
-            , "TransactionNote": $(tr).find('td:eq(5)').text()
-            , "TransactionDate": $(tr).find('td:eq(6)').text()
-            //, "TransactionCreationDate": new Date();
+        if (@Json.Serialize(ViewBag.Show_Doner2) == true) {
+            headerModel.Doner = document.getElementById('Doner2_input').value;
         }
-    });
-      if (TableData.length == 0) {
+        if (@Json.Serialize(ViewBag.Show_cost3) == true) {
+            headerModel.Cost3 = document.getElementById('cost3_input').value;
+        }
+        if (@Json.Serialize(ViewBag.Show_cost4) == true) {
+            headerModel.Cost4 = document.getElementById('cost4_input').value;
+        }
+
+
+        var TableData = new Array();
+
+
+        $('#myTable tr').each(function (row, tr) {
+            TableData[row] = {
+                "TransactionItemCode": $(tr).find('td:eq(0)').text()
+                , "TransactionQty": $(tr).find('td:eq(2)').text()
+                , "TransactionPrice": $(tr).find('td:eq(3)').text()
+                , "TransactionNote": $(tr).find('td:eq(5)').text()
+                , "TransactionDate": $(tr).find('td:eq(6)').text()
+                //, "TransactionCreationDate": new Date();
+            }
+        });
+        if (TableData.length == 0) {
             ShowMessage("يجب ادخال اصناف ")
             return;
+        }
+
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: "../RepushOrder",
+            data: {
+                headerLst: headerModel,
+                TransLst: TableData,
+                id: id
+            },
+            success: function (message) {
+                console.log("handle response :" + message.message);
+                if (message.message = "ok") {
+                    //console.log(length);
+                    PostOrderStatus(id, status);
+                    addPic(id);
+
+                }
+
+                //  document.location = '/Home/Index';
+
+
+            },
+            error: function (message) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'خطأ في التخزين !',
+                    footer: ''
+                })
+                console.log("just die... GetOrder" + "  " + message);
+            },
+        });
+        // addPic();
+        // transArr = [];
     }
 
-$.ajax({
-        type: "POST",
-    dataType: "json",
-    url: "../RepushOrder",
-    data: {
-        headerLst: headerModel,
-    TransLst: TableData,
-    id: id
-},
-    success: function (message) {
-        console.log("handle response :" + message.message);
-    if (message.message = "ok") {
-        //console.log(length);
-        PostOrderStatus(id, status);
-      addPic(id);
+    function addPic(orderHeaderCode) {//add the file to its table using formdata
+        if (orderHeaderCode != 0) {
+            debugger
+            var x = "../OrderView/UploadFile";
+            // alert(orderHeaderCode)
+            var formData = new FormData();
+            formData.append('file', $('#ufile')[0].files[0]);
+            formData.append('OrderHeaderCode', orderHeaderCode);
+            $.ajax(
+                {
+                    url: "/OrderView/UploadFile",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    type: "POST",
+                    enctype: "multipart/form-data",
+                    success: function (data) {
+                        console.log("File Uploaded Successfully");
 
-}
-
-//  document.location = '/Home/Index';
-
-
-},
-    error: function (message) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'خطأ في التخزين !',
-            footer: ''
-        })
-        console.log("just die... GetOrder" + "  " + message);
-},
-});
-// addPic();
-// transArr = [];
-}
-
-function addPic(orderHeaderCode) {//add the file to its table using formdata
-if (orderHeaderCode != 0) {
-    debugger
-    var x = "../OrderView/UploadFile";
-    // alert(orderHeaderCode)
-    var formData = new FormData();
-    formData.append('file', $('#ufile')[0].files[0]);
-    formData.append('OrderHeaderCode', orderHeaderCode);
-    $.ajax(
-        {
-        url: "/OrderView/UploadFile",
-    data: formData,
-    processData: false,
-    contentType: false,
-    type: "POST",
-    enctype: "multipart/form-data",
-            success: function (data) {
-        console.log("File Uploaded Successfully");
-
-    Swal.fire('Good job!',
-        'تم حفظ الطلبيه',
-        'success'
-    )
+                        Swal.fire('Good job!',
+                            'تم حفظ الطلبيه',
+                            'success'
+                        )
 
 
-},
-            error: function (message) {
-        console.log("Error In Uploading");
-    Swal.fire({
-        icon: 'error',
-    title: 'Oops...',
-    text: 'خطأ في التخزين !',
-    footer: 'File Uploaded'
-})
+                    },
+                    error: function (message) {
+                        console.log("Error In Uploading");
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'خطأ في التخزين !',
+                            footer: 'File Uploaded'
+                        })
 
-//document.location = '/Home/Index';
-}
-});
-// document.location = '/Home/Index';
-}
-}
+                        //document.location = '/Home/Index';
+                    }
+                });
+            // document.location = '/Home/Index';
+        }
+    }
 
 function PostOrderStatus(approvalHeaderCode, approvalIsApproved) {
 
@@ -823,38 +938,38 @@ function getRate(id) {
             });
 
     }
-function DeleteOrder() {
-debugger
-    var id = document.getElementById("hi").value;
+    function DeleteOrder() {
+        debugger
+        var id = document.getElementById("hi").value;
 
-    $.ajax(
-    {
-        url: "/OrderView/DeleteOrder",
-        data: {id: id },
-    type: "POST",
-    dataType: "json",
-        success: function (data) {
+        $.ajax(
+            {
+                url: "/OrderView/DeleteOrder",
+                data: { id: id },
+                type: "POST",
+                dataType: "json",
+                success: function (data) {
 
 
-        Swal.fire('Good job!',
-            'تم حذف الطلبيه',
-            'success'
-        )
-            document.location = '/Home/Index';
+                    Swal.fire('Good job!',
+                        'تم حذف الطلبيه',
+                        'success'
+                    )
+                    document.location = '/Home/Index';
 
-},
-        error: function (message) {
-        console.log("Error In delete order");
-    Swal.fire({
-        icon: 'error',
-    title: 'Oops...',
-    text: 'خطأ في التخزين !',
-    footer: 'delete order '
-})
+                },
+                error: function (message) {
+                    console.log("Error In delete order");
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'خطأ في التخزين !',
+                        footer: 'delete order '
+                    })
 
-//document.location = '/Home/Index';
-}
-});
+                    //document.location = '/Home/Index';
+                }
+            });
 
     }
 
@@ -871,190 +986,214 @@ for (var i = 0; i < rows; i++) {
  */
  var transArr = [];
     function getRows() {
-     if (CheckData(document.getElementById('itemName').value, "يجب ادخال  الصنف") == false) { return; }
-       
+        if (CheckData(document.getElementById('itemName').value, "يجب ادخال  الصنف") == false) { return; }
+
         if (CheckData(document.getElementById('qty').value, "يجب ادخال الكميه") == false) { return; }
         if (CheckData(document.getElementById('price').value, "يجب ادخال السعر") == false) { return; }
 
         document.getElementById("itemRowTbl").style.visibility = "visible";
-    var itemcode = document.getElementById('itemName').value;
-    var itemName = $("#itemName option:selected").text();
-    var qty = document.getElementById('qty').value;
-    var price = document.getElementById('price').value;
-    var note = document.getElementById('note').value;
-    var TransDate = document.getElementById('TransDate').value;
+        var itemcode = document.getElementById('itemName').value;
+        if (@Json.Serialize(ViewBag.Show_Unit) == true) {
+            var UnitName = document.getElementById('Unit_input').value;
+        }
+        var itemName = $("#itemName option:selected").text();
+        var qty = document.getElementById('qty').value;
+        var price = document.getElementById('price').value;
+        var note = document.getElementById('note').value;
+        var TransDate = document.getElementById('TransDate').value;
 
-    var table = document.getElementById("myTable");
-    var row = table.insertRow(0);
-    //row.className = "row";
-    var cell0 = row.insertCell(0); cell0.style.display = 'none';
-    var cell1 = row.insertCell(1); cell1.className = "col-md-3";
-    var cell2 = row.insertCell(2); cell2.className = "col-md-1";
-    var cell3 = row.insertCell(3); cell3.className = "col-md-1";
-    var cell4 = row.insertCell(4); cell4.className = "col-md-1";
-    var cell5 = row.insertCell(5); cell5.className = "col-md-4";
-    var cell6 = row.insertCell(6); cell6.className = "col-md-2";
+        var table = document.getElementById("myTable");
+        var row = table.insertRow(0);
+        if (@Json.Serialize(ViewBag.Show_Unit) == true) {
+            var cell0 = row.insertCell(0); cell0.style.display = 'none';
+            var cell1 = row.insertCell(1); cell1.className = "col-md-2";
+            var cell22 = row.insertCell(2); cell22.className = "col-md-1";
+            var cell2 = row.insertCell(3); cell2.className = "col-md-1";
+            var cell3 = row.insertCell(4); cell3.className = "col-md-1";
+            var cell4 = row.insertCell(5); cell4.className = "col-md-1";
+            var cell5 = row.insertCell(6); cell5.className = "col-md-3";
+            var cell6 = row.insertCell(7); cell6.className = "col-md-2";
 
-    var cell7 = row.insertCell(7); cell7.className = "col-md-1";
+            var cell7 = row.insertCell(8); cell7.className = "col-md-1";
+            cell0.innerHTML = itemcode;
+            cell1.innerHTML = itemName;
+            cell22.innerHTML = UnitName;
 
-    cell0.innerHTML = itemcode;
-    cell1.innerHTML = itemName;
+            cell2.innerHTML = qty;
+            cell3.innerHTML = price;
+            cell4.innerHTML = qty * price;
+            cell5.innerHTML = note;
+            cell6.innerHTML = TransDate;
 
-    cell2.innerHTML = qty;
-    cell3.innerHTML = price;
-    cell4.innerHTML = qty * price;
-    cell5.innerHTML = note;
-    cell6.innerHTML = TransDate;
-    var x = qty * price;
+        } else {
+            var cell0 = row.insertCell(0); cell0.style.display = 'none';
+            var cell1 = row.insertCell(1); cell1.className = "col-md-2";
+            var cell2 = row.insertCell(2); cell2.className = "col-md-1";
+            var cell3 = row.insertCell(3); cell3.className = "col-md-1";
+            var cell4 = row.insertCell(4); cell4.className = "col-md-1";
+            var cell5 = row.insertCell(5); cell5.className = "col-md-3";
+            var cell6 = row.insertCell(6); cell6.className = "col-md-2";
+
+            var cell7 = row.insertCell(7); cell7.className = "col-md-1";
+            cell0.innerHTML = itemcode;
+            cell1.innerHTML = itemName;
+
+            cell2.innerHTML = qty;
+            cell3.innerHTML = price;
+            cell4.innerHTML = qty * price;
+            cell5.innerHTML = note;
+            cell6.innerHTML = TransDate;
+        }
+        var x = qty * price;
 
 
-    /**/
-// cell6.innerHTML = '<a class="Editbtn" href="#" ><span class="Editbtn fa fa-pen" ></span> </a>   ';
-    /**/
+        /**/
+        // cell6.innerHTML = '<a class="Editbtn" href="#" ><span class="Editbtn fa fa-pen" ></span> </a>   ';
+        /**/
 
-cell7.innerHTML = ' <a href="#"><span class=" fa fa-pen" onclick="Edit(this , ' + x + ' )"></span> </a> <a href="#"> <span class=" fa fa-trash" onclick="Remove2(this , ' + x + ' )"></span></a>';
-    /**/
-var TransactionClass = function (itemcode, itemName, Quantity, Price, Note, TransDate) {
-        this.TransactionItemCode = itemcode;
-    this.itemName = itemName;
-    this.TransactionQty = Quantity;
-    this.TransactionPrice = Price;
-    this.TransactionNote = Note;
-    this.TransDate = TransDate;
+        cell7.innerHTML = ' <a href="#"><span class=" fa fa-pen" onclick="Edit(this , ' + x + ' )"></span> </a> <a href="#"> <span class=" fa fa-trash" onclick="Remove2(this , ' + x + ' )"></span></a>';
+        /**/
+        var TransactionClass = function (itemcode, itemName, Quantity, Price, Note, TransDate) {
+            this.TransactionItemCode = itemcode;
+            this.itemName = itemName;
+            this.TransactionQty = Quantity;
+            this.TransactionPrice = Price;
+            this.TransactionNote = Note;
+            this.TransDate = TransDate;
 
-};
+        };
 
-transArr.push((new TransactionClass(itemcode, itemName, qty, price, note, TransDate)));
+        transArr.push((new TransactionClass(itemcode, itemName, qty, price, note, TransDate)));
 
-document.getElementById('qty').innerHTML = "";
-document.getElementById('price').innerHTML = "";
-document.getElementById('note').innerHTML = "";
+        document.getElementById('qty').innerHTML = "";
+        document.getElementById('price').innerHTML = "";
+        document.getElementById('note').innerHTML = "";
 
-var realTotal = parseInt(document.getElementById("realTot").value) + (qty * price);
-document.getElementById("realTot").value = realTotal;
-var realBasicTot = parseInt(document.getElementById("realBasicTot").value) + (qty * price * parseFloat(document.getElementById("rateText").value));
-document.getElementById("realBasicTot").value = realBasicTot;
+        var realTotal = parseInt(document.getElementById("realTot").value) + (qty * price);
+        document.getElementById("realTot").value = realTotal;
+        var realBasicTot = parseInt(document.getElementById("realBasicTot").value) + (qty * price * parseFloat(document.getElementById("rateText").value));
+        document.getElementById("realBasicTot").value = realBasicTot;
 
-}
-function Remove(td, amount) {
+    }
+    function Remove(td, amount) {
 
         row = td.parentElement.parentElement;
-    $(row).remove();
-    //document.getElementById("myTable").deleteRow(row.rowIndex -1 );
-    var realTotal = parseFloat(document.getElementById("realTot").value) - (amount);
-    var realBasicTotal = parseFloat(document.getElementById("realBasicTot").value) - (amount * parseFloat(document.getElementById("rateText").value));
+        $(row).remove();
+        //document.getElementById("myTable").deleteRow(row.rowIndex -1 );
+        var realTotal = parseFloat(document.getElementById("realTot").value) - (amount);
+        var realBasicTotal = parseFloat(document.getElementById("realBasicTot").value) - (amount * parseFloat(document.getElementById("rateText").value));
 
-if (parseFloat(realTotal) < 0) {
-        document.getElementById("realTot").value = 0;
-    document.getElementById("realBasicTot").value = 0;
-} else {
-        document.getElementById("realTot").value = realTotal;
-    document.getElementById("realBasicTot").value = realBasicTotal;
-}
+        if (parseFloat(realTotal) < 0) {
+            document.getElementById("realTot").value = 0;
+            document.getElementById("realBasicTot").value = 0;
+        } else {
+            document.getElementById("realTot").value = realTotal;
+            document.getElementById("realBasicTot").value = realBasicTotal;
+        }
 
-}
+    }
 
-function Edit(td, amount) {
+    function Edit(td, amount) {
 
         row = td.parentElement.parentElement.parentElement;
-    // row.children(':nth-child(2)').text();
-    for (i = 0; i < row.childNodes.length; i++) {
+        // row.children(':nth-child(2)').text();
+        for (i = 0; i < row.childNodes.length; i++) {
 
 
-    if (i == 0) {
+            if (i == 0) {
 
-        $('#itemName').val(parseInt(row.childNodes[i].innerHTML));
+                $('#itemName').val(parseInt(row.childNodes[i].innerHTML));
 
-    }
-    if (i == 2) {
-        $("#qty").val(row.childNodes[i].innerHTML);
-    }
-    if (i == 3) {
-        $("#price").val(row.childNodes[i].innerHTML);
+            }
+            if (i == 2) {
+                $("#qty").val(row.childNodes[i].innerHTML);
+            }
+            if (i == 3) {
+                $("#price").val(row.childNodes[i].innerHTML);
 
-    }
-    if (i == 4) {
+            }
+            if (i == 4) {
 
 
-    }
+            }
 
-    if (i == 5) {
-        $("#note").val(row.childNodes[i].innerHTML);
+            if (i == 5) {
+                $("#note").val(row.childNodes[i].innerHTML);
 
-    }
-    if (i == 6) {
+            }
+            if (i == 6) {
 
-        $("#TransDate").val(row.childNodes[i].innerHTML);
+                $("#TransDate").val(row.childNodes[i].innerHTML);
 
-    }
-}
+            }
+        }
 
 
         debugger
-    $(row).remove();
+        $(row).remove();
 
-//document.getElementById("myTable").deleteRow(row.rowIndex -1 );
-var realTotal = parseFloat(document.getElementById("realTot").value) - (amount);
-if (parseFloat(realTotal) < 0) {
-    document.getElementById("realTot").value = 0;
-    document.getElementById("realBasicTot").value = 0;
-    } else {
-    document.getElementById("realTot").value = realTotal;
-    document.getElementById("realBasicTot").value = realTotal * parseFloat(document.getElementById("rateText").value);
+        //document.getElementById("myTable").deleteRow(row.rowIndex -1 );
+        var realTotal = parseFloat(document.getElementById("realTot").value) - (amount);
+        if (parseFloat(realTotal) < 0) {
+            document.getElementById("realTot").value = 0;
+            document.getElementById("realBasicTot").value = 0;
+        } else {
+            document.getElementById("realTot").value = realTotal;
+            document.getElementById("realBasicTot").value = realTotal * parseFloat(document.getElementById("rateText").value);
+        }
+
     }
-
-}
-function Remove2(td, amount) {
-    debugger
+    function Remove2(td, amount) {
+        debugger
         row = td.parentElement.parentElement.parentElement;
 
 
 
-    $(row).remove();
-    //document.getElementById("myTable").deleteRow(row.rowIndex -1 );
-    var realTotal = parseFloat(document.getElementById("realTot").value) - (amount);
-if (parseFloat(realTotal) < 0) {
-    document.getElementById("realTot").value = 0;
-       document.getElementById("realBasicTot").value = 0;
-    } else {
-    document.getElementById("realTot").value = realTotal;
-       document.getElementById("realBasicTot").value = realTotal * parseFloat(document.getElementById("rateText").value);
+        $(row).remove();
+        //document.getElementById("myTable").deleteRow(row.rowIndex -1 );
+        var realTotal = parseFloat(document.getElementById("realTot").value) - (amount);
+        if (parseFloat(realTotal) < 0) {
+            document.getElementById("realTot").value = 0;
+            document.getElementById("realBasicTot").value = 0;
+        } else {
+            document.getElementById("realTot").value = realTotal;
+            document.getElementById("realBasicTot").value = realTotal * parseFloat(document.getElementById("rateText").value);
+        }
+
     }
 
-}
+    function UploadFile() {
+        debugger
+        var id = document.getElementById("hi").value;
+        addPic(id);
 
-function UploadFile() {
-debugger
-    var id = document.getElementById("hi").value;
-    addPic(id);
-  
-   // document.getElementById("btnsDiv").style.display = "none";
-window.location.reload(true);
-}
-function getOrderType(id) {
-debugger
-    $.ajax(
-    {
-        url: "/OrderView/GetOrderType",
-        data: {ordertype: id },
-    dataType: "json",
-    type: "POST",
-        success: function (data) {
+        // document.getElementById("btnsDiv").style.display = "none";
+        window.location.reload(true);
+    }
+    function getOrderType(id) {
+        debugger
+        $.ajax(
+            {
+                url: "/OrderView/GetOrderType",
+                data: { ordertype: id },
+                dataType: "json",
+                type: "POST",
+                success: function (data) {
 
-            var NumberOfDayesBefore = document.getElementById("NumberOfDayesBefore");
-    NumberOfDayesBefore.setAttribute('value', data.numberOfDayesBefore);
-    var NumberOfDayesAfter = document.getElementById("NumberOfDayesAfter");
-    NumberOfDayesAfter.setAttribute('value', data.numberOfDayesAfter);
+                    var NumberOfDayesBefore = document.getElementById("NumberOfDayesBefore");
+                    NumberOfDayesBefore.setAttribute('value', data.numberOfDayesBefore);
+                    var NumberOfDayesAfter = document.getElementById("NumberOfDayesAfter");
+                    NumberOfDayesAfter.setAttribute('value', data.numberOfDayesAfter);
 
 
-},
-        error: function (message) {
-        // console.log("Error In Uploading");
-        console.log(message);
-    },
+                },
+                error: function (message) {
+                    // console.log("Error In Uploading");
+                    console.log(message);
+                },
 
-});
-        }
+            });
+    }
 
        //$('#project')
        // .editableSelect()
@@ -1071,22 +1210,22 @@ debugger
         let OrderHeaderProjectCode = 0;
         let OrderHeaderBudgetlineCode = 0;
               var ProjectCode = document.getElementById('project');
-if (ProjectCode != null) {
+        if (ProjectCode != null) {
 
-        OrderHeaderProjectCode = ProjectCode.value;
+            OrderHeaderProjectCode = ProjectCode.value;
         }
                    var budgetLine = document.getElementById('cmbBudgetLine');
-if (budgetLine != null) {
+        if (budgetLine != null) {
 
-        OrderHeaderBudgetlineCode = budgetLine.value;
+            OrderHeaderBudgetlineCode = budgetLine.value;
         }
 
         debugger
-         
+
         $.ajax(
             {
                     url: '@Url.Action("getBudget")',
-              
+
                 data: { ProjectCode:OrderHeaderProjectCode,BudgetLineName: OrderHeaderBudgetlineCode ,byName:false},
                 dataType: "json",
                 type: "POST",
@@ -1101,31 +1240,59 @@ if (budgetLine != null) {
 
             });
 
-    
-    }
-      function SelectedIndexChanged() {
-        debugger
-         let OrderHeaderProjectCode=0
-              var ProjectCode = document.getElementById('project');
-if (ProjectCode != null) {
 
-        OrderHeaderProjectCode = ProjectCode.value;
-          }
-    
-            $("#cmbBudgetLine").html(""); 
+    }
+    function SelectedIndexChanged() {
+        debugger
+        let OrderHeaderProjectCode = 0
+        var ProjectCode = document.getElementById('project');
+        if (ProjectCode != null) {
+
+            OrderHeaderProjectCode = ProjectCode.value;
+        }
+
+        $("#cmbBudgetLine").html("");
         $.ajax({
-              url: '@Url.Action("GetBudgetLineByFunderData")',
+            url: '@Url.Action("GetBudgetLineByFunderData")',
             type: 'POST',
             data: { "Fundercode": OrderHeaderProjectCode }
         }).done(function (data) {
-            var s = '<option value="-1">Please Select a BudgetLine</option>';  
-            for (var i = 0; i < data.data.length; i++) {  
-                  s += '<option value="' + data.data[i].code + '">' + data.data[i].name + '</option>';  
-               }  
-            $("#cmbBudgetLine").append(s);  
-         //   alert(s)
+            var s = '<option value="-1">Please Select a BudgetLine</option>';
+            for (var i = 0; i < data.data.length; i++) {
+                s += '<option value="' + data.data[i].code + '">' + data.data[i].name + '</option>';
+            }
+            $("#cmbBudgetLine").append(s);
+            //   alert(s)
         });
 
     }
 
+    $('#itemName').editableSelect();
+    $('#itemName')
+        .editableSelect()
+        .on('select.editable-select', function (e, li) {
+            debugger
+            var selected_item_id = li.val();
+            if (@Json.Serialize(ViewBag.Show_Unit) == true) {
+                var items = @Json.Serialize(ViewBag.ItemName);
+                var units = @Json.Serialize(ViewBag.Units);
+
+                for (var i = 0; i < items.length; i++) {
+                    if (items[i].itemCode == selected_item_id) {
+                        var unit_id = items[i].unit_Id;
+                        var unit_name = "";
+
+                        for (var i = 0; i < units.length; i++) {
+                            if (units[i].id == unit_id) {
+                                unit_name = units[i].name;
+                                break;
+                            }
+                        }
+                        //alert(unit_name)
+                        document.getElementById("Unit_input").value = unit_name;
+                        break;
+                    }
+                }
+            }
+        });
 </script>

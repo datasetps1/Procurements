@@ -37,5 +37,8 @@ namespace MVCWebAppServierCon.Models
 
         public string Description { get; set; }
 
+        public int OrderHeaderCode { get; set; }
+
+
     }
 }

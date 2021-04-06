@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using MVCWebAppServierCon.Models;
@@ -9,11 +10,10 @@ using MVCWebAppServierCon.ViewModels;
 
 namespace MVCWebAppServierCon.Models
 {
-    public class SecondConnClass:IdentityDbContext
+    public class SecondConnClass : IdentityDbContext
     {
-        public SecondConnClass(DbContextOptions <SecondConnClass> options): base(options)
+        public SecondConnClass(DbContextOptions<SecondConnClass> options) : base(options)
         {
-
         }
 
         public DbSet<StructureClass> TblStructure { get; set; }
@@ -42,13 +42,14 @@ namespace MVCWebAppServierCon.Models
         public DbSet<CompleteActivity> CompleteActivity { get; set; }
         public DbSet<CompleteActivityOffered> CompleteActivityOffered { get; set; }
         public DbSet<CompleteActivityFiles> CompleteActivityFiles { get; set; }
+        public DbSet<Unit> Units { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<SalesQouteHeader>().HasData(
                 new SalesQouteHeader()
                 {
-                    Id=-4,
+                    Id = -4,
                     CreationDate = DateTime.Now,
                     ExpierDate = new DateTime(2022, 10, 3),
                     OfferDate = new DateTime(),
@@ -83,6 +84,30 @@ namespace MVCWebAppServierCon.Models
 
                 }
             );
+
+            builder.Entity<Unit>().HasData(
+                new Unit()
+                {
+                    Id = -4,
+                    Name = "كيلو"
+                },
+                new Unit()
+                {
+                    Id = -3,
+                    Name = "اوقية"
+                }, 
+                new Unit()
+                {
+                    Id = -2,
+                    Name = "علبة"
+                },
+                new Unit()
+                {
+                    Id = -1,
+                    Name = "دزينة"
+                }
+            );
+
 
             base.OnModelCreating(builder);
         }

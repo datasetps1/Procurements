@@ -9,57 +9,151 @@
 <h4>GeneralPreferenceClass</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit"  enctype="multipart/form-data">
+    <div class="col-md-9">
+        <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="code" />
-            <div class="form-group">
-                <label asp-for="QouteAmount" class="control-label"></label>
-                <input asp-for="QouteAmount" class="form-control" />
-                <span asp-validation-for="QouteAmount" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DeductionAmount" class="control-label"></label>
-                <input asp-for="DeductionAmount" class="form-control" />
-                <span asp-validation-for="DeductionAmount" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ConnecWith">finpack</label><br>
 
-                <input id="finpack" type="radio" asp-for="ConnecWith" value="finpack">
-                <label for="finpack">finpack</label><br>
+            <div class="row">
+                <div class="form-group col-sm-6">
+                    <label asp-for="QouteAmount" class="control-label"></label>
+                    <input asp-for="QouteAmount" class="form-control" />
+                    <span asp-validation-for="QouteAmount" class="text-danger"></span>
+                </div>
+                <div class="form-group col-sm-6">
+                    <label asp-for="DeductionAmount" class="control-label"></label>
+                    <input asp-for="DeductionAmount" class="form-control" />
+                    <span asp-validation-for="DeductionAmount" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-sm-2">
+                    <label asp-for="ConnecWith">Database</label><br>
 
-                <input id="audit" type="radio" asp-for="ConnecWith" value="audit">
-                <label for="audit">audit</label><br>
+                    <input id="finpack" type="radio" asp-for="ConnecWith" value="finpack">
+                    <label for="finpack">finpack</label><br>
 
-                <span asp-validation-for="ConnecWith" class="text-danger"></span>
+                    <input id="audit" type="radio" asp-for="ConnecWith" value="audit">
+                    <label for="audit">audit</label><br>
+
+                    <span asp-validation-for="ConnecWith" class="text-danger"></span>
+                </div>
+                <div class="form-group col-sm-2">
+                    <label asp-for="Show_Unit"></label><br>
+
+                    <input id="trueShow_Unit" type="radio" asp-for="Show_Unit" value="true">
+                    <label for="trueShow_Unit">true</label><br>
+
+                    <input id="falseShow_Unit" type="radio" asp-for="Show_Unit" value="false">
+                    <label for="falseShow_Unit">false</label><br>
+
+                    <span asp-validation-for="Show_Unit" class="text-danger"></span>
+                </div>
+                <div class="form-group col-sm-2">
+                    <label asp-for="Show_Doner2"></label><br>
+
+                    <input id="trueShow_Doner2" type="radio" asp-for="Show_Doner2" value="true">
+                    <label for="trueShow_Doner2">true</label><br>
+
+                    <input id="falseShow_Doner2" type="radio" asp-for="Show_Doner2" value="false">
+                    <label for="falseShow_Doner2">false</label><br>
+
+                    <span asp-validation-for="Show_Doner2" class="text-danger"></span>
+                </div>
+                <div class="form-group col-sm-3">
+                    <label asp-for="Show_cost3"></label><br>
+
+                    <input id="trueShow_cost3" type="radio" asp-for="Show_cost3" value="true">
+                    <label for="trueShow_cost3">true</label><br>
+
+                    <input id="falseShow_cost3" type="radio" asp-for="Show_cost3" value="false">
+                    <label for="falseShow_cost3">false</label><br>
+
+                    <span asp-validation-for="Show_cost3" class="text-danger"></span>
+                </div>
+                <div class="form-group col-sm-3">
+                    <label asp-for="Show_cost4"></label><br>
+
+                    <input id="trueShow_cost4" type="radio" asp-for="Show_cost4" value="true">
+                    <label for="trueShow_cost4">true</label><br>
+
+                    <input id="falseShow_cost4" type="radio" asp-for="Show_cost4" value="false">
+                    <label for="falseShow_cost4">false</label><br>
+
+                    <span asp-validation-for="Show_cost4" class="text-danger"></span>
+                </div>
+
             </div>
-            <div class="form-group">
-                <label asp-for="ActivitiyTable" class="control-label"></label>
-                <input asp-for="ActivitiyTable" class="form-control" />
-                <span asp-validation-for="ActivitiyTable" class="text-danger"></span>
+
+            <div class="row">
+                <div class="form-group col-sm-6">
+                    <label asp-for="ActivitiyTable" class="control-label"></label>
+                    <input asp-for="ActivitiyTable" class="form-control" />
+                    <span asp-validation-for="ActivitiyTable" class="text-danger"></span>
+                </div>
+                <div class="form-group col-sm-6">
+                    <label asp-for="ProjectTable" class="control-label"></label>
+                    <input asp-for="ProjectTable" class="form-control" />
+                    <span asp-validation-for="ProjectTable" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="ProjectTable" class="control-label"></label>
-                <input asp-for="ProjectTable" class="form-control" />
-                <span asp-validation-for="ProjectTable" class="text-danger"></span>
+
+            <div class="row" style="    padding-left: 10px;">
+                <div class="form-group input_group_style col-sm-6" style="margin-bottom:15px; margin-top:0; padding-left:0;">
+                    <label class="control-label"> Company Logo</label>
+                    <div class="custom-file">
+                        <input asp-for="Logo_Files" id="logo_input" type="file" class="form-control custom-file-input" />
+                        <label id="logo_input_label" class="custom-file-label" style="overflow: hidden;">Choose File ...</label>
+                        <span id="logo_error_element" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group col-sm-6">
+                    <label asp-for="Company_Name" class="control-label"></label>
+                    <input asp-for="Company_Name" class="form-control" placeholder="type Company Name here ..." />
+                    <span asp-validation-for="Company_Name" class="text-danger"></span>
+                </div>
             </div>
+
             <div class="form-group">
                 <label asp-for="link_view_name" class="control-label"></label>
                 <input asp-for="link_view_name" class="form-control" placeholder="type link view name here ..." />
                 <span asp-validation-for="link_view_name" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Company_Name" class="control-label"></label>
-                <input asp-for="Company_Name" class="form-control" placeholder="type Company Name here ..." />
-                <span asp-validation-for="Company_Name" class="text-danger"></span>
+
+            <div class="row">
+                <div class="form-group col-sm-6">
+                    <label asp-for="Display_Name_Doner2" class="control-label"></label>
+                    <input asp-for="Display_Name_Doner2" class="form-control" placeholder="type Name here ..." />
+                    <span asp-validation-for="Display_Name_Doner2" class="text-danger"></span>
+                </div>
+                <div class="form-group col-sm-6">
+                    <label asp-for="Table_Name_Doner2" class="control-label"></label>
+                    <input asp-for="Table_Name_Doner2" class="form-control" placeholder="type Name here ..." />
+                    <span asp-validation-for="Table_Name_Doner2" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group input_group_style " style="margin-bottom:15px; padding-left:0;">
-                    <label class="control-label"> Company Logo</label>
-                <div class="custom-file">
-                    <input asp-for="Logo_Files" id="logo_input" type="file" class="form-control custom-file-input" />
-                    <label id="logo_input_label" class="custom-file-label" style="overflow: hidden;">Choose File ...</label>
-                    <span id="logo_error_element" class="text-danger"></span>
+            <div class="row">
+                <div class="form-group col-sm-6">
+                    <label asp-for="Display_Name_cost3" class="control-label"></label>
+                    <input asp-for="Display_Name_cost3" class="form-control" placeholder="type Name here ..." />
+                    <span asp-validation-for="Display_Name_cost3" class="text-danger"></span>
+                </div>
+                <div class="form-group col-sm-6">
+                    <label asp-for="Table_Name_cost3" class="control-label"></label>
+                    <input asp-for="Table_Name_cost3" class="form-control" placeholder="type Name here ..." />
+                    <span asp-validation-for="Table_Name_cost3" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-sm-6">
+                    <label asp-for="Display_Name_cost4" class="control-label"></label>
+                    <input asp-for="Display_Name_cost4" class="form-control" placeholder="type Name here ..." />
+                    <span asp-validation-for="Display_Name_cost4" class="text-danger"></span>
+                </div>
+                <div class="form-group col-sm-6">
+                    <label asp-for="Table_Name_cost4" class="control-label"></label>
+                    <input asp-for="Table_Name_cost4" class="form-control" placeholder="type Name here ..." />
+                    <span asp-validation-for="Table_Name_cost4" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group">
@@ -70,14 +164,14 @@
 </div>
 
 
-@section scripts{ 
-<script>
-    var logo_input = document.getElementById("logo_input");
+@section scripts{
+    <script>
+        var logo_input = document.getElementById("logo_input");
 
-    logo_input.addEventListener('change', () => {
-        //set the label
-        document.getElementById("logo_input_label").innerHTML = logo_input.files[0].name;
-        console.log()
-    })
-</script>
+        logo_input.addEventListener('change', () => {
+            //set the label
+            document.getElementById("logo_input_label").innerHTML = logo_input.files[0].name;
+            console.log()
+        })
+    </script>
 }

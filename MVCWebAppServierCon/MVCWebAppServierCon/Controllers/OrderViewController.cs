@@ -14,6 +14,7 @@ using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using MVCWebAppServierCon.Helpers;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace MVCWebAppServierCon.Controllers
 {
@@ -60,6 +61,13 @@ namespace MVCWebAppServierCon.Controllers
             }
         }
 
+        public override void OnActionExecuting(ActionExecutingContext filterContext)
+        {
+
+            ViewBag.Base64String = _sc.TblGeneralPreference.Select(g => g.Company_Logo).FirstOrDefault();
+            ViewBag.CompName = _sc.TblGeneralPreference.Select(g => g.Company_Name).FirstOrDefault();
+        }
+
         public IActionResult Index()
         {
             List<OrderViewModel> orderViewList = new List<OrderViewModel>();
@@ -97,21 +105,31 @@ namespace MVCWebAppServierCon.Controllers
                 command = new SqlCommand("SELECT Code,Name  FROM " + tblName + " Where Status=1;", connection);
             }
 
-
-            var reader = command.ExecuteReader();
-            List<CostsViewModel> costLst = new List<CostsViewModel>();
-            while (reader.Read())
+            try
             {
-                CostsViewModel costs = new CostsViewModel();
-                costs.costCode = reader.GetValue(0).ToString();
-                costs.costName = reader.GetValue(1).ToString();
-                //costs.costBudget = float.Parse(reader.GetValue(2).ToString());
-                costLst.Add(costs);
+                var reader = command.ExecuteReader();
+                List<CostsViewModel> costLst = new List<CostsViewModel>();
+                while (reader.Read())
+                {
+                    CostsViewModel costs = new CostsViewModel();
+                    costs.costCode = reader.GetValue(0).ToString();
+                    costs.costName = reader.GetValue(1).ToString();
+                    //costs.costBudget = float.Parse(reader.GetValue(2).ToString());
+                    costLst.Add(costs);
 
-                // do something with 'value'
+                    // do something with 'value'
+                }
+                connection.Close();
+                return costLst;
             }
-            connection.Close();
-            return costLst;
+            catch (Exception e)
+            {
+                ViewBag.Error_inProjectLoad = e.Message;
+                connection.Close();
+
+                return new List<CostsViewModel>();
+            }
+
         }
 
         public String projName(String tblName, string code)
@@ -154,21 +172,37 @@ namespace MVCWebAppServierCon.Controllers
 
             var getData = new getAuditData();
             List<CodeNameModel> lst = new List<CodeNameModel>();
-            lst = getData.getTableData("VRelationalBudgetLineWithFunder", "  WHERE (FirstCostCenterCode = '" + Fundercode + "' ) ", connection);
+            if (connect_with == Constants.audit)
+            {
+                lst = getData.getTableData("VRelationalBudgetLineWithFunder", "  WHERE (FirstCostCenterCode = '" + Fundercode + "' ) ", connection);
+            }
+            else
+            {
+                lst = getData.getTableData("viw_cst_lnk", "  WHERE (CodeDep = '" + Fundercode + "' ) ", connection);
+            }
             ViewBag.lst = lst;
 
             return PartialView();
 
         }
 
+
         public ActionResult GetBudgetLineByFunderData(string Fundercode)
         {
 
-            // SqlCommand command = new SqlCommand("SELECT code,name FROM  VRelationalBudgetLineWithFunder WHERE (FirstCostCenterCode = '" + Fundercode + "' );", connection);
+            //SqlCommand command = new SqlCommand("SELECT code,name FROM  VRelationalBudgetLineWithFunder WHERE (FirstCostCenterCode = '" + Fundercode + "' );", connection);
 
             var getData = new getAuditData();
             List<CodeNameModel> lst = new List<CodeNameModel>();
-            lst = getData.getTableData("VRelationalBudgetLineWithFunder", "  WHERE (FirstCostCenterCode = '" + Fundercode + "' ) ", connection);
+            if (connect_with == Constants.audit)
+            {
+                lst = getData.getTableData("VRelationalBudgetLineWithFunder", "  WHERE (FirstCostCenterCode = '" + Fundercode + "' ) ", connection);
+            }
+            else
+            {
+                lst = getData.getTableData("viw_cst_lnk", "  WHERE (CodeDep = '" + Fundercode + "' ) ", connection);
+            }
+
             ViewBag.lst = lst;
 
             return Json(new { data = lst });
@@ -230,7 +264,7 @@ namespace MVCWebAppServierCon.Controllers
 
 
                     var getData = new getAuditData();
-                   // BudgetLineCode = getData.getCodeByName(await _sc.TblGeneralPreference.Select(gp => gp.ActivitiyTable).FirstOrDefaultAsync(), BudgetLineName, connection);
+                    // BudgetLineCode = getData.getCodeByName(await _sc.TblGeneralPreference.Select(gp => gp.ActivitiyTable).FirstOrDefaultAsync(), BudgetLineName, connection);
                 }
                 SqlCommand command = new SqlCommand("SELECT Budget FROM TblBudgetCNTran  WHERE (FirstCost=2 and SecondCost=8 and  FirstCostCode= '" + ProjectCode + "' and SecondCostCode = '" + BudgetLineCode + "');", connection);
 
@@ -320,8 +354,33 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
             }
 
         }
+
         public async Task<ActionResult> Create()
         {
+            var general_prefernce = _sc.TblGeneralPreference.FirstOrDefault();
+            ViewBag.Show_Unit = general_prefernce.Show_Unit;
+            ViewBag.Show_Doner2 = general_prefernce.Show_Doner2;
+            ViewBag.Show_cost3 = general_prefernce.Show_cost3;
+            ViewBag.Show_cost4 = general_prefernce.Show_cost4;
+
+            if (ViewBag.Show_Doner2)
+            {
+                ViewBag.Display_Name_Doner2 = general_prefernce.Display_Name_Doner2;
+                ViewBag.Table_Name_Doner2 = general_prefernce.Table_Name_Doner2;
+                ViewBag.Doner_List = projLoad(general_prefernce.Table_Name_Doner2);
+            }
+            if (ViewBag.Show_cost3)
+            {
+                ViewBag.Display_Name_cost3 = general_prefernce.Display_Name_cost3;
+                ViewBag.Table_Name_cost3 = general_prefernce.Table_Name_cost3;
+                ViewBag.cost3_List = projLoad(general_prefernce.Table_Name_cost3);
+            }
+            if (ViewBag.Show_cost4)
+            {
+                ViewBag.Display_Name_cost4 = general_prefernce.Display_Name_cost4;
+                ViewBag.Table_Name_cost4 = general_prefernce.Table_Name_cost4;
+                ViewBag.cost4_List = projLoad(general_prefernce.Table_Name_cost4);
+            }
 
             var user = _sc.TblUser.Where(u => u.userName.Equals(User.Identity.Name)).FirstOrDefault();
             var stru = _sc.TblStructure.ToList();
@@ -346,11 +405,13 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
             ViewBag.ItemName = _sc.TblItem.ToList();
             ViewBag.UserDepartmentName = _sc.TblDepartment.Where(x => x.departmentCode == user.userDepartmentCode).Select(u => u.departmentName).FirstOrDefault();
 
+            ViewBag.Units = _sc.Units.ToList();
+
             return View();
         }
         //string[] headerlst,
         [HttpPost]
-        public async Task<JsonResult> PostOrder(OrderHeaderClass headerlst, List<TransactionClass> transLst)
+        public async Task<JsonResult> PostOrder(OrderHeaderClass headerlst, List<TransactionClass> transLst, string ExpectedDate, string OrderHeaderdate)
         {
             // return new JsonResult(new { success = true });
             var getData = new getAuditData();
@@ -360,7 +421,7 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
                 OrderHeaderClass ohc = new OrderHeaderClass();
                 ohc.OrderHeaderdepartmentCode = user.userDepartmentCode;
                 ohc.OrderHeaderProjectCode = headerlst.OrderHeaderProjectCode;
-                ohc.OrderHeaderdate = headerlst.OrderHeaderdate;
+                //ohc.OrderHeaderdate = headerlst.OrderHeaderdate;
                 ohc.OrderHeaderOrderTypeCode = headerlst.OrderHeaderOrderTypeCode;
                 ohc.OrderHeaderBudgetLineCode = getData.getCodeByName(await _sc.TblGeneralPreference.Select(gp => gp.ActivitiyTable).FirstOrDefaultAsync(), headerlst.OrderHeaderBudgetLineCode, connection);
                 ohc.OrderHeaderCurrencey = headerlst.OrderHeaderCurrencey;
@@ -372,7 +433,9 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
                 ohc.OrderHeaderUserId = user.userCode;
                 ohc.OrderHeaderCreationDate = DateTime.Now;
                 ohc.OrderHeaderDeviceIp = 1;
-                ohc.ExpectedDate = headerlst.ExpectedDate;
+                ohc.ExpectedDate = headerlst.ExpectedDate != null ? headerlst.ExpectedDate : new DateTime(int.Parse(ExpectedDate.Split('-')[0]), int.Parse(ExpectedDate.Split('-')[1]), int.Parse(ExpectedDate.Split('-')[2]));
+
+                ohc.OrderHeaderdate = new DateTime(int.Parse(OrderHeaderdate.Split('-')[0]), int.Parse(OrderHeaderdate.Split('-')[1]), int.Parse(OrderHeaderdate.Split('-')[2]));
 
                 _sc.Add(ohc);
                 _sc.SaveChanges();
@@ -470,6 +533,32 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
         [HttpGet]
         public async Task<IActionResult> Edit(int id, bool IsPreview = false)
         {/*make a view model to set all properites that come from Audit DB and ours and send them as one object to the veiw*/
+
+            var general_prefernce = _sc.TblGeneralPreference.FirstOrDefault();
+            ViewBag.Show_Unit = general_prefernce.Show_Unit;
+            ViewBag.Show_Doner2 = general_prefernce.Show_Doner2;
+            ViewBag.Show_cost3 = general_prefernce.Show_cost3;
+            ViewBag.Show_cost4 = general_prefernce.Show_cost4;
+
+            if (ViewBag.Show_Doner2)
+            {
+                ViewBag.Display_Name_Doner2 = general_prefernce.Display_Name_Doner2;
+                ViewBag.Table_Name_Doner2 = general_prefernce.Table_Name_Doner2;
+                ViewBag.Doner_List = projLoad(general_prefernce.Table_Name_Doner2);
+            }
+            if (ViewBag.Show_cost3)
+            {
+                ViewBag.Display_Name_cost3 = general_prefernce.Display_Name_cost3;
+                ViewBag.Table_Name_cost3 = general_prefernce.Table_Name_cost3;
+                ViewBag.cost3_List = projLoad(general_prefernce.Table_Name_cost3);
+            }
+            if (ViewBag.Show_cost4)
+            {
+                ViewBag.Display_Name_cost4 = general_prefernce.Display_Name_cost4;
+                ViewBag.Table_Name_cost4 = general_prefernce.Table_Name_cost4;
+                ViewBag.cost4_List = projLoad(general_prefernce.Table_Name_cost4);
+            }
+
             var model = new OrderViewModel();
             model.headerClass = _sc.TblOrderHeader.Where(h => h.OrderHeaderCode == id).FirstOrDefault();
             model.transClass = _sc.TblTransaction.Where(t => t.TransactionOrderHeaderCode == id).ToList();
@@ -514,7 +603,15 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
             ViewBag.ProjectName = projLoad(await _sc.TblGeneralPreference.Select(gp => gp.ProjectTable).FirstOrDefaultAsync());
             // ViewBag.BudgetLine = projLoad("TBLCost8");
             List<CodeNameModel> lst = new List<CodeNameModel>();
-            ViewBag.BudgetLine = getData.getTableData("VRelationalBudgetLineWithFunder", "  WHERE (FirstCostCenterCode = '" + model.headerClass.OrderHeaderProjectCode + "' ) ", connection);
+
+            if (connect_with == Constants.audit)
+            {
+                ViewBag.BudgetLine = getData.getTableData("VRelationalBudgetLineWithFunder", "  WHERE (FirstCostCenterCode = '" + model.headerClass.OrderHeaderProjectCode + "' ) ", connection);
+            }
+            else
+            {
+                ViewBag.BudgetLine = getData.getTableData("viw_cst_lnk", "  WHERE (CodeDep = '" + model.headerClass.OrderHeaderProjectCode + "' ) ", connection);
+            }
 
             ViewBag.DepartmentName = _sc.TblDepartment.ToList();
             ViewBag.OrderType = _sc.TblOrderType.ToList();
@@ -532,6 +629,7 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
             ViewBag.FilesLst = FilesLst;
             var user = _sc.TblUser.Where(u => u.userName.Equals(User.Identity.Name)).FirstOrDefault();
             ViewBag.userTypeCode = user.userTypeCode;
+            ViewBag.Units = _sc.Units.ToList();
             return View();
         }
 

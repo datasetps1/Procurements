@@ -111,3 +111,114 @@ th, td {
         color: #767676;
         cursor:pointer
     }
+
+    /**                             login form                              */
+
+.login_page_container_87 {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #ececec;
+}
+
+.login_page_container_2_87 {
+    display: flex;
+    width: 50%;
+    height: 80%;
+    max-height: 476px;
+    background-color: #fff;
+    border-radius: 13px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .1), 0 8px 16px rgba(0, 0, 0, .1);
+    overflow-y: auto;
+}
+
+.campany_logo_container_87 {
+    width: 40%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.campany_logo_container_2_87 {
+    text-align: center;
+}
+
+.campany_image_container_87 {
+    width: 170px;
+    height: 170px;
+    overflow: hidden;
+    border: 3px solid #f88848;
+    border-radius: 50%;
+    background-color: #ececec;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.form_container_87 {
+    width: 60%;
+    border-left: 1px solid #e1e1e1;
+    padding: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.form_container_2_87 {
+    width: 95%;
+}
+
+.form_container_header_87 {
+    display: flex;
+    align-items: flex-end;
+}
+
+.form_container_body_87 {
+    margin-top: 27px;
+}
+
+.form_container_87 {
+}
+
+@media screen and (max-width:1200px) and (min-width: 801px) {
+    .login_page_container_2_87 {
+        width: 70%;
+    }
+}
+
+
+@media screen and (max-width:800px)and (min-width: 501px) {
+    .login_page_container_2_87 {
+        width: 100%;
+    }
+}
+
+
+@media screen and (max-width:500px) {
+    .login_page_container_2_87 {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        max-height: 100%;
+        width: 100%;
+        border-radius: 0;
+    }
+
+    .form_container_87 {
+        border-top: 1px solid #e1e1e1;
+        border-left: none;
+        width: 85%;
+    }
+
+    .campany_image_container_87 {
+        width: 150px;
+        height: 150px;
+    }
+
+    .campany_logo_container_87 {
+        margin-bottom: 18px;
+    }
+}

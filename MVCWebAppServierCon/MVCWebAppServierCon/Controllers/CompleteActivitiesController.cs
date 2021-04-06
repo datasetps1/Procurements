@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -50,6 +51,15 @@ namespace MVCWebAppServierCon.Controllers
                 accounts_table = Constants_Finpack.accounts;
             }
         }
+
+
+        public override void OnActionExecuting(ActionExecutingContext filterContext)
+        {
+
+            ViewBag.Base64String = _context.TblGeneralPreference.Select(g => g.Company_Logo).FirstOrDefault();
+            ViewBag.CompName = _context.TblGeneralPreference.Select(g => g.Company_Name).FirstOrDefault();
+        }
+
         public void CompanyDefinition()
         {
             ViewBag.Base64String = _context.TblGeneralPreference.Select(g => g.Company_Logo).FirstOrDefault();
@@ -84,10 +94,13 @@ namespace MVCWebAppServierCon.Controllers
 
         // POST: CompleteActivities/Create
         [HttpPost]
-        public ActionResult Create(CompleteActivity completeActivity, List<CompleteActivityOffered> offered_list, List<string> paths_array)
+        public ActionResult Create(string ActivityDate, string Date, CompleteActivity completeActivity, List<CompleteActivityOffered> offered_list, List<string> paths_array)
         {
             //add data to database
-            completeActivity.activityOffereds = offered_list;
+            var date_array = Date.Split('-');
+            var ActivityDate_array = ActivityDate.Split('-');
+            completeActivity.Date = new DateTime(int.Parse(date_array[0]), int.Parse(date_array[1]), int.Parse(date_array[2]));
+            completeActivity.ActivityDate = new DateTime(int.Parse(ActivityDate_array[0]), int.Parse(ActivityDate_array[1]), int.Parse(ActivityDate_array[2]));
 
             //prepare files
             var activityFiles = new List<CompleteActivityFiles>();
@@ -129,12 +142,21 @@ namespace MVCWebAppServierCon.Controllers
 
         // POST: CompleteActivities/update
         [HttpPost]
-        public ActionResult Update(int Id ,CompleteActivity completeActivity, List<CompleteActivityOffered> offered_list, List<string> paths_array , List<int> deleted_files_list, List<CompleteActivityOffered> deleted_offered_list)
+        public ActionResult Update(string ActivityDate, string Date, CompleteActivity completeActivity, List<CompleteActivityOffered> offered_list, List<string> paths_array , List<int> deleted_files_list, List<CompleteActivityOffered> deleted_offered_list)
         {
+
+            var date_array = Date.Split('-');
+            var ActivityDate_array = ActivityDate.Split('-');
+            completeActivity.Date = new DateTime(int.Parse(date_array[0]), int.Parse(date_array[1]), int.Parse(date_array[2]));
+            completeActivity.ActivityDate = new DateTime(int.Parse(ActivityDate_array[0]), int.Parse(ActivityDate_array[1]), int.Parse(ActivityDate_array[2]));
+
             //add offer list
             for (int i=0; i < offered_list.Count; i++){
                 offered_list[i].CompleteActivityId = completeActivity.Id;
             }
+
+
+
             _context.CompleteActivityOffered.AddRange(offered_list);
 
             //delete offer list 

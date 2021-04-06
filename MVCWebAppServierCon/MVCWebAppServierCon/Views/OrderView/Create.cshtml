@@ -6,6 +6,13 @@
     ViewData["Title"] = "Create";
 }
 
+<script>
+    var there_is_error = @Json.Serialize(ViewBag.Error_inProjectLoad);
+    //debugger
+        if (there_is_error != null) {
+            alert(there_is_error+"Or table Not Found");
+        }
+</script>
 
 <script src="~/lib/jquery/selectbox/dist/jquery-editable-select.js"></script>
 <link href="~/lib/jquery/selectbox/dist/jquery-editable-select.css" rel="stylesheet" />
@@ -48,7 +55,7 @@
             <input type="hidden" id="NumberOfDayesBefore" />
             <input type="hidden" id="NumberOfDayesAfter" />
 
-            <div class="container card" style=" box-shadow: 0 0 10px 0 rgba(0, 0, 0, .1);">
+            <div class="container card" style=" box-shadow: 0 0 10px 0 rgba(0, 0, 0, .1);padding: 30px;padding-top: 19px;">
                 <div class="form-row" style="margin-top:15px ; ">
                     <h4 style="">@Localizer["Create OrderView"]</h4>
 
@@ -76,21 +83,21 @@
 
 
                     @*<div class="form-group col-md-3">
-                            <br />
-                            <label for="inputState" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Department"]</label>
-                            <select id="inputState1" class="form-control" name="headerLst">
-                                <option selected></option>
-                                @foreach (DepartmentClass dep in ViewBag.DepartmentName)
-                                {
-                                    <option value="@dep.departmentCode">@dep.departmentName</option>
-                                }
+                    <br />
+                    <label for="inputState" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Department"]</label>
+                    <select id="inputState1" class="form-control" name="headerLst">
+                        <option selected></option>
+                        @foreach (DepartmentClass dep in ViewBag.DepartmentName)
+                        {
+                            <option value="@dep.departmentCode">@dep.departmentName</option>
+                        }
 
 
-                            </select>
-                             asp-items=""
+                    </select>
+                     asp-items=""
 
-                            <span class="text-danger"></span>
-                        </div>*@
+                    <span class="text-danger"></span>
+                </div>*@
 
                     <div class="form-group col-md-3">
                         <br />
@@ -115,10 +122,17 @@
                     <div class="form-group col-md-2">
                         <br />
                         <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["order date"]</label>
-                        <input id="date" type="date" disabled class="form-control" value="@ViewBag.OrderDate.ToString("yyyy-MM-dd")" name="headerLst" style="width:162px ;" />
+                        <input id="date" type="date" disabled class="form-control" value="" name="headerLst" style="width:162px ;" />
+                        <script>
+                            var date = new Date(@Json.Serialize(@ViewBag.OrderDate));
+                            var day_0 = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+                            var month_0 = date.getMonth() < 10 ? "0" + (date.getMonth() + 1) : date.getMonth()+1
+                            var date_format = date.getFullYear() + "-" + month_0 + "-" + day_0;
+                            document.getElementById("date").value = date_format;
+                        </script>
 
                         @*@{var x = @Convert.ToDateTime(@ViewBag.OrderDate).ToString("dd/MM/yyyy}");}
-                            <input id="date" class="form-control" name="headerLst" value="@x" maxlength="10" type="date"  />*@
+                    <input id="date" class="form-control" name="headerLst" value="@x" maxlength="10" type="date"  />*@
 
 
                         <span class="text-danger"></span>
@@ -141,16 +155,16 @@
                     </div>
                     <div class="form-group col-md-4" id="div1">
                         @*<label id="inputState4Lbl" for="inputState" style="@Localizer["text-align: left  ;direction: ltr;visibility:hidden"]">@Localizer["Budget Line"]</label>
-                            <select id="inputState4" class="form-control" name="headerLst" style="visibility:hidden">
-                                <option selected></option>
+                    <select id="inputState4" class="form-control" name="headerLst" style="visibility:hidden">
+                        <option selected></option>
 
-                                @foreach (CostsViewModel costs in ViewBag.BudgetLine)
-                                {
-                                    <option value="@costs.costCode">@costs.costName</option>
-                                }
+                        @foreach (CostsViewModel costs in ViewBag.BudgetLine)
+                        {
+                            <option value="@costs.costCode">@costs.costName</option>
+                        }
 
 
-                            </select>*@
+                    </select>*@
                     </div>
                     <div class="form-group col-md-3">
                         <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Rate"]</label>
@@ -168,102 +182,166 @@
                     </div>
                 </div>
 
-                <div class="row " style=" box-shadow: 0 0 10px 0 rgba(0, 0, 0, .1); margin-right:1px; margin-left:1px;margin-bottom:4px;margin-top:-4px">
+                <div class="row">
+                    @if (ViewBag.Show_Doner2)
+                    {
+                        <div class="form-group col-md-4">
+                            <label id="Doner2_label" for="Doner2_input" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer[ViewBag.Display_Name_Doner2]</label>
+                            <select id="Doner2_input" class="form-control" name="headerLst">
+                                <option selected></option>
+                                @* asp-items="" *@
+                                @foreach (CostsViewModel costs in ViewBag.Doner_List)
+                                {
+                                    <option value="@costs.costCode">@costs.costName</option>
+                                }
+                            </select>
+                            <span class="text-danger"></span>
+                        </div>
+                    }
+                    @if (ViewBag.Show_cost3)
+                    {
+                        <div class="form-group col-md-4">
 
-                    <div class="form-group col-md-4">
+                            <label id="cost3_label" for="cost3_input" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer[ViewBag.Display_Name_cost3]</label>
+                            <select id="cost3_input" class="form-control" name="headerLst">
+                                <option selected></option>
+                                @* asp-items="" *@
+                                @foreach (CostsViewModel costs in ViewBag.cost3_List)
+                                {
+                                    <option value="@costs.costCode">@costs.costName</option>
+                                }
+                            </select>
+                            <span class="text-danger"></span>
+                        </div>
+                    }
+                    @if (ViewBag.Show_cost4)
+                    {
+                        <div class="form-group col-md-4">
 
-                        <label style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Item"]</label>
-                        <select id="itemName" class="form-control">
-                            <option selected></option>
-                            @* asp-items="" *@
-                            @foreach (ItemClass itm in ViewBag.ItemName)
-                            {
-                                <option value="@itm.itemCode">@itm.itemName</option>
+                            <label id="cost4_label" for="cost4_input" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer[ViewBag.Display_Name_cost4]</label>
+                            <select id="cost4_input" class="form-control" name="headerLst">
+                                <option selected></option>
+                                @* asp-items="" *@
+                                @foreach (CostsViewModel costs in ViewBag.cost4_List)
+                                {
+                                    <option value="@costs.costCode">@costs.costName</option>
+                                }
+                            </select>
+                            <span class="text-danger"></span>
+                        </div>
+                    }
+                </div>
+                <div class="" style="    border-radius: 6px;    border: 2px solid #46688a;     margin-top: 9px;">
+                    <div class="row " style="margin: 0 1px -2px 1px;  padding: 12px 0 0 0;">
 
-                            }
+                        <div class="form-group col-md-2">
+
+                            <label style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Item"]</label>
+                            <select id="itemName" class="form-control">
+                                <option selected></option>
+                                @* asp-items="" *@
+                                @foreach (ItemClass itm in ViewBag.ItemName)
+                                {
+                                    <option value="@itm.itemCode">@itm.itemName</option>
+
+                                }
 
 
-                        </select>
+                            </select>
+                        </div>
+                        @if (ViewBag.Show_Unit)
+                        {
+                            <div class="form-group col-md-2">
+                                <label class="control-label" style="@Localizer["text-align: left  ;dm irection: ltr"]">@Localizer["Unit"]</label>
+                                <input class="form-control" type="text" id="Unit_input" disabled />
+                            </div>
+                        }
+
+
+                        <div class="form-group @(ViewBag.Show_Unit ? "col-md-1":"col-md-2")">
+                            <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Quantity"]</label>
+                            <input type="number" step="any" class="form-control" name="transLst" id="qty" />
+                            <span class="text-danger"></span>
+                        </div>
+                        <div class="form-group @(ViewBag.Show_Unit ? "col-md-1":"col-md-2")">
+                            <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Price"]</label>
+                            <input type="number" step="any" class="form-control" name="transLst" id="price" />
+                            <span class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Item Note"]</label>
+                            <input type="text" class="form-control" name="transLst" id="note" />
+                            <span class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-2">
+
+                            <label id="lblTransDate" class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["date"]</label>
+                            <input id="TransDate" type="date" class="form-control" name="headerLst" style="width:162px ;" value="" />
+                            <span class="text-danger"></span>
+
+
+                        </div>
+                        <div class="form-group col-md-1">
+                            <br />
+                            <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]"> </label>
+                            <input type="button" class="form-control btn-primary" value="+" onclick="getRows()" />
+                        </div>
                     </div>
-                    <div class="form-group col-md-1">
-                        <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Quantity"]</label>
-                        <input type="number" step="any" class="form-control" name="transLst" id="qty" style="width:80px ;" />
-                        <span class="text-danger"></span>
-                    </div>
-                    <div class="form-group col-md-1">
-                        <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Price"]</label>
-                        <input type="number" step="any" class="form-control" name="transLst" id="price" style="width:80px ;" />
-                        <span class="text-danger"></span>
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Item Note"]</label>
-                        <input type="text" class="form-control" name="transLst" id="note" />
-                        <span class="text-danger"></span>
-                    </div>
-                    <div class="form-group col-md-2">
 
-                        <label id="lblTransDate" class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["date"]</label>
-                        <input id="TransDate" type="date" class="form-control" name="headerLst" style="width:162px ;" value="" />
-                        <span class="text-danger"></span>
+                    <div style="width:100%;height:200px ; overflow-y:auto" id="itemRowTbl">
+                        <table class="table">
+                            @* <thead class="thead-dark">*@
+                            <thead style="background-color:#46688a;">
+                                <tr class="row" style="width: 100%; margin: 0;">
+                                    <th scope="col" style="color:#fff; display:none ;">@Localizer["Item code"]</th>
+                                    <th class="col-md-2" style="color:#fff;">@Localizer["Item Name"]</th>
+                                    @if (ViewBag.Show_Unit)
+                                    {
+                                        <th class="col-md-1" style="color:#fff;">@Localizer["Unit"]</th>
+                                    }
+                                    <th class="col-md-1" style="color:#fff;">@Localizer["Quantity"]</th>
+                                    <th class="col-md-1" style="color:#fff;">@Localizer["Price"]</th>
+                                    <th class="col-md-1" style="color:#fff;">@Localizer["Total"]</th>
+                                    <th class="col-md-3" style="color:#fff;">@Localizer["Item Note"]</th>
+                                    <th class="col-md-2" style="color:#fff;">@Localizer["Date"]</th>
+                                    <th class="@(ViewBag.Show_Unit ? "col-md-1":"col-md-2")" style="color:#fff;">@Localizer["Remove"]</th>
+                                </tr>
+                            </thead>
+                            @* this body used to display the item for the user when add an item *@
+                            <tbody id="myTable">
 
+                                @*<tr>
 
-                    </div>
-                    <div class="form-group col-md-1">
-                        <br />
-                        <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]"> </label>
-                        <input type="button" class="form-control btn-primary" value="+" onclick="getRows()" />
+                                <td>
+                                    sdf
+                                </td>
+
+                                <td>
+                                    aa
+                                </td>
+                                <td>
+                                    ddd
+                                </td>
+                                <td>
+                                    ggg
+                                </td>
+                                <td>
+                                    ffffff
+                                </td>
+                                <td>
+                                    ffffff
+                                </td>
+                                <td>
+                                    ffffff
+                                </td>
+                            </tr>*@
+
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
-                <div style="width:100%;height:200px ;border-style: solid; border-color: #f1f0f0;border-width: thin;overflow-y:scroll" id="itemRowTbl">
-                    <table class="table">
-                        @* <thead class="thead-dark">*@
-                        <thead style="background-color:#46688a;">
-                            <tr class="row">
-                                <th scope="col" style="color:#fff; display:none ;">@Localizer["Item code"]</th>
-                                <th class="col-md-3" style="color:#fff;">@Localizer["Item Name"]</th>
-                                <th class="col-md-1" style="color:#fff;">@Localizer["Quantity"]</th>
-                                <th class="col-md-1" style="color:#fff;">@Localizer["Price"]</th>
-                                <th class="col-md-1" style="color:#fff;">@Localizer["Total"]</th>
-                                <th class="col-md-3" style="color:#fff;">@Localizer["Item Note"]</th>
-                                <th class="col-md-2" style="color:#fff;">@Localizer["Date"]</th>
-                                <th class="col-md-1" style="color:#fff;">@Localizer["Remove"]</th>
-                            </tr>
-                        </thead>
-                        @* this body used to display the item for the user when add an item *@
-                        <tbody id="myTable">
-
-                            @*<tr>
-
-                                    <td>
-                                        sdf
-                                    </td>
-
-                                    <td>
-                                        aa
-                                    </td>
-                                    <td>
-                                        ddd
-                                    </td>
-                                    <td>
-                                        ggg
-                                    </td>
-                                    <td>
-                                        ffffff
-                                    </td>
-                                    <td>
-                                        ffffff
-                                    </td>
-                                    <td>
-                                        ffffff
-                                    </td>
-                                </tr>*@
-
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="row" style="margin-bottom:4px;margin-top:2px">
+                <div class="row" style="margin-top: 20px;">
 
                     <div class="form-group col-md-3">
                         <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Total"]</label>
@@ -291,8 +369,8 @@
 
                 </div>
                 @*<div class="form-group">
-                        <button class="btn btn-primary cursor" onclick="GetOrder()"> @Localizer["Create"]</button>
-                    </div>*@
+                <button class="btn btn-primary cursor" onclick="GetOrder()"> @Localizer["Create"]</button>
+            </div>*@
             </div>
             @ViewBag.message
             @section Scripts{
@@ -364,24 +442,25 @@
 
 
     function CheckOrderDate() {
-           if ($('#NumberOfDayesBefore').val() == '0' || $('#NumberOfDayesBefore').val() == '') {
+        debugger
+        if ($('#NumberOfDayesBefore').val() == '0' || $('#NumberOfDayesBefore').val() == '') {
             return true
         }
-         var orderddate = new Date($('#date').val());
-          var now =new Date(Date.now());
-            var diffTime = Math.abs(  now - orderddate);
+        var orderddate = new Date($('#date').val());
+        var now = new Date(Date.now());
+        var diffTime = Math.abs(now - orderddate);
         var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
         if (diffDays > $('#NumberOfDayesBefore').val()) {
-                var now3 = new Date();
-                now3.setDate(now3.getDate() - 4);
+            var now3 = new Date();
+            now3.setDate(now3.getDate() - 4);
 
-                 Swal.fire({
-                    icon: 'error',
-                    title: 'خطأ',
-                     text: ' يجب ان يكون تاريخ الطلبيه اقل من '  + $('#NumberOfDayesBefore').val() + ' ايام ' ,
-                    footer: 'PostOrderStatus'
-                 })
+            Swal.fire({
+                icon: 'error',
+                title: 'خطأ',
+                text: ' يجب ان يكون تاريخ الطلبيه اقل من ' + $('#NumberOfDayesBefore').val() + ' ايام ',
+                footer: 'PostOrderStatus'
+            })
             return false
         }
         return true
@@ -512,6 +591,7 @@
         var BudgetLineCode = document.getElementById('cmbBudgetLine');
        // BudgetLineCode != 'undefined' ||
         if (BudgetLineCode != null) {
+            debugger
             if (BudgetLineCode.value != undefined) {
                      OrderHeaderBudgetLineCode = BudgetLineCode.value; //this get budgetline name
             }
@@ -533,7 +613,6 @@
         var loader = document.getElementById("loader");
         loader.style.display = "block";
         var HeaderList = new Array();
-
         var headerModel = {
 
           //  OrderHeaderdepartmentCode: OrderHeaderdepartmentCode,
@@ -546,8 +625,19 @@
             OrderHeaderNote: $("#txtNote").val(),
             OrderHeaderRealTotal: $('#realTot').val(),
             ExpectedDate: $('#txtExpectedDate').val(),
-        };
 
+        };
+        if (@Json.Serialize(ViewBag.Show_Doner2) == true) {
+            headerModel.Doner = document.getElementById('Doner2_input').value;
+        }
+        if (@Json.Serialize(ViewBag.Show_cost3) == true) {
+            headerModel.Cost3 = document.getElementById('cost3_input').value;
+        }
+        if (@Json.Serialize(ViewBag.Show_cost4) == true) {
+            headerModel.Cost4 = document.getElementById('cost4_input').value;
+        }
+        console.log(headerModel)
+        debugger
         var TableData = new Array();
 
 
@@ -572,6 +662,8 @@
             data: {
                 headerLst: headerModel,
                 TransLst: TableData,
+                ExpectedDate: $('#txtExpectedDate').val(),
+                OrderHeaderdate: $('#date').val(),
             },
             success: function (response) {
                 console.log("handle response :" + response.data);
@@ -812,11 +904,19 @@
         }
     }
 
+    function handle_item_changed(id , name) {
+
+        console.log(id);
+        console.log(name);
+        alert('true')
+    }
+    //document.getElementById('itemName').addEventListener("change", function () {
+    //})
 
     var transArr = [];// store each transaction item
     function getRows() { // display the transaction for the user when he clicks the (+)Button
         //debugger
-     if (CheckData(document.getElementById('itemName').value, "يجب ادخال  الصنف") == false) { return; }
+        if (CheckData(document.getElementById('itemName').value, "يجب ادخال  الصنف") == false) { return; }
 
         if (CheckData(document.getElementById('qty').value, "يجب ادخال الكميه") == false) { return; }
         if (CheckData(document.getElementById('price').value, "يجب ادخال السعر") == false) { return; }
@@ -829,6 +929,10 @@
 
         var itemcode = document.getElementById('itemName').text;
         var itemName = document.getElementById('itemName').value;
+        if (@Json.Serialize(ViewBag.Show_Unit) == true) {
+            var UnitName = document.getElementById('Unit_input').value;
+        }
+
         var qty = document.getElementById('qty').value;
         var price = document.getElementById('price').value;
         var note = document.getElementById('note').value;
@@ -840,24 +944,49 @@
         var table = document.getElementById("myTable");
         var row = table.insertRow(0);
         row.className = "row";
-        var cell0 = row.insertCell(0); cell0.style.display = 'none';
-        var cell1 = row.insertCell(1); cell1.className = "col-md-3";
-        var cell2 = row.insertCell(2); cell2.className = "col-md-1";
-        var cell3 = row.insertCell(3); cell3.className = "col-md-1";
-        var cell4 = row.insertCell(4); cell4.className = "col-md-1";
-        var cell5 = row.insertCell(5); cell5.className = "col-md-3";
-        var cell6 = row.insertCell(6); cell6.className = "col-md-2";
+        row.style.width = "100%";
+        row.style.margin = "0";
+        if (@Json.Serialize(ViewBag.Show_Unit) == true) {
+            var cell0 = row.insertCell(0); cell0.style.display = 'none';
+            var cell1 = row.insertCell(1); cell1.className = "col-md-2";
+            var cell22 = row.insertCell(2); cell22.className = "col-md-1";
+            var cell2 = row.insertCell(3); cell2.className = "col-md-1";
+            var cell3 = row.insertCell(4); cell3.className = "col-md-1";
+            var cell4 = row.insertCell(5); cell4.className = "col-md-1";
+            var cell5 = row.insertCell(6); cell5.className = "col-md-3";
+            var cell6 = row.insertCell(7); cell6.className = "col-md-2";
 
-        var cell7 = row.insertCell(7); cell7.className = "col-md-1";
+            var cell7 = row.insertCell(8); cell7.className = "col-md-1";
+            cell0.innerHTML = itemcode;
+            cell1.innerHTML = itemName;
+            cell22.innerHTML = UnitName;
 
-        cell0.innerHTML = itemcode;
-        cell1.innerHTML = itemName;
+            cell2.innerHTML = qty;
+            cell3.innerHTML = price;
+            cell4.innerHTML = qty * price;
+            cell5.innerHTML = note;
+            cell6.innerHTML = TransDate;
 
-        cell2.innerHTML = qty;
-        cell3.innerHTML = price;
-        cell4.innerHTML = qty * price;
-        cell5.innerHTML = note;
-        cell6.innerHTML = TransDate;
+        } else {
+            var cell0 = row.insertCell(0); cell0.style.display = 'none';
+            var cell1 = row.insertCell(1); cell1.className = "col-md-2";
+            var cell2 = row.insertCell(2); cell2.className = "col-md-1";
+            var cell3 = row.insertCell(3); cell3.className = "col-md-1";
+            var cell4 = row.insertCell(4); cell4.className = "col-md-1";
+            var cell5 = row.insertCell(5); cell5.className = "col-md-3";
+            var cell6 = row.insertCell(6); cell6.className = "col-md-2";
+
+            var cell7 = row.insertCell(7); cell7.className = "col-md-2";
+            cell0.innerHTML = itemcode;
+            cell1.innerHTML = itemName;
+
+            cell2.innerHTML = qty;
+            cell3.innerHTML = price;
+            cell4.innerHTML = qty * price;
+            cell5.innerHTML = note;
+            cell6.innerHTML = TransDate;
+        }
+
         var x = qty * price;
         cell7.innerHTML = '<button id="DeleteButton" type="button" class="close danger" aria-label="Close" onClick="Remove(this , ' + x + ')"><span aria-hidden="true">&times;</span></button>';
 
@@ -879,7 +1008,7 @@
         var realTotal = parseInt(document.getElementById("realTot").value) + (qty * price);
         document.getElementById("realTot").value = realTotal;
 
-        var realBasicTot = parseInt(document.getElementById("realBasicTot").value) + (qty * price * parseFloat(document.getElementById("rateText").value)) ;
+        var realBasicTot = parseInt(document.getElementById("realBasicTot").value) + (qty * price * parseFloat(document.getElementById("rateText").value));
         document.getElementById("realBasicTot").value = realBasicTot;
 
     }
@@ -921,6 +1050,33 @@
             var txt = document.getElementById('itemname');
             txt.text = li.val();
 
+
+        });
+    $('#itemName')
+        .editableSelect()
+        .on('select.editable-select', function (e, li) {
+            debugger
+            var selected_item_id = li.val();
+
+            var items = @Json.Serialize(ViewBag.ItemName);
+            var units = @Json.Serialize(ViewBag.Units);
+
+            for (var i = 0; i < items.length; i++){
+                if (items[i].itemCode == selected_item_id) {
+                    var unit_id = items[i].unit_Id;
+                    var unit_name = "";
+
+                    for (var i = 0; i < units.length; i++) {
+                        if (units[i].id == unit_id) {
+                            unit_name = units[i].name;
+                            break;
+                        }
+                    }
+                    //alert(unit_name)
+                    document.getElementById("Unit_input").value = unit_name;
+                    break;
+                }
+            }
 
         });
 

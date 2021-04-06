@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using MVCWebAppServierCon.Helpers;
@@ -34,6 +35,7 @@ namespace MVCWebAppServierCon.Controllers
         private string currency_table = "";
         private string accounts_table = "";
         private string connect_with = "";
+
 
         public HomeController(SecondConnClass sc, IConfiguration config, IHostingEnvironment hostingEnviromen)
         {
@@ -58,6 +60,22 @@ namespace MVCWebAppServierCon.Controllers
                 accounts_table = Constants_Finpack.accounts;
             }
         }
+
+
+        public override void OnActionExecuting(ActionExecutingContext filterContext)
+        {
+
+            ViewBag.Base64String = _sc.TblGeneralPreference.Select(g => g.Company_Logo).FirstOrDefault();
+            ViewBag.CompName = _sc.TblGeneralPreference.Select(g => g.Company_Name).FirstOrDefault();
+
+            var req = Request;
+
+            int x = 9;
+        }
+
+
+
+
         public async Task<IActionResult> Index()
         {/*first select the logged user then get its rank then by the rank get its amount sitting range to use the range the view his orders*/
             //var x = User.Identity.Name;
@@ -118,11 +136,11 @@ namespace MVCWebAppServierCon.Controllers
                     {
                         var approv = _sc.TblApproval.Where(s => s.ApprovalHeaderCode == t.OrderHeaderCode).OrderBy(a => a.ApprovalCode).ToList();
                         ApprovalClass lastApproval = approv.LastOrDefault();
-                        if (lastApproval.ApprovalIsApproved == (int)Enums.ApprovalStatus.Reject || lastApproval.ApprovalIsApproved == (int)Enums.ApprovalStatus.Excuted)
+                        if (lastApproval != null && (lastApproval.ApprovalIsApproved == (int)Enums.ApprovalStatus.Reject || lastApproval.ApprovalIsApproved == (int)Enums.ApprovalStatus.Excuted))
                         {
                             continue;
                         }
-                        if (lastApproval.ToUser == user.userCode)
+                        if (lastApproval != null && lastApproval.ToUser == user.userCode)
                         {
                             try
                             {
@@ -203,11 +221,11 @@ namespace MVCWebAppServierCon.Controllers
             {
                 var approv = _sc.TblApproval.Where(s => s.ApprovalHeaderCode == t.OrderHeaderCode).OrderBy(a => a.ApprovalCode).ToList();
                 ApprovalClass lastApproval = approv.LastOrDefault();
-                if (lastApproval.ApprovalIsApproved == (int)(int)Enums.ApprovalStatus.Reject)
+                if (lastApproval != null && lastApproval.ApprovalIsApproved == (int)(int)Enums.ApprovalStatus.Reject)
                 {
                     continue;
                 }
-                if (lastApproval.ToUser == user.userCode)
+                if (lastApproval != null && lastApproval.ToUser == user.userCode)
                 {
 
                     t.OrderTypeName = _sc.TblOrderType.Where(u => u.orderTypeCode == t.OrderHeaderOrderTypeCode).FirstOrDefault().orderTypeName;
@@ -338,37 +356,31 @@ namespace MVCWebAppServierCon.Controllers
         public async Task<IActionResult> GetAllOrders()
         {
             var user = _sc.TblUser.Where(u => u.userName.Equals(User.Identity.Name)).FirstOrDefault();
-            if (user.userTypeCode == 1 || user.userTypeCode == 2 || user.userTypeCode == 3 || user.userTypeCode == 4 || user.userTypeCode == 5)
-            {
-                var getData = new getAuditData();
-                ViewBag.DepartmentName = _sc.TblDepartment.Where(x => x.departmentGeneralManagerCode == user.userCode || x.departmentManagerCode == user.userCode || x.departmentFinancialCode == user.userCode || x.departmentProcurementSectionCode == user.userCode || x.departmentHeadCode == user.userCode).ToList();
-                ViewBag.OrderType = _sc.TblOrderType.ToList();
+            var getData = new getAuditData();
+            ViewBag.DepartmentName = _sc.TblDepartment.Where(x => x.departmentGeneralManagerCode == user.userCode || x.departmentManagerCode == user.userCode || x.departmentFinancialCode == user.userCode || x.departmentProcurementSectionCode == user.userCode || x.departmentHeadCode == user.userCode).ToList();
+            ViewBag.OrderType = _sc.TblOrderType.ToList();
 
-                ViewBag.Project = getData.getTableData(await _sc.TblGeneralPreference.Select(gp => gp.ProjectTable).FirstOrDefaultAsync(), "", connection);
-                ViewBag.Employee = _sc.TblUser.OrderBy(x => x.userName).ToList();
-                // ViewBag.BudgetLine = getData.getTableData("TBLCost8", connection);
-                ViewBag.Supplier = getData.getTableData(accounts_table, "", connection);
-                ViewBag.UserDepartmentName = _sc.TblDepartment.Where(x => x.departmentCode == user.userDepartmentCode).Select(u => u.departmentName).FirstOrDefault();
-                ViewBag.UserDepartmentCode = user.userDepartmentCode;
-                //if(user.userTypeCode == 4 || user.userTypeCode == 5)
-                //{
-                //    ViewBag.UserDepartmentCodeEnabled = false;
-                //}
-                //else
-                //{
-                //    ViewBag.UserDepartmentCodeEnabled = true;
-                //}
-                ViewBag.UserDepartmentCodeEnabled = true;
-                return View();
-            }
-            else
-            {
-                return RedirectToAction("Privacy", "Home");
-            }
+            ViewBag.Project = getData.getTableData(await _sc.TblGeneralPreference.Select(gp => gp.ProjectTable).FirstOrDefaultAsync(), "", connection);
+            ViewBag.Employee = _sc.TblUser.OrderBy(x => x.userName).ToList();
+            // ViewBag.BudgetLine = getData.getTableData("TBLCost8", connection);
+            ViewBag.Supplier = getData.getTableData(accounts_table, "", connection);
+            ViewBag.UserDepartmentName = _sc.TblDepartment.Where(x => x.departmentCode == user.userDepartmentCode).Select(u => u.departmentName).FirstOrDefault();
+            ViewBag.UserDepartmentCode = user.userDepartmentCode;
+            //if(user.userTypeCode == 4 || user.userTypeCode == 5)
+            //{
+            //    ViewBag.UserDepartmentCodeEnabled = false;
+            //}
+            //else
+            //{
+            //    ViewBag.UserDepartmentCodeEnabled = true;
+            //}
+            ViewBag.UserDepartmentCodeEnabled = true;
+            return View();
 
         }
 
 
+        [Authorize(Roles = "Admin, EnterMyFollowUp")]
         public async Task<IActionResult> MyFollowUp()
         {
             var user = _sc.TblUser.Where(u => u.userName.Equals(User.Identity.Name)).FirstOrDefault();
@@ -389,11 +401,11 @@ namespace MVCWebAppServierCon.Controllers
                 t.ProjectName = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ProjectTable).FirstOrDefaultAsync(), t.OrderHeaderProjectCode.ToString(), connection);
 
                 t.BudgetLine = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ActivitiyTable).FirstOrDefaultAsync(), t.OrderHeaderBudgetLineCode.ToString(), connection);
-<<<<<<< HEAD
+
                 t.Currency = getData.getTblCodeName(currency_table, t.OrderHeaderCurrencey.ToString(), connection);
-=======
+
                 t.Currency = getData.getTblCodeName("TblCurrency", t.OrderHeaderCurrencey.ToString(), connection);
->>>>>>> 358c67f6ec5c686108866850f2b304e691729516
+
                 t.UserName = _sc.TblUser.Where(u => u.userCode == t.OrderHeaderUserId).FirstOrDefault().userName;
                 t.StatusName = GetStatusName(a.ApprovalIsApproved);
 
@@ -408,8 +420,9 @@ namespace MVCWebAppServierCon.Controllers
             return View(orders2);
         }
 
+        //public async Task<IActionResult>
 
-        public async Task<IActionResult> GetAllOrdersBydate(DateTime FromDate, DateTime ToDate, string Project, string BudgetLine, int Department, bool ShowStuckOrdersOnly, string Employee, string Supplier, bool ShowExecutedOnly, bool ShowUnderExecutedOnly, bool ShowRejectedOnly, double FromAmount, double ToAmount)
+        public async Task<IActionResult> GetAllOrdersBydate(DateTime FromDate, DateTime ToDate, string Project, string BudgetLine, int Department, bool ShowStuckOrdersOnly, string Employee, string Supplier, bool ShowExecutedOnly, bool ShowUnderExecutedOnly, bool ShowRejectedOnly, double FromAmount, double ToAmount, int FromId, int ToId)
         {
             if (FromDate.ToString() == "01/01/0001 12:00:00 AM")
             {
@@ -425,7 +438,7 @@ namespace MVCWebAppServierCon.Controllers
             var getData = new getAuditData();
 
             orders = _sc.TblOrderHeader.Where(o => o.OrderHeaderdate >= FromDate && o.OrderHeaderdate <= ToDate).ToList();
-            //  orders = _sc.TblOrderHeader.ToList();
+            orders = _sc.TblOrderHeader.ToList();
 
             if (Project != null && Project != "0")
             {
@@ -454,6 +467,22 @@ namespace MVCWebAppServierCon.Controllers
             if (FromAmount != 0 && ToAmount != 0)
             {
                 orders = orders.Where(o => o.ActualTotalAmount * o.OrderHeaderRate >= FromAmount && o.ActualTotalAmount * o.OrderHeaderRate <= ToAmount).ToList();
+            }
+
+            if (FromId != -1 || ToId != -1)
+            {
+                if (FromId == -1)
+                {
+                    orders = orders.Where(o => o.OrderHeaderCode <= ToId).ToList();
+                }
+                else if (ToId == -1)
+                {
+                    orders = orders.Where(o => o.OrderHeaderCode >= FromId).ToList();
+                }
+                else//FromId != -1 && ToId != -1
+                {
+                    orders = orders.Where(o => o.OrderHeaderCode >= FromId && o.OrderHeaderCode <= ToId).ToList();
+                }
             }
             foreach (var t in orders)
             {
@@ -1110,6 +1139,9 @@ namespace MVCWebAppServierCon.Controllers
             var approv = _sc.TblApproval.Where(s => s.ApprovalHeaderCode == order.OrderHeaderCode).OrderBy(a => a.ApprovalCode).ToList().Distinct().ToList();
             approv = approv.GroupBy(o => new { o.ApprovalUserId })
                               .Select(o => o.LastOrDefault()).ToList();
+            approv = approv.OrderBy(a => a.ApprovalCode).ToList();
+            //var approv2 = _sc.TblApproval.Where(s => s.ApprovalHeaderCode == order.OrderHeaderCode).OrderBy(a => a.ApprovalCode).ToList();
+            //var approv3 = _sc.TblApproval.Where(s => s.ApprovalHeaderCode == order.OrderHeaderCode).OrderBy(a => a.ApprovalCode).Distinct().ToList();
             ApprovalClass lastApproval = approv.LastOrDefault();
             var StatusName = GetStatusName(lastApproval.ApprovalIsApproved);
             var LastStatusUser = _sc.TblUser.Where(x => x.userCode == lastApproval.ApprovalUserId).FirstOrDefault();

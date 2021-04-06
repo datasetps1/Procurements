@@ -83,6 +83,11 @@ namespace MVCWebAppServierCon.Models
         public Boolean Freaze { get; set; }
         public string FreazeNote { get; set; }
 
+        public string Cost3 { get; set; }
+
+        public string Cost4 { get; set; }
+
+        public string Doner { get; set; }
 
     }
 }

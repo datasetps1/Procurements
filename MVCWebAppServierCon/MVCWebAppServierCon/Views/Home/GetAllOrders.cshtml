@@ -7,6 +7,11 @@
 <script src="~/lib/jquery/selectbox/dist/jquery-editable-select.js"></script>
 <link href="~/lib/jquery/selectbox/dist/jquery-editable-select.css" rel="stylesheet" />
 
+@*@Context.Request.Host@Context.Request.Path.ToString().Split("/")[0];*@
+<script>
+    console.log("http://" + @Json.Serialize(Context.Request.Host.Value))
+</script>
+
 <style>
 
 
@@ -78,7 +83,7 @@
             <label class="form-check-label" for="ShowUnderExecutedOrdersOnly" style="width:auto">@Localizer["Show Under Executed Only"]</label>
             <br />
             <input id="ShowRejectedOnly" type="radio" name="radio" />
-            <label class="form-check-label" for="ShowRejectedOnly" style="width:auto">@Localizer["Show Rejected Only "]</label>
+            <label class="form-check-label" for="ShowRejectedOnly" style="width:auto">@Localizer["Show Rejected Only"]</label>
             <br />
             <input id="None" type="radio" name="radio" />
             <label class="form-check-label" for="None" style="width:auto">@Localizer["None"]</label>
@@ -102,7 +107,7 @@
             <input id="ToAmount" type="number" class="form-control" style="width:90px " />
 
         </div>
-        <div class="form-group col-md-2" style="margin-top:-5px ;">
+        <div class="form-group col-md-2" style="margin-top:-5px ;  @Localizer["text-align: left;"]">
             <label id="lblEmployee" for="Employee" style="@Localizer["text-align: left "]">@Localizer["Employee"]</label>
             <select id="cmbEmp" class="form-control" style="width:130px">
                 <option selected></option>
@@ -114,7 +119,7 @@
             </select>
 
         </div>
-        <div class="form-group col-md-3" style="margin-top:-5px ;">
+        <div class="form-group col-md-3" style="margin-top:-5px;  @Localizer["text-align: left;"]">
 
             <label id="LblSupplier" for="Supplier" style="@Localizer["text-align: left "]">@Localizer["Supplier"]</label>
             <select id="cmbSupplier" class="form-control" name="cmbSupplier" style="width:160px">
@@ -130,9 +135,9 @@
     </div>
     <div class="row" style="margin-top:-5px ;">
 
-        <div class="form-group col-md-3">
+        <div class="form-group col-md-3" style="@Localizer["text-align: left;"]">
 
-            <label id="LblProject" for="project" style="@Localizer["text-align: left "]">@Localizer["Project"]</label>
+            <label id="LblProject" for="project">@Localizer["Project"]</label>
             <select id="cmbProject" class="form-control" name="cmbProject" style="width:auto">
                 <option selected></option>
 
@@ -141,6 +146,17 @@
                     <option value="@costs.Code">@costs.Name</option>
                 }
             </select>
+        </div>
+
+        <div class="form-group col-md-2">
+            <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["From order code"]</label>
+            <input id="FromId" type="number" class="form-control" style="margin-left:2px" />
+
+        </div>
+
+        <div class="form-group col-md-2">
+            <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["To order code"]</label>
+            <input id="ToId" type="number" class="form-control" style=" " />
 
         </div>
         <div class="form-group col-md-3" id="div1">
@@ -148,7 +164,7 @@
         </div>
 
         <div class="form-group col-md-3">
-            <input id="search" type="button" class="form-control btn-primary" value="Execute" style="margin-top:22px ; margin-left:55px" />
+            <input id="search" type="button" class="form-control btn-primary" value="@Localizer["Execute"]" style="margin-top:22px ; margin-left:55px" />
         </div>
 
     </div>
@@ -220,7 +236,7 @@
       // var x= $('#cmbProject').siblings('.es-list').find('li.selected').data('value')
      //  var y= $('#cmbProject').siblings('.es-list').find('li.selected').text()
         var y= $('#cmbProject').text()
-     var loader = document.getElementById("loader");
+        var loader = document.getElementById("loader");
         loader.style.display = "block";
         var ShowStuckOrdersOnly = document.getElementById('ShowStuckOrdersOnly');
         var ShowUnderExecutedOnly = document.getElementById('ShowUnderExecutedOrdersOnly');
@@ -228,14 +244,14 @@
         var ShowRejectedOnly = document.getElementById('ShowRejectedOnly');
         var dep = document.getElementById('cmbDepartment');
 
-         var OrderHeaderProjectCode = "0";
+        var OrderHeaderProjectCode = "0";
         var OrderHeaderBudgetLineCode = "0";
         var employeeCode = "0";
         var ProjectCode = document.getElementById('cmbProject');
 
-         if (  ProjectCode.value!=undefined ) {
+        if (ProjectCode.value != undefined) {
 
-          OrderHeaderProjectCode  = ProjectCode.value;
+            OrderHeaderProjectCode = ProjectCode.value;
         }
 
         if ($('#cmbProject').value == "") {
@@ -250,14 +266,14 @@
             }
         }
 
-          var Employee = document.getElementById('cmbEmp');
+        var Employee = document.getElementById('cmbEmp');
         var employeeCode = Employee.value; // this return emp Name
 
 
         if ($('#cmbProject').text() != "" ) {
            OrderHeaderProjectCode  = ProjectCode.value;
         }
-         if ($('#cmbBudgetLine').text() != "") {
+        if ($('#cmbBudgetLine').text() != "") {
             OrderHeaderBudgetLineCode = BudgetLineCode.value;
         }
 
@@ -275,11 +291,21 @@
         }
 
         $('#searchResults').load(url, {
-            FromDate: $('#fromdate').val(), ToDate: $('#todate').val(),
-            Project: OrderHeaderProjectCode, BudgetLine: OrderHeaderBudgetLineCode, Department: dep.value, ShowStuckOrdersOnly: ShowStuckOrdersOnly.checked,
-            Employee: employeeCode,Supplier:SupplierCode
-            , ShowExecutedOnly: ShowExecutedOnly.checked, ShowUnderExecutedOnly: ShowUnderExecutedOnly.checked, ShowRejectedOnly:ShowRejectedOnly.checked,
-            FromAmount, ToAmount
+            FromDate: $('#fromdate').val(),
+            ToDate: $('#todate').val(),
+            Project: OrderHeaderProjectCode,
+            BudgetLine: OrderHeaderBudgetLineCode,
+            Department: dep.value,
+            ShowStuckOrdersOnly: ShowStuckOrdersOnly.checked,
+            Employee: employeeCode,
+            Supplier: SupplierCode,
+            ShowExecutedOnly: ShowExecutedOnly.checked,
+            ShowUnderExecutedOnly: ShowUnderExecutedOnly.checked,
+            ShowRejectedOnly: ShowRejectedOnly.checked,
+            FromAmount,
+            ToAmount,
+            FromId: document.getElementById('FromId').value == "" ? -1 : document.getElementById('FromId').value ,
+            ToId: document.getElementById('ToId').value == "" ? -1 : document.getElementById('ToId').value
         });
 
     });

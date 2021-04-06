@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Internal;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using MVCWebAppServierCon.Models;
 
 namespace MVCWebAppServierCon.Controllers
@@ -21,6 +22,16 @@ namespace MVCWebAppServierCon.Controllers
             _sc = sc;
             this.hostingEnviroment = hostingEnviroment;
         }
+
+
+        public override void OnActionExecuting(ActionExecutingContext filterContext)
+        {
+
+            ViewBag.Base64String = _sc.TblGeneralPreference.Select(g => g.Company_Logo).FirstOrDefault();
+            ViewBag.CompName = _sc.TblGeneralPreference.Select(g => g.Company_Name).FirstOrDefault();
+        }
+
+
         public IActionResult Index(Forms model)
         {
             return View();

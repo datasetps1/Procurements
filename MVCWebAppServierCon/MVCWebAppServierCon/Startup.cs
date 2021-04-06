@@ -216,6 +216,7 @@ namespace MVCWebAppServierCon
             #endregion
 
 
+
             app.UseStaticFiles();
             app.UseHttpsRedirection();
             app.UseStaticFiles();

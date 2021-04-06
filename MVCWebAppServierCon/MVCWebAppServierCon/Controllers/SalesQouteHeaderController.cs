@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 using MVCWebAppServierCon.Migrations;
 using MVCWebAppServierCon.Models;
@@ -35,13 +36,21 @@ namespace MVCWebAppServierCon.Controllers
         }
 
 
+        public override void OnActionExecuting(ActionExecutingContext filterContext)
+        {
+
+            ViewBag.Base64String = _context.TblGeneralPreference.Select(g => g.Company_Logo).FirstOrDefault();
+            ViewBag.CompName = _context.TblGeneralPreference.Select(g => g.Company_Name).FirstOrDefault();
+        }
+
+
         // GET: SalesQouteHeader/Create
         public async Task<ActionResult> Create(int? id)
         {
             // if the action is display (get the order with the passed id) 
             ViewBag.Criteria_List = _context.Criteria.ToList();
-
-            if(id != null)
+            ViewBag.Orders_List = _context.TblOrderHeader.ToList();
+            if (id != null)
             {
                 ViewBag.Status = "display";
                 //get the order and its all realated data
@@ -147,6 +156,17 @@ namespace MVCWebAppServierCon.Controllers
                 else if (key.Contains("Description"))
                 {
                     salesQouteHeader.Description = request[key];
+                }
+                else if (key.Contains("OrderHeaderCode"))
+                {
+                    try
+                    {
+                        salesQouteHeader.OrderHeaderCode = int.Parse(request[key]);
+                    }
+                    catch (Exception e)
+                    {
+                        salesQouteHeader.OrderHeaderCode = -1;
+                    }
                 }
             }
 

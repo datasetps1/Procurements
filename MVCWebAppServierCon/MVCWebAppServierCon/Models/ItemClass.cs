@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MVCWebAppServierCon.Models
 {
@@ -21,5 +22,8 @@ namespace MVCWebAppServierCon.Models
         [Required]
         public DateTime itemCreationDate { get; set; }
         public String itemNote { get; set; }
+
+        [ForeignKey("Unit")]
+        public int Unit_Id { get; set; }
     }
 }

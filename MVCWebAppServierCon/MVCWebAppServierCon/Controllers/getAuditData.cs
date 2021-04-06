@@ -31,7 +31,7 @@ namespace MVCWebAppServierCon.Controllers
             }
             else if (connect_with == Constants.finpack)
             {
-                command = new SqlCommand("SELECT Code,Name FROM " + tblName + " Where Status=1;", connection);
+                command = new SqlCommand("SELECT Code,Name FROM " + tblName + " Where Status=0;", connection);
             }
 
             var reader = command.ExecuteReader();
@@ -84,8 +84,16 @@ namespace MVCWebAppServierCon.Controllers
         public List<CodeNameModel> getTableData(string tblName, string condition, SqlConnection connection)
         {
             connection.Open();
+            SqlCommand command = null;
+            if (tblName == "viw_cst_lnk")
+            {
+                command = new SqlCommand("SELECT CodeACt ,NameAct FROM " + tblName + condition + "  ;", connection);
+            }
+            else
+            {
+                command = new SqlCommand("SELECT Code,Name FROM " + tblName + condition + "  ;", connection);
+            }
 
-            SqlCommand command = new SqlCommand("SELECT Code,Name FROM " + tblName + condition + "  ;", connection);
             var reader = command.ExecuteReader();
             List<CodeNameModel> Lst = new List<CodeNameModel>();
             while (reader.Read())

@@ -38,9 +38,28 @@
                     <span asp-validation-for="itemNote" class="text-danger"></span>
                 </div>
             </div>
-                <div class="form-group">
-                    <input type="submit" value="Create" class="btn btn-primary" />
+
+            @if (ViewBag.Show_Unit)
+            {
+                <div class="row">
+                    <div class="form-group col-md-12">
+                        <label style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Unit"]</label>
+                        <select asp-for="Unit_Id" id="Unit_input" class="form-control">
+                            <option selected></option>
+                            @* asp-items="" *@
+                            @foreach (var unit in ViewBag.Units)
+                            {
+                                <option value="@unit.Id">@unit.Name</option>
+
+                            }
+                        </select>
+                    </div>
                 </div>
+            }
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
         </form>
     </div>
 </div>
@@ -64,6 +83,12 @@
                     @*@Html.DisplayNameFor(model => model.itemPrice)*@
                     @Localizer["Item Price"]
                 </th>
+                @if (ViewBag.Show_Unit)
+                {
+                    <th>
+                        @Localizer["Unit"]
+                    </th>
+                }
                 <th>
                     @*@Html.DisplayNameFor(model => model.itemNote)*@
                     @Localizer["Item Note"]
@@ -84,6 +109,18 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.itemPrice)
                     </td>
+                    @if (ViewBag.Show_Unit)
+                    {
+                        <td>
+                            @foreach (var unit in ViewBag.Units)
+                            {
+                                if (unit.Id == item.Unit_Id)
+                                {
+                                    <span>@unit.Name</span>
+                                }
+                            }
+                        </td>
+                    }
                     <td>
                         @Html.DisplayFor(modelItem => item.itemNote)
                     </td>
@@ -97,6 +134,6 @@
         </tbody>
     </table>
 </div>
-    @section Scripts {
-        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    }
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

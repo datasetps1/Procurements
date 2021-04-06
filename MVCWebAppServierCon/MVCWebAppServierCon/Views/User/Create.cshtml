@@ -1,7 +1,7 @@
 ﻿@model MVCWebAppServierCon.ViewModels.UserViewModel
 
 
- <link href="~/css/site.css" rel="stylesheet" />
+<link href="~/css/site.css" rel="stylesheet" />
 @using Microsoft.AspNetCore.Mvc.Localization
 
 @inject IViewLocalizer Localizer
@@ -89,7 +89,7 @@
                 <div class="form-group col-md-3">
                     <label class="control-label">Excecutable !</label>
                     <div>
-                        <input id="true" type="radio" value="true"   asp-for="Excutable"/>
+                        <input id="true" type="radio" value="true" asp-for="Excutable" />
                         <label for="true">true</label>
                         <br />
                         <input id="false" type="radio" value="false" asp-for="Excutable" />
@@ -188,17 +188,17 @@
                     @Localizer["User Type"]
                 </th>
                 @*<th>
-                        @Html.DisplayNameFor(model => model.userDepartment)
-                    </th>*@
+            @Html.DisplayNameFor(model => model.userDepartment)
+        </th>*@
                 @*<th>
-                        @Html.DisplayNameFor(model => model.managmentAccesstance)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.sectionManager)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.finacnceDepartment)
-                    </th>*@
+            @Html.DisplayNameFor(model => model.managmentAccesstance)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.sectionManager)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.finacnceDepartment)
+        </th>*@
                 <th>
                     @*@Html.DisplayNameFor(model => model.userActive)*@
                     @Localizer["User Active"]
@@ -207,58 +207,67 @@
                     @*@Html.DisplayNameFor(model => model.userNote)*@
                     @Localizer["User Note"]
                 </th>
+                <th> 
+                </th>
+                <th>
+                    @*@Html.DisplayNameFor(model => model.userNote)*@
+                    @Localizer["Executable"]
+                </th>
                 <th></th>
             </tr>
         </thead>
         <tbody>
             @foreach (UserClass item in ViewBag.Users)
             {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.userName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.userEmail)
-                    </td>
-                    @*<td>
-                            @Html.DisplayFor(modelItem => item.userPassword)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.userConfirmPassword)
-                        </td>*@
-                    <td>
-                        @Html.DisplayFor(modelItem => item.userTypeCode)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.userDepartmentCode)
-                    </td>
-                    @*<td>
-                            @Html.DisplayFor(modelItem => item.managmentAccesstanceCode)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.sectionManagerCode)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.finacnceDepartmentCode)
-                        </td>*@
-                    <td>
-                        @Html.DisplayFor(modelItem => item.userActive)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.userNote)
-                    </td>
-                    <td>
-                        <a asp-controller="User" asp-action="Edit" asp-route-id="@item.userCode">Edit</a>
-                        <a>  \  </a>
-                        <a asp-controller="User" asp-action="EditUsersView" asp-route-id="@item.userCode">Permissions</a>
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.userName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.userEmail)
+                </td>
+                @*<td>
+            @Html.DisplayFor(modelItem => item.userPassword)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.userConfirmPassword)
+        </td>*@
+                <td>
+                    @Html.DisplayFor(modelItem => item.userTypeCode)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.userDepartmentCode)
+                </td>
+                @*<td>
+            @Html.DisplayFor(modelItem => item.managmentAccesstanceCode)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.sectionManagerCode)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.finacnceDepartmentCode)
+        </td>*@
+                <td>
+                    @Html.DisplayFor(modelItem => item.userActive)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.userNote)
+                </td>
+                <td>
+                    <input type="checkbox" checked="@(item.Excutable == true ? true : false)" disabled/>
+                </td>
+                <td>
+                    <a asp-controller="User" asp-action="Edit" asp-route-id="@item.userCode">Edit</a>
+                    <a>  \  </a>
+                    <a asp-controller="User" asp-action="EditUsersView" asp-route-id="@item.userCode">Permissions</a>
 
-                        @*<a asp-action="Details" asp-route-id="@item.userCode">Details</a> |*@
-                        @*<a asp-action="Delete" asp-route-id="@item.userCode">Delete</a>*@
-                    </td>
-                </tr>
+                    @*<a asp-action="Details" asp-route-id="@item.userCode">Details</a> |*@
+                    @*<a asp-action="Delete" asp-route-id="@item.userCode">Delete</a>*@
+                </td>
+            </tr>
             }
         </tbody>
     </table>
- 
+
 </div>
 

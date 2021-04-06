@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using MVCWebAppServierCon.Models;
 using MVCWebAppServierCon.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace MVCWebAppServierCon.Controllers
 
@@ -21,6 +22,16 @@ namespace MVCWebAppServierCon.Controllers
             _sc = sc;
             _conns = conns;
         }
+
+
+        public override void OnActionExecuting(ActionExecutingContext filterContext)
+        {
+
+            ViewBag.Base64String = _sc.TblGeneralPreference.Select(g => g.Company_Logo).FirstOrDefault();
+            ViewBag.CompName = _sc.TblGeneralPreference.Select(g => g.Company_Name).FirstOrDefault();
+        }
+
+
         // GET: Order
         [Authorize(Roles = "Admin, EnterSet")]
         public ActionResult Index()

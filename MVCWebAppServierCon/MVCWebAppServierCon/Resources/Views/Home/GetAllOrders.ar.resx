@@ -123,8 +123,20 @@
   <data name="Employee" xml:space="preserve">
     <value>الموظف</value>
   </data>
+  <data name="Execute" xml:space="preserve">
+    <value>تنفيذ</value>
+  </data>
+  <data name="From Amount" xml:space="preserve">
+    <value>من كمية</value>
+  </data>
   <data name="From date" xml:space="preserve">
     <value>من تاريخ</value>
+  </data>
+  <data name="From order code" xml:space="preserve">
+    <value>من طلبية رقم</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>لا شيء</value>
   </data>
   <data name="Project" xml:space="preserve">
     <value>المشروع</value>
@@ -132,16 +144,31 @@
   <data name="Show Executed Only" xml:space="preserve">
     <value>اظهار المنفذ فقط</value>
   </data>
+  <data name="Show Rejected Only" xml:space="preserve">
+    <value>عرض المرفوض فقط</value>
+  </data>
   <data name="Show Stuck Orders Only" xml:space="preserve">
     <value>اظهار العالق فقط</value>
   </data>
   <data name="Show Under Executed Only" xml:space="preserve">
     <value>اظهار تحت التنفيذ فقط</value>
   </data>
+  <data name="Supplier" xml:space="preserve">
+    <value>المورد</value>
+  </data>
   <data name="text-align: left  ;direction: ltr" xml:space="preserve">
     <value>text-align: right; display:block ;direction: rtl !important; unicode-bidi: bidi-override !important</value>
   </data>
+  <data name="text-align: left;" xml:space="preserve">
+    <value>text-align: right;</value>
+  </data>
+  <data name="To Amount" xml:space="preserve">
+    <value>إلى كمية</value>
+  </data>
   <data name="To date" xml:space="preserve">
     <value>الى تاريخ</value>
+  </data>
+  <data name="To order code" xml:space="preserve">
+    <value>إلى طلبية رقم</value>
   </data>
 </root>

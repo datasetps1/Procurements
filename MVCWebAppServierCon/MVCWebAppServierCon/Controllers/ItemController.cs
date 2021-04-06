@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MVCWebAppServierCon.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace MVCWebAppServierCon.Controllers
 {
@@ -18,6 +19,16 @@ namespace MVCWebAppServierCon.Controllers
         {
             _sc = sc;
         }
+
+
+        public override void OnActionExecuting(ActionExecutingContext filterContext)
+        {
+
+            ViewBag.Base64String = _sc.TblGeneralPreference.Select(g => g.Company_Logo).FirstOrDefault();
+            ViewBag.CompName = _sc.TblGeneralPreference.Select(g => g.Company_Name).FirstOrDefault();
+        }
+
+
         // GET: Item
         [Authorize(Roles = "Admin, EnterSet")]
         public ActionResult Index()
@@ -38,6 +49,10 @@ namespace MVCWebAppServierCon.Controllers
         [Authorize(Roles = "Admin, EnterSet")]
         public ActionResult Create()
         {
+
+            ViewBag.Units = _sc.Units.ToList();
+            ViewBag.Show_Unit = _sc.TblGeneralPreference.Select(g => g.Show_Unit).FirstOrDefault();
+
             var mess = TempData["ErrorMessage"] as String;
             if (mess != null && mess.Equals("error"))
             {
@@ -64,6 +79,8 @@ namespace MVCWebAppServierCon.Controllers
                 ViewBag.Items = _sc.TblItem.ToList();
                 ViewBag.message = "The Record " + ic.itemName + " has been added";
 
+                ViewBag.Units = _sc.Units.ToList();
+
                 return View(ic);
             }
             catch
@@ -76,6 +93,8 @@ namespace MVCWebAppServierCon.Controllers
         [Authorize(Roles = "Admin, EnterSet")]
         public ActionResult Edit(int id)
         {
+            ViewBag.Show_Unit = _sc.TblGeneralPreference.Select(g => g.Show_Unit).FirstOrDefault();
+            ViewBag.Units = _sc.Units.ToList();
             var res = _sc.TblItem.Where(i => i.itemCode == id).FirstOrDefault();
             return View(res);
         }
@@ -93,6 +112,7 @@ namespace MVCWebAppServierCon.Controllers
                 res.itemName2 = ic.itemName2;
                 res.itemPrice = ic.itemPrice;
                 res.itemNote = ic.itemNote;
+                res.Unit_Id = ic.Unit_Id;
                 _sc.SaveChanges();
                 // TODO: Add update logic here
 
@@ -108,6 +128,8 @@ namespace MVCWebAppServierCon.Controllers
         [Authorize(Roles = "Admin, DeleteSet")]
         public ActionResult Delete(int id)
         {
+            ViewBag.Show_Unit = _sc.TblGeneralPreference.Select(g => g.Show_Unit).FirstOrDefault();
+            ViewBag.Units = _sc.Units.ToList();
             var del = _sc.TblItem.Where(i => i.itemCode == id).FirstOrDefault();
             /*_sc.TblItem.Remove(del);
             _sc.SaveChanges();*/

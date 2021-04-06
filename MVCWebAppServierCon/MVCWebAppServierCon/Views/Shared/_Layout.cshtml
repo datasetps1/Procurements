@@ -51,7 +51,7 @@
 
         <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
             <div class="input-group">
-                <img alt="" src="http://localhost:2657/images/Logo/@ViewBag.Base64String" style="height:50px;width:80px; margin-left: 34px;" />
+                <img alt="" src="http://@Context.Request.Host.Value/images/Logo/@ViewBag.Base64String" style="height:50px;width:80px; margin-left: 34px;" />
                 <hr />
                 <h6 style="font-size: large; color: white; line-height: 45px; font-weight:bold">@ViewBag.CompName</h6>
             </div>
@@ -94,41 +94,48 @@
                     <div class="nav">
                         @*<div class="sb-sidenav-menu-heading">Core</div>*@
 
-                        <a class="nav-link" asp-controller="Home" asp-action="Index">
-                            <div class="sb-nav-link-icon"><i class="fas fa-home"></i></div>
-                            <h7>@Localizer["Home"]</h7>
-                        </a>
-
-                        <a class="nav-link" asp-controller="Home" asp-action="StuckOrders">
-                            <div class="sb-nav-link-icon"><i class="fas fa-plus"></i></div>
-                            Stuck Orders
-                        </a>
-
-                        <a class="nav-link" asp-controller="Home" asp-action="MyOrders">
-                            <div class="sb-nav-link-icon"><i class="fas fa-building"></i></div>
-                            <h7>@Localizer["My Orders"]</h7>
-                        </a>
-                        <a class="nav-link" asp-controller="Home" asp-action="MyFollowUp">
-                            <div class="sb-nav-link-icon"><i class="fas fa-building"></i></div>
-                            <h7>@Localizer["My Follow up"]</h7>
-                        </a>
-                        <a class="nav-link" asp-controller="OrderView" asp-action="Create">
-                            <div class="sb-nav-link-icon"><i class="fas fa-shopping-cart"></i></div>
-                            @Localizer["Create Order"]
-                        </a>
 
                         @*@if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
-        {*@
-                        <a class="nav-link" asp-controller="Home" asp-action="GetAllOrders">
-                            <div class="sb-nav-link-icon"><i class="fas fa-home"></i></div>
-                            <h7>@Localizer["All Orders"]</h7>
+                            {*@
+
+                        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapse_orders" aria-expanded="false" aria-controls="collapse_orders">
+                            <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                            <h7 style="@Localizer["margin-right: 0;"]">@Localizer["Orders"]</h7>
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
-                        @*   }*@
+                        <div class="collapse" id="collapse_orders" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+
+                                <a class="nav-link" asp-controller="OrderView" asp-action="Create">
+                                    <div class="sb-nav-link-icon"><i class="fas fa-shopping-cart"></i></div>
+                                    <h7 style="@Localizer["margin-right: 0;"]">@Localizer["Create Order"]</h7>
+                                </a>
+                                <a class="nav-link" asp-controller="Home" asp-action="Index">
+                                    <div class="sb-nav-link-icon"><i class="fas fa-home"></i></div>
+                                    <h7>@Localizer["Home"]</h7>
+                                </a>
+
+                                <a class="nav-link" asp-controller="Home" asp-action="StuckOrders">
+                                    <div class="sb-nav-link-icon"><i class="fas fa-plus"></i></div>
+                                    <h7 style="@Localizer["margin-right: 0;"]"> @Localizer["Stuck Orders"]</h7>
+                                </a>
+
+                                <a class="nav-link" asp-controller="Home" asp-action="MyOrders">
+                                    <div class="sb-nav-link-icon"><i class="fas fa-building"></i></div>
+                                    <h7 style="@Localizer["margin-right: 0;"]">@Localizer["My Orders"]</h7>
+                                </a>
+                                <a class="nav-link" asp-controller="Home" asp-action="MyFollowUp">
+                                    <div class="sb-nav-link-icon"><i class="fas fa-building"></i></div>
+                                    <h7 style="@Localizer["margin-right: 0;"]">@Localizer["My Follow up"]</h7>
+                                </a>
+                            </nav>
+                        </div>
+
                         @if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
                         {
                             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
                                 <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-                                @Localizer["Settings"]
+                                <h7 style="@Localizer["margin-right: 0;"]">@Localizer["Settings"]</h7>
                                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                             </a>
                             <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
@@ -139,51 +146,66 @@
                                     <a class="nav-link" asp-controller="User" asp-action="Create"> <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div> @Localizer["User"]</a>
                                     <a class="nav-link" asp-controller="AmountSitting" asp-action="Create"> <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>@Localizer["Amount Settings"]</a>
                                     <a class="nav-link" asp-controller="Department" asp-action="Create"> <div class="sb-nav-link-icon"><i class="fas fa-building"></i></div>@Localizer["Department"]</a>
-                                    <a class="nav-link" asp-controller="GeneralPref" asp-action="index"> <div class="sb-nav-link-icon"><i class="fas fa-building"></i></div>General Preference</a>
+                                    <a class="nav-link" asp-controller="GeneralPref" asp-action="index"> <div class="sb-nav-link-icon"><i class="fas fa-building"></i></div>@Localizer["General Preference"]</a>
+
+                                    <a class="nav-link" asp-controller="orderview" asp-action="editProjectBudget">
+                                        <div class="sb-nav-link-icon"><i class="fas fa-key"></i></div>
+                                        <h7 style="@Localizer["margin-right: 0;"]">@Localizer["Project admin"]</h7>
+                                    </a>
+                                    <a class="nav-link" asp-controller="Home" asp-action="Privacy">
+                                        <div class="sb-nav-link-icon"><i class="fas fa-key"></i></div>
+                                        <h7 style="@Localizer["margin-right: 0;"]">@Localizer["Privacy"]</h7>
+                                    </a>
                                 </nav>
                             </div>
                         }
 
-                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#PriceQuote_collapse" aria-expanded="false" aria-controls="PriceQuote_collapse">
-                        <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-                        Price Quote
-                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                    </a>
+                        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#PriceQuote_collapse" aria-expanded="false" aria-controls="PriceQuote_collapse">
+                            <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                            <h7 style="@Localizer["margin-right: 0;"]">@Localizer["Price Quote"]</h7>
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        </a>
                         <div class="collapse" id="PriceQuote_collapse" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
                                 <a class="nav-link" asp-controller="SalesQouteHeader" asp-action="Create">
                                     <div class="sb-nav-link-icon"><i class="fas fa-plus"></i></div>
-                                    Create
+                                    <h7 style="@Localizer["margin-right: 0;"]">@Localizer["Create"]</h7>
                                 </a>
 
                                 <a class="nav-link" asp-controller="SalesQouteHeader" asp-action="Search">
                                     <div class="sb-nav-link-icon"><i class="fas fa-search"></i></div>
-                                    Report
+                                    <h7 style="@Localizer["margin-right: 0;"]"> @Localizer["Report"]</h7>
+                                </a>
+                                <a class="nav-link" asp-controller="Criteria" asp-action="Create">
+                                    <div class="sb-nav-link-icon"><i class="fas fa-search"></i></div>
+                                    <h7 style="@Localizer["margin-right: 0;"]"> @Localizer["Criterias"]</h7>
                                 </a>
                             </nav>
                         </div>
 
                         <a class="nav-link" asp-controller="Forms" asp-action="Create">
                             <div class="sb-nav-link-icon"><i class="fas fa-building"></i></div>
-                            <h7>@Localizer["Forms"]</h7>
+                            <h7 style="@Localizer["margin-right: 0;"]">@Localizer["Forms"]</h7>
                         </a>
                         <a class="nav-link" asp-controller="Contracts" asp-action="Create">
                             <div class="sb-nav-link-icon"><i class="fas fa-search"></i></div>
-                            Contracts
-                        </a>
-                        <a class="nav-link" asp-controller="Criteria" asp-action="Create">
-                            <div class="sb-nav-link-icon"><i class="fas fa-search"></i></div>
-                            Criterias
-                        </a>
-                        <a class="nav-link" asp-controller="orderview" asp-action="editProjectBudget">
-                            <div class="sb-nav-link-icon"><i class="fas fa-key"></i></div>
-                            Project admin
+                            <h7 style="@Localizer["margin-right: 0;"]">@Localizer["Contracts"]</h7>
                         </a>
 
-                        <a class="nav-link" asp-controller="Home" asp-action="Privacy">
-                            <div class="sb-nav-link-icon"><i class="fas fa-key"></i></div>
-                            @Localizer["Privacy"]
+                        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapse_reports" aria-expanded="false" aria-controls="collapse_reports">
+                            <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                            <h7 style="@Localizer["margin-right: 0;"]">@Localizer["Reports"]</h7>
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
+                        <div class="collapse" id="collapse_reports" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+
+                                <a class="nav-link" asp-controller="Home" asp-action="GetAllOrders">
+                                    <div class="sb-nav-link-icon"><i class="fas fa-home"></i></div>
+                                    <h7 style="@Localizer["margin-right: 0;"]">@Localizer["All Orders"]</h7>
+                                </a>
+                            </nav>
+                        </div>
                         @*<footer class="py-4 bg-light mt-auto">*@
 
                         <div title="@Localizer["Request culture provider:"] @requestCulture?.Provider?.GetType().Name" style="display: none">
@@ -229,48 +251,48 @@
 
                             @*<div class="d-flex  small" id="Ar">
 
-                <i class="fas fa-globe language" onclick="var element = document.getElementById('selectLanguageInput'); element.value = 'ar'; var event = new Event('change'); element.dispatchEvent(event); document.getElementById('bod').style.direction = 'rtl'; document.getElementById('en-US').style.visibility = 'visible';
-                    document.getElementById('ar').style.visibility = 'hidden'" style="width:25px; height:40px;" img src="~/Images/langlogo.jpg"></i>
-                <p style="margin-top :12px; margin-left : 2px;">Arabic</p>
-            </div>
-            <div class="d-flex  small" id="En">
-                <i class="fas fa-globe language" onclick="var element = document.getElementById('selectLanguageInput'); element.value = 'en-US'; var event = new Event('change'); element.dispatchEvent(event);document.getElementById('bod').style.direction = 'ltr'; document.getElementById('ar').style.visibility = 'visible';
-                    document.getElementById('en-US').style.visibility = 'hidden' " style="width:25px; height:40px; " img src="~/Images/langlogo.jpg"></i>
-                <p style="margin-top :12px; margin-left : -4px;">English</p>
+                                    <i class="fas fa-globe language" onclick="var element = document.getElementById('selectLanguageInput'); element.value = 'ar'; var event = new Event('change'); element.dispatchEvent(event); document.getElementById('bod').style.direction = 'rtl'; document.getElementById('en-US').style.visibility = 'visible';
+                                        document.getElementById('ar').style.visibility = 'hidden'" style="width:25px; height:40px;" img src="~/Images/langlogo.jpg"></i>
+                                    <p style="margin-top :12px; margin-left : 2px;">Arabic</p>
+                                </div>
+                                <div class="d-flex  small" id="En">
+                                    <i class="fas fa-globe language" onclick="var element = document.getElementById('selectLanguageInput'); element.value = 'en-US'; var event = new Event('change'); element.dispatchEvent(event);document.getElementById('bod').style.direction = 'ltr'; document.getElementById('ar').style.visibility = 'visible';
+                                        document.getElementById('en-US').style.visibility = 'hidden' " style="width:25px; height:40px; " img src="~/Images/langlogo.jpg"></i>
+                                    <p style="margin-top :12px; margin-left : -4px;">English</p>
 
-            </div>*@
+                                </div>*@
 
                             @*<script>
-                alert("1")
-                $(document).ready(function () {
-                    alert("2")
-                    $('#Arbut').click(function () {
-                        alert("3")
-                        $('.EnLabel').toggle("slide");
-                        $('#enbtn').toggle("slide")
-                        $('.ArLabel').hide("slow")
-                        $('#arbtn').hide("slow")
-                        document.getElementById('bod').style.direction = "rtl"
-                        alert("4")
-                    });
-                    $('#Enbut').click(function () {
-                        alert("5")
-                        $('.EnLabel').hide("slow")
-                        $('#enbtn').hide("slow")
-                        $('.ArLabel').toggle("slide")
-                        $('#arbtn').toggle("slide")
-                        document.getElementById('bod').style.direction = "ltr"
-                        alert("6")
-                    });
-                });
+                                    alert("1")
+                                    $(document).ready(function () {
+                                        alert("2")
+                                        $('#Arbut').click(function () {
+                                            alert("3")
+                                            $('.EnLabel').toggle("slide");
+                                            $('#enbtn').toggle("slide")
+                                            $('.ArLabel').hide("slow")
+                                            $('#arbtn').hide("slow")
+                                            document.getElementById('bod').style.direction = "rtl"
+                                            alert("4")
+                                        });
+                                        $('#Enbut').click(function () {
+                                            alert("5")
+                                            $('.EnLabel').hide("slow")
+                                            $('#enbtn').hide("slow")
+                                            $('.ArLabel').toggle("slide")
+                                            $('#arbtn').toggle("slide")
+                                            document.getElementById('bod').style.direction = "ltr"
+                                            alert("6")
+                                        });
+                                    });
 
-            </script>*@
+                                </script>*@
 
                             @* <div class="d-flex  small">
-                <center>
-                    <img src="~/Images/langlogo.jpg" />
-                </center>
-            </div>*@
+                                    <center>
+                                        <img src="~/Images/langlogo.jpg" />
+                                    </center>
+                                </div>*@
 
                         </div>
 

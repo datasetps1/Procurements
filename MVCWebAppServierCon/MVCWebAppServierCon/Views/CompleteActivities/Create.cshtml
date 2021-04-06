@@ -1,5 +1,7 @@
 ﻿@model MVCWebAppServierCon.Models.CompleteActivity
 
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
 @{
     ViewData["Title"] = "Create";
 }
@@ -16,18 +18,19 @@
 @*<link rel="stylesheet"  href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />*@
 <script src="https://raw.githack.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
 
-<h5>Complete Activity</h5>
+<h5 style="@Localizer["text-align: inherit;"]">@Localizer["Complete Activity"]</h5>
 <hr />
-<div class="form_container row">
+<div class="form_container row" style="@Localizer["text-align: inherit;"] font-size:18px;">
     <form asp-action="Create" class="form_style col-md-6 col-lg-6 col-sm-8 col-12">
         <div class="row" style="margin:0; margin-bottom:16px;">
             <div class="btn btn-info" style="width: 100%;" data-toggle="modal" data-target="#attachmentsModal">
-                Attachments
+                @Localizer["Attachments"]
             </div>
         </div>
         <div class="row" style="margin:0; margin-bottom:20px;">
             <div class="btn btn-outline-info" style="width: 100%;" data-toggle="modal" data-target="#offeredModal">
-                offered to us
+                @Localizer["offered to us"]
+
             </div>
         </div>
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -35,10 +38,10 @@
         <!--_________________________________________________Suppliers dropdown ___________________________________________________-->
 
         <div id="Supplier_dropdown" style="position:relative;">
-            <div class="My_drop_down_title ddc" style="padding-top: 0;">Supplier</div>
+            <div class="My_drop_down_title ddc" style="padding-top: 0; padding: 11px 0;">@Localizer["Supplier"]</div>
             <div class="input_container" style="margin-bottom: 25px;">
                 <input type="hidden" id="selected_Supplier" />
-                <input id="My_drop_down_input-Supplier" type="text" class="My_drop_down_input ddc" placeholder="Search here ..." style="border-radius: 6px;margin-left: 0%;width: 100%;" />
+                <input id="My_drop_down_input-Supplier" type="text" class="My_drop_down_input ddc" placeholder="Search here ..." style="border-radius: 6px;margin-left: 0%;width: 100%; direction: ltr;" />
                 <i class="fas fa-chevron-circle-down input_icon"></i>
             </div>
             <div id="My_drop_down_container-Supplier" class="My_drop_down_container ddc" style="top: -16px; padding: 120px 10px 10px 10px;">
@@ -51,44 +54,59 @@
 
         <input asp-for="SupplierId" type="hidden" value="@ViewBag.OrderHeader.SupplierCode" />
         <div class="form-group">
-            <label class="control-label">Supplier Name</label>
+            <label class="control-label">@Localizer["Supplier Name"]</label>
             <input class="form-control" value="@(ViewBag.OrderHeader.SupplierName == null ? "not specified" : ViewBag.OrderHeader.SupplierName)" style="cursor:not-allowed" disabled />
             <span asp-validation-for="SupplierId" class="text-danger"></span>
         </div>
         <div class="form-group">
-            <label asp-for="Description" class="control-label"></label>
+            <label asp-for="Description" class="control-label">@Localizer["Description"]</label>
             <textarea id="Description_input" asp-for="Description" class="form-control" placeholder="Type Description here ..."></textarea>
             <span asp-validation-for="Description" class="text-danger"></span>
         </div>
-        <div class="row" style="margin: 0;">
-            <div class="form-group col-sm-6" style="padding-left:0;">
-                <label asp-for="OrderCode" class="control-label">Order Code</label>
+        <div class="row" style="margin: 0; display:flex; justify-content:space-between">
+            <div class="form-group col-sm-5" style=" padding: 0;">
+                <label asp-for="OrderCode" class="control-label">@Localizer["Order Code"]</label>
                 <input id="OrderCode_input" asp-for="OrderCode" class="form-control" value="@ViewBag.OrderHeader.OrderHeaderCode" style="cursor:not-allowed" disabled />
                 <span class="text-danger"></span>
             </div>
-            <div class="form-group col-sm-6" style="padding-right:0;">
-                <label asp-for="BookNumber" class="control-label"></label>
+            <div class="form-group col-sm-5" style="padding: 0;">
+                <label asp-for="BookNumber" class="control-label">@Localizer["Book Number"]</label>
                 <input id="BookNumber_input" asp-for="BookNumber" class="form-control" placeholder="Type Book Name here ..." />
                 <span asp-validation-for="BookNumber" class="text-danger"></span>
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="ActivityVenue" class="control-label"></label>
+            <label asp-for="ActivityVenue" class="control-label">@Localizer["Activity place"]</label>
             <input id="ActivityVenue_input" asp-for="ActivityVenue" class="form-control" placeholder="Type Activity Venue here ..." />
             <span asp-validation-for="ActivityVenue" class="text-danger"></span>
         </div>
         <div class="form-group">
-            <label asp-for="ActivityDate" class="control-label"></label>
-            <input id="ActivityDate_input" asp-for="ActivityDate" class="form-control" />
+            <label asp-for="ActivityDate" class="control-label">@Localizer["Activity Date"]</label>
+            <input id="ActivityDate_input" type="date" class="form-control" />
+
+            <script>
+                if (@Json.Serialize(Model) != null) {
+                    console.log("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
+                var model = @Json.Serialize(Model)
+                    var date = new Date(model.activityDate);
+                    console.log(date)
+                    debugger
+                    var day_0 = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+                    var month_0 = date.getMonth() < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+                    var date_format = date.getFullYear() + "-" + month_0 + "-" + day_0;
+                    document.getElementById("ActivityDate_input").value = date_format;
+                    console.log(document.getElementById("ActivityDate_input").value);
+                }
+            </script>
             <span asp-validation-for="ActivityDate" class="text-danger"></span>
         </div>
         <div class="form-group">
-            <label asp-for="DoneTasks" class="control-label"></label>
+            <label asp-for="DoneTasks" class="control-label">@Localizer["Done Tasks"]</label>
             <textarea id="DoneTasks_input" asp-for="DoneTasks" class="form-control" placeholder="Type the done tasks here ..."></textarea>
             <span asp-validation-for="DoneTasks" class="text-danger"></span>
         </div>
         <div class="form-group">
-            <label asp-for="CoordinatorName" class="control-label"></label>
+            <label asp-for="CoordinatorName" class="control-label">@Localizer["Coordinator Name"]</label>
             <input id="CoordinatorName_input" asp-for="CoordinatorName" class="form-control" placeholder="Type Coordinator Name here ..." />
             <span asp-validation-for="CoordinatorName" class="text-danger"></span>
         </div>
@@ -98,12 +116,28 @@
                 <span asp-validation-for="ProjectName" class="text-danger"></span>
             </div>*@
         <div class="form-group">
-            <label asp-for="Date" class="control-label"></label>
-            <input id="Date_input" asp-for="Date" class="form-control" />
+            <label asp-for="Date" class="control-label">@Localizer["Date"]</label>
+            <input id="Date_input" type="date" class="form-control" />
             <span asp-validation-for="Date" class="text-danger"></span>
+
+            <script>
+                console.log(@Json.Serialize(Model))
+                var model = @Json.Serialize(Model)
+                if (model != null) {
+                    console.log("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee22222222222222");
+                    var date_01 = new Date(model.date);
+                    console.log(date_01)
+                    debugger
+                    var day_0_01 = date_01.getDate() < 10 ? "0" + date_01.getDate() : date_01.getDate();
+                    var month_0_01 = date_01.getMonth() < 10 ? "0" + (date_01.getMonth() + 1) : date_01.getMonth() + 1;
+                    var date_format_01 = date_01.getFullYear() + "-" + month_0_01 + "-" + day_0_01;
+                    document.getElementById("Date_input").value = date_format_01;
+                    console.log(document.getElementById("Date_input").value );
+                }
+            </script>
         </div>
         <div class="form-group">
-            <div id="submit_btn" value="Create" class="btn btn-info" style="width:100%;">Finish</div>
+            <div id="submit_btn" value="Create" class="btn btn-info" style="width:100%;">@Localizer["Finish"]</div>
         </div>
     </form>
 </div>
@@ -113,7 +147,7 @@
     <div class="modal-dialog  modal-dialog-centered modal-md">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Attachments</h4>
+                <h4 class="modal-title">@Localizer["Attachments"]</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
@@ -121,23 +155,22 @@
                     <div class="form-group input_group_style col-sm-9" style="margin-top:0; padding-left:0;">
                         <div class="custom-file">
                             <input id="attachment_input" type="file" class="form-control custom-file-input" />
-                            <label id="attachment_input_label" class="custom-file-label" style="overflow: hidden;">Choose File ...</label>
+                            <label id="attachment_input_label" class="custom-file-label" style="overflow: hidden;">@Localizer["Choose File ..."]</label>
                             <span id="attachment_error_element" class="text-danger"></span>
                         </div>
                     </div>
                     <button id="add_file_btn" class="btn btn-outline-info col-sm-3">
-                        Add
+                        @Localizer["Add"]
                     </button>
                 </div>
 
                 <div id="files_list_element">
-                    <h6>files list : </h6>
+                    <h6 style="@Localizer["text-align: inherit;"]">@Localizer["files list :"]</h6>
 
                 </div>
-
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-info" style="width:100%;" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-info" style="width:100%;" data-dismiss="modal">@Localizer["Close"]</button>
             </div>
         </div>
     </div>
@@ -149,28 +182,28 @@
     <div class="modal-dialog  modal-dialog-centered modal-md">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Offered To Us</h4>
+                <h4 class="modal-title"> @Localizer["Add"]</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="row" style="width:100%; margin:0 0 15px 0;">
                     <div class="form-group input_group_style col-sm-9" style="margin-top:0; padding-left:0;">
-                        <input id="offered_input" class="form-control" placeholder="Type what offered to us ..." />
+                        <input id="offered_input" class="form-control" placeholder="@Localizer["Type what offered to us ..."]" />
                         <span id="offered_error_element" class="text-danger"></span>
                     </div>
                     <button id="add_Offered_btn" class="btn btn-outline-info col-sm-3">
-                        Add
+                        @Localizer["Add"]
                     </button>
                 </div>
 
                 <div id="Offered_list_element">
-                    <h6>Offered list : </h6>
+                    <h6 style="@Localizer["text-align: inherit;"]">@Localizer["Offered list  :"]</h6>
 
                 </div>
 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-info" style="width:100%;" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-info" style="width:100%;" data-dismiss="modal">@Localizer["Close"]</button>
             </div>
         </div>
     </div>
@@ -182,16 +215,16 @@
     <div class="modal-dialog  modal-dialog-centered modal-md">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Success</h4>
+                <h4 class="modal-title">@Localizer["Success"]</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
-                <div>Do you want to print acopy of close activiy !</div>
+                <div>@Localizer["Do you want to print acopy of close activiy !"]</div>
 
             </div>
             <div class="modal-footer">
-                <button onclick="print_and_redirect()" type="button" class="btn btn-outline-info" style="width:100%;" data-dismiss="modal">print</button>
-                <button onclick="redirect()" type="button" class="btn btn-info" style="width:100%;" data-dismiss="modal">don't print</button>
+                <button onclick="print_and_redirect()" type="button" class="btn btn-outline-info" style="width:100%;" data-dismiss="modal">@Localizer["print"]</button>
+                <button onclick="redirect()" type="button" class="btn btn-info" style="width:100%;" data-dismiss="modal">@Localizer["don't print"]</button>
             </div>
         </div>
     </div>
@@ -274,7 +307,7 @@
         });
 
         const refill_files = () => {
-            files_list_element.innerHTML = "<h6>files list : </h6>";
+            files_list_element.innerHTML = "<h6>@Localizer["files list :"] </h6>";
 
             files_list.forEach((current, index) => {
                 var file_path;
@@ -287,7 +320,7 @@
                             <div class="list_item" style="display: flex;justify-content: space-between;">
                                 <div>${file_name}</div>
                                 <div>
-                                    <a style="text-decoration:none;" href="${'http://localhost:2657/images/complete_activity/' + file_path}" download>
+                                    <a style="text-decoration:none;" href="${'http://@Context.Request.Host.Value/images/complete_activity/' + file_path}" download>
                                         <i class="fas fa-file-download" style="font-size: 20px;color: #17a2b8;" title="تنزيل"></i>
                                     </a>
                                     <i onclick="delete_file(${index})" class="fas fa-trash-alt" style="color:red;font-size: 20px; cursor:pointer; margin:0 5px;" title="حذف"></i>
@@ -335,7 +368,7 @@
 
         document.getElementById("add_file_btn").addEventListener("click", function () {
             if (attachment_input.files.length == 0) {
-                attachment_error_element.innerHTML = "you have to select file !";
+                attachment_error_element.innerHTML = "@Localizer["you have to select file !"]";
                 return;
             } else {
                 attachment_error_element.innerHTML = "";
@@ -361,12 +394,12 @@
 
                 //set file to null
                 attachment_input.value = null;
-                document.getElementById("attachment_input_label").innerHTML = "choose a file ...";
+                document.getElementById("attachment_input_label").innerHTML = "@Localizer["Choose File ..."]";
             }
         });
 
         const refill_offers = () => {
-            Offered_list_element.innerHTML = "<h6>Offered list : </h6>";
+            Offered_list_element.innerHTML = "<h6>@Localizer["Offered list  :"]</h6>";
 
             offered_list.forEach((current, index) => {
                 Offered_list_element.innerHTML += `
@@ -432,7 +465,7 @@
             window.location.href = redirect_url;
         }
 
-        const print_and_redirect = () => {
+        const print_and_redirect = async () => {
             debugger
             console.log(complete_activity_obj)
             console.log(document.getElementById('BookNumber_report'))
@@ -456,12 +489,13 @@
             })
 
             var div = document.getElementById("complete-activity-print-element");
-            html2pdf().from(div).save();
+            await html2pdf().from(div).save();
 
             window.location.href = redirect_url;
         }
 
         async function submit() {
+
              //prepare data :
             var completeActivity = {
                 SupplierId: selected_Supplier,
@@ -501,11 +535,17 @@
                  },
              });
 
-              await $.ajax({
+            await $.ajax({
                 url: "@Url.Action("Create")",
-                data: {offered_list:offered_list , completeActivity:completeActivity ,paths_array:paths_array},
+                data: {
+                    offered_list: offered_list,
+                    completeActivity: completeActivity,
+                    paths_array: paths_array,
+                    ActivityDate: completeActivity.ActivityDate,
+                    Date: completeActivity.Date,
+                },
                 type: 'POST',
-                dataType:'json',
+                dataType: 'json',
                 success: function (response) {
                     console.log(response);
                     //open successModal
@@ -537,7 +577,6 @@
                     }
                 }
             })
-
             var completeActivity = {
                 Id:@(Model != null ? Model.Id : -1),
                 SupplierId: selected_Supplier,
@@ -583,6 +622,8 @@
             var post_data = {
                 offered_list: offered_list_to_add,
                 completeActivity: completeActivity,
+                ActivityDate: completeActivity.ActivityDate,
+                Date: completeActivity.Date,
                 paths_array: paths_array,
                 deleted_files_list: deleted_files_list,
                 deleted_offered_list: deleted_offered_list
@@ -622,7 +663,7 @@
 
         //fill offered
         offered_list = complete_activity_offereds != null ? complete_activity_offereds : [];
-        Offered_list_element.innerHTML = "<h6>Offered list : </h6>";
+        Offered_list_element.innerHTML = "<h6>@Localizer["Offered list  :"]</h6>";
 
         offered_list.forEach((current,index) => {
             Offered_list_element.innerHTML += `
@@ -637,7 +678,7 @@
 
         //file files
         files_list = complete_activity_files != null ? complete_activity_files : [];
-        files_list_element.innerHTML = "<h6>files list : </h6>";
+        files_list_element.innerHTML = "<h6>@Localizer["files list :"] </h6>";
 
         files_list.forEach((current, index) => {
             var file_path = current.file_path;
@@ -647,7 +688,7 @@
                             <div class="list_item" style="display: flex;justify-content: space-between;">
                                 <div>${file_name}</div>
                                 <div>
-                                    <a style="text-decoration:none;" href="${'http://localhost:2657/images/complete_activity/' + file_path}" download>
+                                    <a style="text-decoration:none;" href="${'http://@Context.Request.Host.Value/images/complete_activity/' + file_path}" download>
                                         <i class="fas fa-file-download" style="font-size: 20px;color: #17a2b8;" title="تنزيل"></i>
                                     </a>
                                     <i onclick="delete_file(${index})" class="fas fa-trash-alt" style="color:red;font-size: 20px; cursor:pointer; margin:0 5px;" title="حذف"></i>
@@ -656,7 +697,7 @@
                         `;
         });
 
-        
+
         var selected_Supplier = -1;
         var selected_Supplier_name = "not added";
 

@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 using MVCWebAppServierCon.Helpers;
 using MVCWebAppServierCon.Models;
@@ -21,6 +23,14 @@ namespace MVCWebAppServierCon.Controllers
             this.hostingEnviroment = hostingEnviroment;
             _context = sc;
         }
+
+        public override void OnActionExecuting(ActionExecutingContext filterContext)
+        {
+
+            ViewBag.Base64String = _context.TblGeneralPreference.Select(g => g.Company_Logo).FirstOrDefault();
+            ViewBag.CompName = _context.TblGeneralPreference.Select(g => g.Company_Name).FirstOrDefault();
+        }
+
 
         [HttpGet("GeneralPref/")]
         [HttpGet("GeneralPref/index")]
@@ -62,7 +72,20 @@ namespace MVCWebAppServierCon.Controllers
                 Gpref.ActivitiyTable = model.ActivitiyTable;
                 Gpref.link_view_name = model.link_view_name;
                 Gpref.Company_Name = model.Company_Name;
-                Gpref.Company_Logo = model.Company_Logo;
+                if (model.Logo_Files != null)
+                {
+                    Gpref.Company_Logo = model.Company_Logo;
+                }
+                Gpref.Show_Unit = model.Show_Unit;
+                Gpref.Show_Doner2 = model.Show_Doner2;
+                Gpref.Display_Name_Doner2 = model.Display_Name_Doner2;
+                Gpref.Table_Name_Doner2 = model.Table_Name_Doner2;
+                Gpref.Show_cost3 = model.Show_cost3;
+                Gpref.Display_Name_cost3 = model.Display_Name_cost3;
+                Gpref.Table_Name_cost3 = model.Table_Name_cost3;
+                Gpref.Show_cost4 = model.Show_cost4;
+                Gpref.Display_Name_cost4 = model.Display_Name_cost4;
+                Gpref.Table_Name_cost4 = model.Table_Name_cost4;
                 _context.SaveChanges();
             }
             else
@@ -111,19 +134,22 @@ namespace MVCWebAppServierCon.Controllers
             {
                 var previous_model = await _context.TblGeneralPreference.FirstOrDefaultAsync(g => g.code == model.code);
 
-
-                if (model.Logo_Files.Count > 0)
+                if (model.Logo_Files != null)
                 {
-                    //save logo
-                    var path = await HelperFunctions.save_file(hostingEnviroment, model.Logo_Files[0], "images/Logo");
-                    model.Company_Logo = path;
-
-                    //if there is image before 
-                    if (previous_model.Company_Logo != null)
+                    if (model.Logo_Files.Count > 0)
                     {
-                        HelperFunctions.Delete_file(hostingEnviroment, "images/Logo", previous_model.Company_Logo);
+                        //save logo
+                        var path = await HelperFunctions.save_file(hostingEnviroment, model.Logo_Files[0], "images/Logo");
+                        model.Company_Logo = path;
+
+                        //if there is image before 
+                        if (previous_model.Company_Logo != null)
+                        {
+                            HelperFunctions.Delete_file(hostingEnviroment, "images/Logo", previous_model.Company_Logo);
+                        }
                     }
                 }
+
                 previous_model.QouteAmount = model.QouteAmount;
                 previous_model.DeductionAmount = model.DeductionAmount;
                 previous_model.ConnecWith = model.ConnecWith;
@@ -131,7 +157,20 @@ namespace MVCWebAppServierCon.Controllers
                 previous_model.ActivitiyTable = model.ActivitiyTable;
                 previous_model.link_view_name = model.link_view_name;
                 previous_model.Company_Name = model.Company_Name;
-                previous_model.Company_Logo = model.Company_Logo;
+                if (model.Logo_Files != null)
+                {
+                    previous_model.Company_Logo = model.Company_Logo;
+                }
+                previous_model.Show_Unit = model.Show_Unit;
+                previous_model.Show_Doner2 = model.Show_Doner2;
+                previous_model.Display_Name_Doner2 = model.Display_Name_Doner2;
+                previous_model.Table_Name_Doner2 = model.Table_Name_Doner2;
+                previous_model.Show_cost3 = model.Show_cost3;
+                previous_model.Display_Name_cost3 = model.Display_Name_cost3;
+                previous_model.Table_Name_cost3 = model.Table_Name_cost3;
+                previous_model.Show_cost4 = model.Show_cost4;
+                previous_model.Display_Name_cost4 = model.Display_Name_cost4;
+                previous_model.Table_Name_cost4 = model.Table_Name_cost4;
                 _context.TblGeneralPreference.Update(previous_model);
                 await _context.SaveChangesAsync();
             }

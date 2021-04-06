@@ -10,6 +10,7 @@ using static Microsoft.AspNetCore.Hosting.Internal.HostingApplication;
 using System.Data.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace MVCWebAppServierCon.Controllers
 {
@@ -40,6 +41,13 @@ namespace MVCWebAppServierCon.Controllers
             return View(result);
         }
 
+
+        public override void OnActionExecuting(ActionExecutingContext filterContext)
+        {
+
+            ViewBag.Base64String = _sc.TblGeneralPreference.Select(g => g.Company_Logo).FirstOrDefault();
+            ViewBag.CompName = _sc.TblGeneralPreference.Select(g => g.Company_Name).FirstOrDefault();
+        }
         // GET: AmountSitting/Details/5
         [Authorize(Roles = "Admin, EnterSet")]
         public ActionResult Details(int id)

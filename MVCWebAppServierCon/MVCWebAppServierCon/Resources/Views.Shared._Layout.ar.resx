@@ -117,14 +117,32 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="All Orders" xml:space="preserve">
+    <value>جميع الطلبيات</value>
+  </data>
   <data name="Amount Settings" xml:space="preserve">
     <value>اعدادات المبلغ</value>
   </data>
+  <data name="Contracts" xml:space="preserve">
+    <value>العقود</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>إنشاء</value>
+  </data>
   <data name="Create Order" xml:space="preserve">
-    <value>عمل طلبية</value>
+    <value>إنشاء طلبية</value>
+  </data>
+  <data name="Criterias" xml:space="preserve">
+    <value>المعايير</value>
   </data>
   <data name="Department" xml:space="preserve">
     <value>    الدائرة</value>
+  </data>
+  <data name="Forms" xml:space="preserve">
+    <value>نماذج</value>
+  </data>
+  <data name="General Preference" xml:space="preserve">
+    <value>التفضيل العام</value>
   </data>
   <data name="Home" xml:space="preserve">
     <value>    الرئيسية</value>
@@ -141,8 +159,23 @@
   <data name="ltr" xml:space="preserve">
     <value>rtl</value>
   </data>
+  <data name="margin-right: 0;" xml:space="preserve">
+    <value>margin-right: 7px;</value>
+  </data>
+  <data name="My Follow up" xml:space="preserve">
+    <value>متابعتي</value>
+  </data>
+  <data name="My Orders" xml:space="preserve">
+    <value>طلباتي</value>
+  </data>
   <data name="Order Type" xml:space="preserve">
     <value>    نوع الطلبية</value>
+  </data>
+  <data name="Orders" xml:space="preserve">
+    <value>الطبيات</value>
+  </data>
+  <data name="Price Quote" xml:space="preserve">
+    <value>عرض أسعار</value>
   </data>
   <data name="Privacy" xml:space="preserve">
     <value>خصوصية</value>
@@ -150,8 +183,17 @@
   <data name="Procurement" xml:space="preserve">
     <value>    المشتريات </value>
   </data>
+  <data name="Project admin" xml:space="preserve">
+    <value>مشرف المشروع</value>
+  </data>
   <data name="Register" xml:space="preserve">
     <value>    تسجيل </value>
+  </data>
+  <data name="Report" xml:space="preserve">
+    <value>تقرير</value>
+  </data>
+  <data name="Reports" xml:space="preserve">
+    <value>التقارير</value>
   </data>
   <data name="sb-nav-fixed sb-sidenav-toggled" xml:space="preserve">
     <value>sb-nav-fixed</value>
@@ -161,6 +203,9 @@
   </data>
   <data name="Structure" xml:space="preserve">
     <value>    تركيب</value>
+  </data>
+  <data name="Stuck Orders" xml:space="preserve">
+    <value>الطلبيات العالقة</value>
   </data>
   <data name="User" xml:space="preserve">
     <value>    المستخدم</value>

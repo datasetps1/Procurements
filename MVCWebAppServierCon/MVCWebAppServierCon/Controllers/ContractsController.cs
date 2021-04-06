@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
+using MVCWebAppServierCon.Helpers;
 using MVCWebAppServierCon.Models;
 using MVCWebAppServierCon.ViewModels;
 
@@ -23,6 +25,13 @@ namespace MVCWebAppServierCon.Controllers
 
         private readonly SecondConnClass _sc;
         private IHostingEnvironment hostingEnviroment { get; }
+
+        private string rate_table = "";
+        private string currency_table = "";
+        private string accounts_table = "";
+        private string connect_with = "";
+
+
         public ContractsController(SecondConnClass sc, IConfiguration config, IHostingEnvironment hostingEnviroment)
         {
             _sc = sc;
@@ -31,7 +40,31 @@ namespace MVCWebAppServierCon.Controllers
             configuration = config;
             conString = configuration.GetConnectionString("Myconnection");
             connection = new SqlConnection(conString);
+
+            // specify the tables according to genereal preference (finpack or audit)
+            connect_with = _sc.TblGeneralPreference.Select(g => g.ConnecWith).FirstOrDefault();
+            if (connect_with == Constants.audit)
+            {
+                rate_table = Constants_Audit.Rate;
+                currency_table = Constants_Audit.TBLCurrency;
+                accounts_table = Constants_Audit.VAccountSuppliers;
+            }
+            else
+            {
+                rate_table = Constants_Finpack.rateTable;
+                currency_table = Constants_Finpack.Curr;
+                accounts_table = Constants_Finpack.accounts;
+            }
         }
+
+
+        public override void OnActionExecuting(ActionExecutingContext filterContext)
+        {
+
+            ViewBag.Base64String = _sc.TblGeneralPreference.Select(g => g.Company_Logo).FirstOrDefault();
+            ViewBag.CompName = _sc.TblGeneralPreference.Select(g => g.Company_Name).FirstOrDefault();
+        }
+
         public IActionResult Index()
         {
             return View();
@@ -43,7 +76,7 @@ namespace MVCWebAppServierCon.Controllers
 
             var getData = new getAuditData();
             IList<CodeNameModel> SuppliersList = new List<CodeNameModel>();
-            SuppliersList = getData.getTableData("VAccountSuppliers", "", connection);
+            SuppliersList = getData.getTableData(accounts_table, "", connection);
             ViewBag.lstsuppliers = SuppliersList;
 
             return View();
