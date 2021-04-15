@@ -102,7 +102,7 @@ namespace MVCWebAppServierCon.Controllers
             }
             else if (connect_with == Constants.finpack)
             {
-                command = new SqlCommand("SELECT Code,Name  FROM " + tblName + " Where Status=1;", connection);
+                command = new SqlCommand("SELECT Code,Name  FROM " + tblName + " Where Status=0;", connection);
             }
 
             try
@@ -169,6 +169,8 @@ namespace MVCWebAppServierCon.Controllers
         {
 
             // SqlCommand command = new SqlCommand("SELECT code,name FROM  VRelationalBudgetLineWithFunder WHERE (FirstCostCenterCode = '" + Fundercode + "' );", connection);
+
+            ViewBag.Display_Name_Activityt = _sc.TblGeneralPreference.Select(g => g.Display_Name_Activityt).FirstOrDefault();
 
             var getData = new getAuditData();
             List<CodeNameModel> lst = new List<CodeNameModel>();
@@ -359,9 +361,11 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
         {
             var general_prefernce = _sc.TblGeneralPreference.FirstOrDefault();
             ViewBag.Show_Unit = general_prefernce.Show_Unit;
+            ViewBag.Show_Order_Type = general_prefernce.Show_Order_Type;
             ViewBag.Show_Doner2 = general_prefernce.Show_Doner2;
             ViewBag.Show_cost3 = general_prefernce.Show_cost3;
             ViewBag.Show_cost4 = general_prefernce.Show_cost4;
+            ViewBag.Display_Name_Project = general_prefernce.Display_Name_Project;
 
             if (ViewBag.Show_Doner2)
             {
@@ -536,9 +540,12 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
 
             var general_prefernce = _sc.TblGeneralPreference.FirstOrDefault();
             ViewBag.Show_Unit = general_prefernce.Show_Unit;
+            ViewBag.Show_Order_Type = general_prefernce.Show_Order_Type;
             ViewBag.Show_Doner2 = general_prefernce.Show_Doner2;
             ViewBag.Show_cost3 = general_prefernce.Show_cost3;
             ViewBag.Show_cost4 = general_prefernce.Show_cost4;
+            ViewBag.Display_Name_Project = general_prefernce.Display_Name_Project;
+            ViewBag.Display_Name_Activityt = general_prefernce.Display_Name_Activityt;
 
             if (ViewBag.Show_Doner2)
             {

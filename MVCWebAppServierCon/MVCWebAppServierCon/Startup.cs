@@ -104,8 +104,8 @@ namespace MVCWebAppServierCon
             );
 
 
-            services.AddDbContext<SecondConnClass>(options => options.UseSqlServer(Configuration.GetConnectionString("ProcurementConn")));
-            services.AddDbContext<ConnnectionStringClass>(options => options.UseSqlServer(Configuration.GetConnectionString("Myconnection")));
+            services.AddDbContext<SecondConnClass>(options => options.UseSqlServer(Configuration.GetConnectionString("ProcurementConn"), builder => builder.UseRowNumberForPaging()));
+            services.AddDbContext<ConnnectionStringClass>(options => options.UseSqlServer(Configuration.GetConnectionString("Myconnection"), builder => builder.UseRowNumberForPaging()));
 
             services.AddSingleton<IConfiguration>(Configuration);
 

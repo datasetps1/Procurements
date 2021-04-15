@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
@@ -73,16 +74,8 @@ namespace MVCWebAppServierCon.Controllers
             int x = 9;
         }
 
-
-
-
-        public async Task<IActionResult> Index()
-        {/*first select the logged user then get its rank then by the rank get its amount sitting range to use the range the view his orders*/
-            //var x = User.Identity.Name;
-            //(amountTo >= 600) AND(amountFrom <= 600)
-            // var amountsRanks = _sc.TblAmountSitting.Where(a => a.amountTo >= 600 && a.amountFrom <= 600).OrderBy(a => a.amountStructure).ToList(); // get user amount range
-
-
+        public async Task<Object> Search_Index(string search_query)
+        {
             var user = _sc.TblUser.Where(u => u.userName.Equals(User.Identity.Name)).FirstOrDefault();
             var orders = new List<OrderHeaderClass>();
             var orders2 = new List<OrderHeaderClass>();
@@ -136,7 +129,7 @@ namespace MVCWebAppServierCon.Controllers
                     {
                         var approv = _sc.TblApproval.Where(s => s.ApprovalHeaderCode == t.OrderHeaderCode).OrderBy(a => a.ApprovalCode).ToList();
                         ApprovalClass lastApproval = approv.LastOrDefault();
-                        if (lastApproval != null && (lastApproval.ApprovalIsApproved == (int)Enums.ApprovalStatus.Reject || lastApproval.ApprovalIsApproved == (int)Enums.ApprovalStatus.Excuted))
+                        if (lastApproval != null && (lastApproval.ApprovalIsApproved == (int)Enums.ApprovalStatus.Reject || lastApproval.ApprovalIsApproved == (int)Enums.ApprovalStatus.Excuted) || lastApproval.ApprovalIsApproved == (int)Enums.ApprovalStatus.Stuck)
                         {
                             continue;
                         }
@@ -194,6 +187,204 @@ namespace MVCWebAppServierCon.Controllers
                     RejectedOrders = orders2.Where(x => x.StatusCode == 3 && x.OrderHeaderdate < DateTime.Now.AddDays(-5)).ToList();
 
                     orders2 = orders2.Except(RejectedOrders).ToList();
+
+                    //search if the search query is exist 
+                    var orders_search_result = new List<OrderHeaderClass>();
+                    foreach (var order in orders2)
+                    {
+                        string Date = null;
+                        string expected_date = null;
+
+                        if (order.ExpectedDate != null)
+                        {
+                            expected_date = order.ExpectedDate.Value.ToString("dd/MM/yyyy");
+                        }
+
+                        if (order.ExpectedDate != null)
+                        {
+                            Date = order.OrderHeaderCreationDate.ToString("dd/MM/yyyy");
+                        }
+
+                        search_query = search_query.ToUpper();
+                        if ((order.OrderHeaderCode + "").Contains(search_query) ||
+                            order.Currency != null && order.Currency.ToUpper().Contains(search_query) ||
+                             (order.UserName != null && order.UserName.ToUpper().Contains(search_query)) ||
+                            (order.LastUserName != null && order.LastUserName.ToUpper().Contains(search_query)) ||
+                             (order.ActualTotalAmount + "").Contains(search_query) ||
+                            (order.TotalInbasic + "").Contains(search_query) ||
+                             (order.ProjectName != null && order.ProjectName.ToUpper().Contains(search_query)) ||
+                            (order.BudgetLine != null && order.BudgetLine.ToUpper().Contains(search_query)) ||
+                             (order.OrderTypeName != null && order.OrderTypeName.ToUpper().Contains(search_query)) ||
+                             (order.NotesFromLastAction != null && order.NotesFromLastAction.ToUpper().Contains(search_query)) ||
+                             (order.SupplierName != null && order.SupplierName.ToUpper().Contains(search_query)) ||
+                             (order.StatusName != null && order.StatusName.ToUpper().Contains(search_query)) ||
+                             (order.OrderHeaderNote != null && order.OrderHeaderNote.ToUpper().Contains(search_query)) ||
+                             (order.waitingUser != null && order.waitingUser.ToUpper().Contains(search_query)) ||
+                             (Date != null && Date.Contains(search_query)) ||
+                             (expected_date != null && expected_date.Contains(search_query))
+                            )
+                        {
+                            orders_search_result.Add(order);
+                        }
+                    }
+
+                    return new
+                    {
+                        result = orders_search_result
+                    };
+
+
+                }
+            }
+            return new { result = "not found" };
+        }
+
+        public async Task<IActionResult> Index(int? pageNumber, int? max_records)
+        {/*first select the logged user then get its rank then by the rank get its amount sitting range to use the range the view his orders*/
+            //var x = User.Identity.Name;
+            //(amountTo >= 600) AND(amountFrom <= 600)
+            // var amountsRanks = _sc.TblAmountSitting.Where(a => a.amountTo >= 600 && a.amountFrom <= 600).OrderBy(a => a.amountStructure).ToList(); // get user amount range
+
+            if (pageNumber == null || pageNumber <= 0)
+            {
+                pageNumber = 1;
+            }
+
+            if (max_records == null || max_records <= 0)
+            {
+                max_records = 10;
+            }
+
+
+            var user = _sc.TblUser.Where(u => u.userName.Equals(User.Identity.Name)).FirstOrDefault();
+            var orders = new List<OrderHeaderClass>();
+            var orders2 = new List<OrderHeaderClass>();
+            var getData = new getAuditData();
+
+
+            int userRank = (int?)user.userTypeCode ?? 0;
+            int department = (int?)user.userDepartmentCode ?? 0;
+
+            CompanyDefinition();
+            if (userRank == (int)Enums.UserRanks.Employee)
+            {
+
+                return RedirectToAction("StuckOrders", "Home");
+
+
+            }
+            if (userRank == 0)
+            {
+                ModelState.AddModelError("", "There is no data for you");
+                return View(orders);
+            }
+            if (userRank != 0)
+            {
+
+                var amount = _sc.TblAmountSitting.Where(a => a.amountStructure.Equals(userRank)).ToList(); // get user amount range
+                if (amount.Count != 0)
+                {
+                    var minAmount = amount.Select(s => s.amountFrom).Min();
+                    var maxAmount = amount.Select(s => s.amountTo).Max();
+
+                    if (userRank == (int)Enums.UserRanks.GeneralManager || userRank == (int)Enums.UserRanks.Purchase || userRank == (int)Enums.UserRanks.FinancialDepartment) //|| userRank == (int)Enums.UserRanks.DepartmentManager)
+                    {
+                        orders = _sc.TblOrderHeader.Where(o => o.OrderHeaderRealTotal * o.OrderHeaderRate > minAmount && o.OrderHeaderRealTotal * o.OrderHeaderRate < maxAmount && o.Freaze == false).ToList();
+
+                    }
+                    else if (userRank == (int)Enums.UserRanks.DepartmentManager)
+                    {
+                        orders = _sc.TblOrderHeader.ToList();
+                    }
+                    else
+                    {
+                        orders = _sc.TblOrderHeader.Where(o => o.OrderHeaderRealTotal * o.OrderHeaderRate > minAmount && o.OrderHeaderRealTotal * o.OrderHeaderRate < maxAmount && o.OrderHeaderdepartmentCode == department
+                                                       //&& o.OrderHeaderCode == _sc.TblApproval.Where(s=> s.ApprovalHeaderCode == o.OrderHeaderCode && s.ToUser == user.userCode ).Max(r=>r.ApprovalHeaderCode)
+
+                                                       // && _sc.TblApproval.Max(Appr => Appr.ApprovalCode).Where(Appr => Appr.ApprovalHeaderCode == o.OrderHeaderCode  ).
+                                                       ).ToList();
+                    }
+
+                    foreach (var t in orders)
+                    {
+                        var approv = _sc.TblApproval.Where(s => s.ApprovalHeaderCode == t.OrderHeaderCode).OrderBy(a => a.ApprovalCode).ToList();
+                        ApprovalClass lastApproval = approv.LastOrDefault();
+                        if (lastApproval != null && (lastApproval.ApprovalIsApproved == (int)Enums.ApprovalStatus.Reject || lastApproval.ApprovalIsApproved == (int)Enums.ApprovalStatus.Excuted) || lastApproval.ApprovalIsApproved == (int)Enums.ApprovalStatus.Stuck)
+                        {
+                            continue;
+                        }
+                        if (lastApproval != null && lastApproval.ToUser == user.userCode)
+                        {
+                            try
+                            {
+                                t.OrderTypeName = _sc.TblOrderType.Where(u => u.orderTypeCode == t.OrderHeaderOrderTypeCode).FirstOrDefault().orderTypeName;
+                                t.ProjectName = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ProjectTable).FirstOrDefaultAsync(), t.OrderHeaderProjectCode.ToString(), connection);
+
+                                t.BudgetLine = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ActivitiyTable).FirstOrDefaultAsync(), t.OrderHeaderBudgetLineCode.ToString(), connection);
+                                //t.Currency = getData.getTblCodeName(currency_table, t.OrderHeaderCurrencey.ToString(), connection);
+                                t.UserName = _sc.TblUser.Where(u => u.userCode == t.OrderHeaderUserId).FirstOrDefault().userName;
+                                t.StatusName = GetStatusName(lastApproval.ApprovalIsApproved);
+                                t.StatusCode = lastApproval.ApprovalIsApproved;
+                                t.LastUserName = _sc.TblUser.Where(u => u.userCode == lastApproval.ApprovalUserId).FirstOrDefault().userName;
+                                t.waitingUser = _sc.TblUser.Where(u => u.userCode == lastApproval.ToUser).FirstOrDefault().userName;
+                                t.TotalInbasic = t.ActualTotalAmount * t.OrderHeaderRate;
+                                t.NotesFromLastAction = lastApproval.ApprovalNote;
+                                t.TotalInbasic = t.ActualTotalAmount * t.OrderHeaderRate;
+                                if (t.SupplierCode != null)
+                                {
+                                    t.PriceQuoteAmount = getData.GetPriceQouteAmountForSupplier(t.SupplierCode.ToString(), connection);
+
+                                    if (t.PriceQuoteAmount > 0)
+                                    {
+                                        if ((t.ActualTotalAmount * t.OrderHeaderRate) >= t.PriceQuoteAmount)
+                                        {
+                                            t.IsNeedPriceQuote = true;
+                                        }
+                                    }
+                                }
+                                var dud = _sc.TblGeneralPreference.FirstOrDefault();
+                                if ((t.ActualTotalAmount * t.OrderHeaderRate) >= dud.DeductionAmount)
+                                {
+                                    t.NeedDeductionAtsource = true;
+                                }
+
+                                orders2.Add(t);
+                            }
+                            catch (Exception e)
+                            {
+
+                                Console.WriteLine(e.Message + "At order " + t.OrderHeaderCode);
+
+
+                            }
+
+
+                        }
+                    }
+
+                    ViewBag.userTypeCode = user.userTypeCode;
+                    var RejectedOrders = new List<OrderHeaderClass>();
+                    RejectedOrders = orders2.Where(x => x.StatusCode == 3 && x.OrderHeaderdate < DateTime.Now.AddDays(-5)).ToList();
+
+                    orders2 = orders2.Except(RejectedOrders).ToList();
+
+
+                    // for paging -----------------------------------------------------
+
+                    ViewBag.pageNumber = pageNumber;
+                    ViewBag.max_records = max_records;
+                    var no_of_record = orders2.Count();
+                    if (no_of_record % max_records != 0)
+                    {
+                        ViewBag.no_of_pages = (no_of_record + max_records) / max_records;
+                    }
+                    else
+                    {
+                        ViewBag.no_of_pages = (no_of_record) / max_records;
+                    }
+
+                    orders2 = orders2.Skip(((int)pageNumber - 1) * (int)max_records).Take((int)max_records).ToList();
+
                     ViewBag.Orders = orders2;
 
                 }
@@ -201,8 +392,9 @@ namespace MVCWebAppServierCon.Controllers
             return View(orders2);
         }
 
+
         [Authorize(Roles = "Admin, EnterStuckOrders")]
-        public async Task<IActionResult> StuckOrders()
+        public async Task<Object> Search_StuckOrders(string search_query)
         {
 
             var user = _sc.TblUser.Where(u => u.userName.Equals(User.Identity.Name)).FirstOrDefault();
@@ -227,8 +419,12 @@ namespace MVCWebAppServierCon.Controllers
                 }
                 if (lastApproval != null && lastApproval.ToUser == user.userCode)
                 {
+                    var show_order_type = _sc.TblGeneralPreference.Select(g => g.Show_Order_Type).FirstOrDefault();
+                    if (show_order_type)
+                    {
+                        t.OrderTypeName = _sc.TblOrderType.Where(u => u.orderTypeCode == t.OrderHeaderOrderTypeCode).FirstOrDefault().orderTypeName;
+                    }
 
-                    t.OrderTypeName = _sc.TblOrderType.Where(u => u.orderTypeCode == t.OrderHeaderOrderTypeCode).FirstOrDefault().orderTypeName;
                     t.ProjectName = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ProjectTable).FirstOrDefaultAsync(), t.OrderHeaderProjectCode.ToString(), connection);
 
                     t.BudgetLine = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ActivitiyTable).FirstOrDefaultAsync(), t.OrderHeaderBudgetLineCode.ToString(), connection);
@@ -267,15 +463,158 @@ namespace MVCWebAppServierCon.Controllers
             RejectedOrders = orders2.Where(x => x.StatusCode == 3 && x.OrderHeaderdate < DateTime.Now.AddDays(-5)).ToList();
 
             orders2 = orders2.Except(RejectedOrders).ToList();
+
+            //search if the search query is exist 
+            var orders_search_result = new List<OrderHeaderClass>();
+            foreach (var order in orders2)
+            {
+                string Date = null;
+                string expected_date = null;
+
+                if (order.ExpectedDate != null)
+                {
+                    expected_date = order.ExpectedDate.Value.ToString("dd/MM/yyyy");
+                }
+
+                if (order.ExpectedDate != null)
+                {
+                    Date = order.OrderHeaderCreationDate.ToString("dd/MM/yyyy");
+                }
+
+                search_query = search_query.ToUpper();
+                if ((order.OrderHeaderCode + "").Contains(search_query) ||
+                    order.Currency.ToUpper().Contains(search_query) ||
+                     (order.UserName != null && order.UserName.ToUpper().Contains(search_query)) ||
+                    (order.LastUserName != null && order.LastUserName.ToUpper().Contains(search_query)) ||
+                     (order.ActualTotalAmount + "").Contains(search_query) ||
+                    (order.TotalInbasic + "").Contains(search_query) ||
+                     (order.ProjectName != null && order.ProjectName.ToUpper().Contains(search_query)) ||
+                    (order.BudgetLine != null && order.BudgetLine.ToUpper().Contains(search_query)) ||
+                     (order.OrderTypeName != null && order.OrderTypeName.ToUpper().Contains(search_query)) ||
+                     (order.NotesFromLastAction != null && order.NotesFromLastAction.ToUpper().Contains(search_query)) ||
+                     (order.SupplierName != null && order.SupplierName.ToUpper().Contains(search_query)) ||
+                     (order.StatusName != null && order.StatusName.ToUpper().Contains(search_query)) ||
+                     (order.OrderHeaderNote != null && order.OrderHeaderNote.ToUpper().Contains(search_query)) ||
+                     (order.waitingUser != null && order.waitingUser.ToUpper().Contains(search_query)) ||
+                     (Date != null && Date.Contains(search_query)) ||
+                     (expected_date != null && expected_date.Contains(search_query))
+                    )
+                {
+                    orders_search_result.Add(order);
+                }
+            }
+
+            return new
+            {
+                result = orders_search_result
+            };
+        }
+
+        [Authorize(Roles = "Admin, EnterStuckOrders")]
+        public async Task<IActionResult> StuckOrders(int? pageNumber, int? max_records)
+        {
+            if (pageNumber == null || pageNumber <= 0)
+            {
+                pageNumber = 1;
+            }
+
+            if (max_records == null || max_records <= 0)
+            {
+                max_records = 10;
+            }
+
+            var user = _sc.TblUser.Where(u => u.userName.Equals(User.Identity.Name)).FirstOrDefault();
+            var orders = new List<OrderHeaderClass>();
+            var orders2 = new List<OrderHeaderClass>();
+
+            var getData = new getAuditData();
+            var GPref = _sc.TblGeneralPreference.FirstOrDefault();
+
+
+            orders = _sc.TblOrderHeader.Where(x => x.Freaze == false).ToList();
+
+
+
+            foreach (var t in orders)
+            {
+                var approv = _sc.TblApproval.Where(s => s.ApprovalHeaderCode == t.OrderHeaderCode).OrderBy(a => a.ApprovalCode).ToList();
+                ApprovalClass lastApproval = approv.LastOrDefault();
+                if (lastApproval != null && lastApproval.ApprovalIsApproved == (int)(int)Enums.ApprovalStatus.Reject)
+                {
+                    continue;
+                }
+                if (lastApproval != null && lastApproval.ToUser == user.userCode)
+                {
+                    var show_order_type = _sc.TblGeneralPreference.Select(g => g.Show_Order_Type).FirstOrDefault();
+                    if (show_order_type)
+                    {
+                        t.OrderTypeName = _sc.TblOrderType.Where(u => u.orderTypeCode == t.OrderHeaderOrderTypeCode).FirstOrDefault().orderTypeName;
+                    }
+
+                    t.ProjectName = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ProjectTable).FirstOrDefaultAsync(), t.OrderHeaderProjectCode.ToString(), connection);
+
+                    t.BudgetLine = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ActivitiyTable).FirstOrDefaultAsync(), t.OrderHeaderBudgetLineCode.ToString(), connection);
+                    t.Currency = getData.getTblCodeName(currency_table, t.OrderHeaderCurrencey.ToString(), connection);
+                    t.UserName = _sc.TblUser.Where(u => u.userCode == t.OrderHeaderUserId).FirstOrDefault().userName;
+                    t.StatusName = GetStatusName(lastApproval.ApprovalIsApproved);
+                    t.StatusCode = lastApproval.ApprovalIsApproved;
+                    t.LastUserName = _sc.TblUser.Where(u => u.userCode == lastApproval.ApprovalUserId).FirstOrDefault().userName;
+                    t.waitingUser = _sc.TblUser.Where(u => u.userCode == lastApproval.ToUser).FirstOrDefault().userName;
+                    t.TotalInbasic = t.ActualTotalAmount * t.OrderHeaderRate;
+                    t.NotesFromLastAction = lastApproval.ApprovalNote;
+                    if (t.SupplierCode != null)
+                    {
+                        //t.PriceQuoteAmount = getData.GetPriceQouteAmountForSupplier(t.SupplierCode.ToString(), connection);
+
+                        //if (t.PriceQuoteAmount > 0)
+                        //{
+                        //    if ((t.ActualTotalAmount * t.OrderHeaderRate) >= t.PriceQuoteAmount)
+                        //    {
+                        //        t.IsNeedPriceQuote = true;
+                        //    }
+                        //}
+                    }
+                    var dud = _sc.TblGeneralPreference.FirstOrDefault();
+                    if ((t.ActualTotalAmount * t.OrderHeaderRate) >= dud.DeductionAmount)
+                    {
+                        t.NeedDeductionAtsource = true;
+                    }
+
+                    orders2.Add(t);
+                }
+            }
+
+            ViewBag.userTypeCode = user.userTypeCode;
+            var RejectedOrders = new List<OrderHeaderClass>();
+            RejectedOrders = orders2.Where(x => x.StatusCode == 3 && x.OrderHeaderdate < DateTime.Now.AddDays(-5)).ToList();
+
+            orders2 = orders2.Except(RejectedOrders).ToList();
+
+            // for paging -----------------------------------------------------
+
+            ViewBag.pageNumber = pageNumber;
+            ViewBag.max_records = max_records;
+            var no_of_record = orders2.Count();
+            if (no_of_record % 2 != 0)
+            {
+                ViewBag.no_of_pages = (no_of_record + 1) / max_records;
+            }
+            else
+            {
+                ViewBag.no_of_pages = (no_of_record) / max_records;
+            }
+
+            orders2 = orders2.Skip(((int)pageNumber - 1) * (int)max_records).Take((int)max_records).ToList();
+
             ViewBag.Orders = orders2;
-
-
 
             if (orders2.Count == 0)
             {
                 return RedirectToAction("MyOrders", "Home");
             }
             return View();
+
+
         }
         public void CompanyDefinition()
         {
@@ -314,12 +653,19 @@ namespace MVCWebAppServierCon.Controllers
         //    return costLst;
         //}
 
-        public async Task<IActionResult> MyOrders()
+        public async Task<Object> search_myorders(string query)
         {
+            if (query == "")
+            {
+                return new { result = "no data" };
+            }
+
             var user = _sc.TblUser.Where(u => u.userName.Equals(User.Identity.Name)).FirstOrDefault();
             var orders = new List<OrderHeaderClass>();
             var orders2 = new List<OrderHeaderClass>();
             var getData = new getAuditData();
+
+
 
             orders = _sc.TblOrderHeader.Where(o => o.OrderHeaderUserId == user.userCode).ToList();
 
@@ -330,8 +676,11 @@ namespace MVCWebAppServierCon.Controllers
                 ApprovalClass lastApproval = approv.LastOrDefault();
 
 
-
-                t.OrderTypeName = _sc.TblOrderType.Where(u => u.orderTypeCode == t.OrderHeaderOrderTypeCode).FirstOrDefault().orderTypeName;
+                var show_order_type = _sc.TblGeneralPreference.Select(g => g.Show_Order_Type).FirstOrDefault();
+                if (show_order_type)
+                {
+                    t.OrderTypeName = _sc.TblOrderType.Where(u => u.orderTypeCode == t.OrderHeaderOrderTypeCode).FirstOrDefault().orderTypeName;
+                }
                 t.ProjectName = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ProjectTable).FirstOrDefaultAsync(), t.OrderHeaderProjectCode.ToString(), connection);
 
                 t.BudgetLine = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ActivitiyTable).FirstOrDefaultAsync(), t.OrderHeaderBudgetLineCode.ToString(), connection);
@@ -344,12 +693,119 @@ namespace MVCWebAppServierCon.Controllers
                 t.NotesFromLastAction = lastApproval.ApprovalNote;
 
                 orders2.Add(t);
+            }
+            //filter the list of orders according to the query:
 
+            var orders_result = new List<OrderHeaderClass>();
+            foreach (var order in orders2)
+            {
+                string Date = null;
+                string expected_date = null;
+
+                if (order.ExpectedDate != null)
+                {
+                    expected_date = order.ExpectedDate.Value.ToString("dd/MM/yyyy");
+                }
+
+                if (order.ExpectedDate != null)
+                {
+                    Date = order.OrderHeaderCreationDate.ToString("dd/MM/yyyy");
+                }
+
+                query = query.ToUpper();
+                if ((order.OrderHeaderCode + "").Contains(query) || order.Currency.ToUpper().Contains(query) ||
+                     (order.UserName != null && order.UserName.ToUpper().Contains(query)) ||
+                    (order.LastUserName != null && order.LastUserName.ToUpper().Contains(query)) ||
+                     (order.ActualTotalAmount + "").Contains(query) ||
+                    (order.TotalInbasic + "").Contains(query) ||
+                     (order.ProjectName != null && order.ProjectName.ToUpper().Contains(query)) ||
+                    (order.BudgetLine != null && order.BudgetLine.ToUpper().Contains(query)) ||
+                     (order.OrderTypeName != null && order.OrderTypeName.ToUpper().Contains(query)) ||
+                     (order.NotesFromLastAction != null && order.NotesFromLastAction.ToUpper().Contains(query)) ||
+                     (order.SupplierName != null && order.SupplierName.ToUpper().Contains(query)) ||
+                     (order.StatusName != null && order.StatusName.ToUpper().Contains(query)) ||
+                     (order.OrderHeaderNote != null && order.OrderHeaderNote.ToUpper().Contains(query)) ||
+                     (order.waitingUser != null && order.waitingUser.ToUpper().Contains(query)) ||
+                     (Date != null && Date.Contains(query)) ||
+                     (expected_date != null && expected_date.Contains(query))
+                    )
+                {
+                    orders_result.Add(order);
+                }
             }
 
-            ViewBag.Orders = orders2;
+            return new { result = orders_result };
+        }
 
-            return View(orders2);
+        public async Task<IActionResult> MyOrders(int? pageNumber, int? max_records)
+        {
+            try
+            {
+                if (pageNumber == null || pageNumber <= 0)
+                {
+                    pageNumber = 1;
+                }
+
+                if (max_records == null || max_records <= 0)
+                {
+                    max_records = 10;
+                }
+
+                var user = _sc.TblUser.Where(u => u.userName.Equals(User.Identity.Name)).FirstOrDefault();
+                var orders = new List<OrderHeaderClass>();
+                var orders2 = new List<OrderHeaderClass>();
+                var getData = new getAuditData();
+
+                ViewBag.pageNumber = pageNumber;
+                ViewBag.max_records = max_records;
+                var no_of_record = _sc.TblOrderHeader.Where(o => o.OrderHeaderUserId == user.userCode).Count();
+                if (no_of_record % 2 != 0)
+                {
+                    ViewBag.no_of_pages = (no_of_record + 1) / max_records;
+                }
+                else
+                {
+                    ViewBag.no_of_pages = (no_of_record) / max_records;
+                }
+                orders = _sc.TblOrderHeader.Where(o => o.OrderHeaderUserId == user.userCode).Skip(((int)pageNumber - 1) * (int)max_records).Take((int)max_records).ToList();
+
+
+                foreach (var t in orders)
+                {
+                    var approv = _sc.TblApproval.Where(s => s.ApprovalHeaderCode == t.OrderHeaderCode).OrderBy(a => a.ApprovalCode).ToList();
+                    ApprovalClass lastApproval = approv.LastOrDefault();
+
+
+                    var show_order_type = _sc.TblGeneralPreference.Select(g => g.Show_Order_Type).FirstOrDefault();
+                    if (show_order_type)
+                    {
+                        t.OrderTypeName = _sc.TblOrderType.Where(u => u.orderTypeCode == t.OrderHeaderOrderTypeCode).FirstOrDefault().orderTypeName;
+                    }
+                    t.ProjectName = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ProjectTable).FirstOrDefaultAsync(), t.OrderHeaderProjectCode.ToString(), connection);
+
+                    t.BudgetLine = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ActivitiyTable).FirstOrDefaultAsync(), t.OrderHeaderBudgetLineCode.ToString(), connection);
+                    t.Currency = getData.getTblCodeName(currency_table, t.OrderHeaderCurrencey.ToString(), connection);
+                    t.UserName = _sc.TblUser.Where(u => u.userCode == t.OrderHeaderUserId).FirstOrDefault().userName;
+                    t.StatusName = GetStatusName(lastApproval.ApprovalIsApproved);
+                    t.LastUserName = _sc.TblUser.Where(u => u.userCode == lastApproval.ApprovalUserId).FirstOrDefault().userName;
+                    t.waitingUser = _sc.TblUser.Where(u => u.userCode == lastApproval.ToUser).FirstOrDefault().userName;
+                    t.TotalInbasic = t.ActualTotalAmount * t.OrderHeaderRate;
+                    t.NotesFromLastAction = lastApproval.ApprovalNote;
+
+                    orders2.Add(t);
+
+                }
+
+                ViewBag.Orders = orders2;
+                return View(orders2);
+
+            }
+            catch (Exception e)
+            {
+                ViewBag.Error_happend = e.Message;
+                return View(new List<OrderHeaderClass>());
+
+            }
         }
 
         [Authorize(Roles = "Admin, EnterGetAllOrders")]
@@ -484,14 +940,19 @@ namespace MVCWebAppServierCon.Controllers
                     orders = orders.Where(o => o.OrderHeaderCode >= FromId && o.OrderHeaderCode <= ToId).ToList();
                 }
             }
+            var orders_withtype_0 = orders.Where(o => o.OrderHeaderOrderTypeCode == 0).ToList();
+
             foreach (var t in orders)
             {
                 var approv = _sc.TblApproval.Where(s => s.ApprovalHeaderCode == t.OrderHeaderCode).OrderBy(a => a.ApprovalCode).ToList();
                 ApprovalClass lastApproval = approv.LastOrDefault();
 
 
-
-                t.OrderTypeName = _sc.TblOrderType.Where(u => u.orderTypeCode == t.OrderHeaderOrderTypeCode).FirstOrDefault().orderTypeName;
+                var order_type = _sc.TblOrderType.Where(u => u.orderTypeCode == t.OrderHeaderOrderTypeCode).FirstOrDefault();
+                if (order_type != null)
+                {
+                    t.OrderTypeName = order_type.orderTypeName;
+                }
                 t.ProjectName = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ProjectTable).FirstOrDefaultAsync(), t.OrderHeaderProjectCode.ToString(), connection);
 
                 t.BudgetLine = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ActivitiyTable).FirstOrDefaultAsync(), t.OrderHeaderBudgetLineCode.ToString(), connection);
@@ -1214,12 +1675,19 @@ namespace MVCWebAppServierCon.Controllers
                         "<td>" + approv[i].ApprovalCreationDate.ToString("dd/MM/yyyy") + "</td>" +
                   "</tr>";
                     }
+                    else if (approv[i].ApprovalIsApproved == 2)
+                    {
+                        Approvalstable = Approvalstable + "<tr>" +
+                           "<td>" + "returned by" + "</td>" +
+                           "<td>" + _sc.TblStructure.Where(x => x.structureRank == approUser.userTypeCode).Select(x => x.structureName).FirstOrDefault() + "</td>" +
+                           "<td>" + approUser.userName + "</td>" +
+                            "<td>" + approv[i].ApprovalCreationDate.ToString("dd/MM/yyyy") + "</td>" +
+                        "</tr>";
+                    }
 
 
                     else
                     {
-
-
                         Approvalstable = Approvalstable + "<tr>" +
                             "<td>" + "Approved by" + "</td>" +
                             "<td>" + _sc.TblStructure.Where(x => x.structureRank == approUser.userTypeCode).Select(x => x.structureName).FirstOrDefault() + "</td>" +
@@ -1313,7 +1781,7 @@ namespace MVCWebAppServierCon.Controllers
            "<div class='row>" +
             "<div class='col-md-12 well invoice-body'>" +
               "<table class='table table-bordered'>" +
-                //" <table id='tbl2' class='table table-striped responsive-table text-center table-hover table-bordered'>"+
+               //" <table id='tbl2' class='table table-striped responsive-table text-center table-hover table-bordered'>"+
                "<thead style = 'background-color:#46688a;font-size:smaller ;' >" +
                " <tr> " +
                 "<th class='th'>" + "Item" + "</th>" +
@@ -1380,7 +1848,7 @@ namespace MVCWebAppServierCon.Controllers
 
 
 
-   "</div>" +
+        "</div>" +
 
                 "</body ></html > "
             };

@@ -34,7 +34,7 @@ namespace MVCWebAppServierCon.Controllers
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.roleManager = roleManager;
-      
+
             configuration = config;
             conString = configuration.GetConnectionString("ProcurementConn");
             connection = new SqlConnection(conString);
@@ -64,22 +64,73 @@ namespace MVCWebAppServierCon.Controllers
             return View();
         }
 
+
+        public async Task<Object> Search_Users(string query)
+        {
+            var users = _sc.TblUser.ToList();
+
+            var users_result = new List<UserClass>();
+            foreach (var user in users)
+            {
+                query = query.ToUpper();
+                if (
+                    (user.userName != null && user.userName.ToUpper().Contains(query)) ||
+                    (user.userEmail != null && user.userEmail.ToUpper().Contains(query)) ||
+                     (user.userTypeCode + "").Contains(query) ||
+                     (user.userActive + "").Contains(query) ||
+                     (user.userDepartmentCode + "").Contains(query) ||
+                    (user.userNote != null && user.userNote.ToUpper().Contains(query)) 
+                    )
+                {
+                    users_result.Add(user);
+                }
+            }
+
+            return new { result = users_result };
+        }
+
         // GET: User/Create
         [Authorize(Roles = "Admin, EnterSet")]
-        public ActionResult Create()
+        public ActionResult Create(int? pageNumber, int? max_records)
         {
+            if (pageNumber == null || pageNumber <= 0)
+            {
+                pageNumber = 1;
+            }
+
+            if (max_records == null || max_records <= 0)
+            {
+                max_records = 10;
+            }
+
+            ViewBag.pageNumber = pageNumber;
+            ViewBag.max_records = max_records;
+            var no_of_record = _sc.TblUser.Count();
+
+            if (no_of_record % 2 != 0)
+            {
+                ViewBag.no_of_pages = (no_of_record + 1) / max_records;
+            }
+            else
+            {
+                ViewBag.no_of_pages = (no_of_record) / max_records;
+            }
+
+            ViewBag.Users = _sc.TblUser.Skip(((int)pageNumber - 1) * (int)max_records).Take((int)max_records).ToList();
+
+
             var mess = TempData["ErrorMessage"] as String;
             if (mess != null && mess.Equals("error"))
             {
                 ModelState.AddModelError("", "You Need To define The Users First");
             }
             var stru = _sc.TblStructure.ToList();
-            if(stru.Count < 1)
+            if (stru.Count < 1)
             {
                 TempData["ErrorMessage"] = "error";
                 return RedirectToAction("create", "Structure");
             }
-            ViewBag.Users = _sc.TblUser.ToList();
+
 
 
             ViewBag.uType = stru;
@@ -89,7 +140,7 @@ namespace MVCWebAppServierCon.Controllers
             //ViewBag.uMngAss = stru.Where(s => s.structureRank.Equals(3)).ToList();
             //ViewBag.uSecMan = stru.Where(s => s.structureRank.Equals(4)).ToList();
             //ViewBag.uFinDep = stru.Where(s => s.structureRank.Equals(5)).ToList();
-            
+
             return View();
         }
 
@@ -102,10 +153,10 @@ namespace MVCWebAppServierCon.Controllers
             string errormsg = "";
             if (uvc.userType.Equals(1))
             {
-               // uvc.userDepartment= 0;
+                // uvc.userDepartment= 0;
             }
 
-          //  var userWithSameEmail = _sc.Users.Where(m => m.Email == uvc.userEmail).SingleOrDefault(); //checking if the emailid already exits for any user
+            //  var userWithSameEmail = _sc.Users.Where(m => m.Email == uvc.userEmail).SingleOrDefault(); //checking if the emailid already exits for any user
             var userWithSameUser = _sc.Users.Where(m => m.UserName == uvc.userName).SingleOrDefault(); //checking if the emailid already exits for any user
 
             if (ModelState.IsValid)
@@ -125,7 +176,7 @@ namespace MVCWebAppServierCon.Controllers
                         ModelState.AddModelError(String.Empty, error.Description);
                         errormsg = error.Description;
                     }
-                   if (errormsg != "")
+                    if (errormsg != "")
                     {
 
                         var stru1 = _sc.TblStructure.ToList();
@@ -163,7 +214,7 @@ namespace MVCWebAppServierCon.Controllers
                 else
                 {
                     ViewBag.Message = "User or Email Already Exist";
-                  //  return View("New");
+                    //  return View("New");
                 }
             }
 
@@ -208,7 +259,7 @@ namespace MVCWebAppServierCon.Controllers
             ViewBag.Users = _sc.TblUser.ToList();
             return View(uvc);
 
-                //return RedirectToAction(nameof(Index));
+            //return RedirectToAction(nameof(Index));
             /*}
             catch
             {
@@ -255,7 +306,7 @@ namespace MVCWebAppServierCon.Controllers
         //}
 
         [HttpGet]
-       //  public List<CostsViewModel> projLoad(String tblName)
+        //  public List<CostsViewModel> projLoad(String tblName)
         public List<VUserRoles> EditUsersViewLst(String id)
         {
             //  VUserRoles vur = new VUserRoles();
@@ -290,7 +341,7 @@ namespace MVCWebAppServierCon.Controllers
         public ActionResult EditUsersView(String id)
         {
             //VUserRoles vur = new VUserRoles();
-   
+
             //var res = _sc.VUsersRole.Where(u => u.UserId == id).FirstOrDefault();
             //ViewBag.UsersRole = res;
             //ViewBag.userroleName = res.Name;
@@ -302,9 +353,9 @@ namespace MVCWebAppServierCon.Controllers
 
             VUserRoles uvc = new VUserRoles();
 
-         
+
             ViewBag.Name = EditUsersViewLst(id);
-        
+
 
             // var res2 = AspNetRoleManager<AspNetUserManager>.Where(u => u.UserId == id).FirstOrDefault();
             // ViewBag.UserRole = res2;
@@ -340,15 +391,15 @@ namespace MVCWebAppServierCon.Controllers
             uvc.userName = res.userName;
             uvc.userEmail = res.userEmail;
 
-           // var res2 = AspNetRoleManager<AspNetUserManager>.Where(u => u.UserId == id).FirstOrDefault();
-           // ViewBag.UserRole = res2;
-            
+            // var res2 = AspNetRoleManager<AspNetUserManager>.Where(u => u.UserId == id).FirstOrDefault();
+            // ViewBag.UserRole = res2;
+
             return View(uvc);
         }
 
         // GET: User/Edit/5
         [Authorize(Roles = "Admin, EnterSet")]
- 
+
         public ActionResult Edit(string id)
         {
             var mess = TempData["ErrorMessage"] as String;
@@ -407,7 +458,7 @@ namespace MVCWebAppServierCon.Controllers
                 ViewBag.uType = stru;
                 ViewBag.DepName = _sc.TblDepartment.ToList();
 
-           
+
 
                 var res = _sc.TblUser.Where(u => u.userCode == id).FirstOrDefault();
 

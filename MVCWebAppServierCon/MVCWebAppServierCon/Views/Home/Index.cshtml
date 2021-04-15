@@ -105,41 +105,56 @@
         opacity: 1;
     }
 </style>
-<h1>Index</h1>
 
 @*<p>
         <a asp-action="Create">Create New</a>
     </p>*@
 
-<div asp-validation-summary="All" class="text-danger" style="margin-top:12px;">
 
-    <table id="tbl1" class="table table-striped responsive-table text-center table-hover table-bordered">
-        <thead style="background-color:#46688a;color:white ;font-size:smaller ;">
+<div style="display:flex; justify-content:space-between;    margin-top: 100px;">
+    <h1>Index</h1>
+    <div class="form-group" style="display: flex; align-items: center;">
+        <input id="search_input_01" type="text" class="search form-control" placeholder="What you looking for?">
+        <div style="
+                padding: 12px;
+                color: #fff;
+                background-color: #19a3f4;
+                border-radius: 0 3px 3px 0;
+                cursor:pointer;
+            "
+             id="search_btn_01"><i class="fas fa-search"></i></div>
+    </div>
+</div>
+
+<div style="position: relative;    width: 100%;overflow: auto;">
+
+    <table class="table table-hover table-bordered results" style="width: max-content;">
+        <thead style="background-color: #00a6ff; color: #fff;">
             <tr>
                 <th>
                     @*@Html.DisplayNameFor(model => model.OrderHeaderdepartmentCode)*@
                     @Localizer["Code"]
                 </th>
                 @*<th>
-            @Html.DisplayNameFor(model => model.OrderHeaderProjectCode)
-            Project Name
-        </th>*@
+                        @Html.DisplayNameFor(model => model.OrderHeaderProjectCode)
+                        Project Name
+                    </th>*@
                 <th>
                     @*@Html.DisplayNameFor(model => model.OrderHeaderdate)*@
                     @Localizer["date"]
                 </th>
                 @*<th>
-            @Html.DisplayNameFor(model => model.OrderHeaderOrderTypeCode)
-            Order Type
-        </th>*@
+                        @Html.DisplayNameFor(model => model.OrderHeaderOrderTypeCode)
+                        Order Type
+                    </th>*@
                 @*<th>
-            @Html.DisplayNameFor(model => model.OrderHeaderBudgetLineCode)
-            Budget Line
-        </th>*@
+                        @Html.DisplayNameFor(model => model.OrderHeaderBudgetLineCode)
+                        Budget Line
+                    </th>*@
                 @*<th>
-            @Html.DisplayNameFor(model => model.OrderHeaderCurrencey)
-            Currency
-        </th>*@
+                        @Html.DisplayNameFor(model => model.OrderHeaderCurrencey)
+                        Currency
+                    </th>*@
                 <th>
                     @Localizer["User Name"]
                 </th>
@@ -149,8 +164,8 @@
                 </th>
                 @*<th>
 
-            @Localizer["Rate"]
-        </th>*@
+                        @Localizer["Rate"]
+                    </th>*@
                 <th>
                     @*@Html.DisplayNameFor(model => model.OrderHeaderRealTotal)*@
                     @Localizer["Total"]
@@ -196,134 +211,134 @@
                 <th>@Localizer["Waiting user"]</th>
                 <th>  @Localizer["Actions"] </th>
                 <th>  @Localizer["print"] </th>
-               
+
                 @*//  <th>  @Localizer["Add Supplier"] </th>*@
             </tr>
         </thead>
-        <tbody style="font-size:smaller ;">
+        <tbody style="font-size:smaller ;" id="orders_table_tag">
             @foreach (OrderHeaderClass item in Model)
             {
-            <tr>
-                <td>
-                    @*  @Html.DisplayFor(modelItem => item.OrderHeaderdepartmentCode)*@
+                <tr>
+                    <td>
+                        @*  @Html.DisplayFor(modelItem => item.OrderHeaderdepartmentCode)*@
 
-                    <a asp-action="Edit" asp-controller="OrderView" asp-route-id="@item.OrderHeaderCode" asp-route-IsPreview="true"> @Html.DisplayFor(modelItem => item.OrderHeaderCode)</a>
-                </td>
-                @*<td>
-            @Html.DisplayFor(modelItem => item.OrderHeaderProjectCode)
-        </td>*@
-                <td>
-                    @Html.DisplayFor(modelItem => item.OrderHeaderdate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.UserName)
-                </td>
-                @*<td>
-            @Html.DisplayFor(modelItem => item.OrderTypeName)
-        </td>*@
-                @*<td>
-            @Html.DisplayFor(modelItem => item.OrderHeaderBudgetLineCode)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.OrderHeaderCurrencey)
-        </td>*@
-                <td>
-                    @Html.DisplayFor(modelItem => item.Currency)
-                </td>
-                @*<td>
-            @Html.DisplayFor(modelItem => item.OrderHeaderRate)
-        </td>*@
-                <td>
-                    @Html.DisplayFor(modelItem => item.ActualTotalAmount)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TotalInbasic)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ProjectName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.BudgetLine)
-                </td>
+                        <a asp-action="Edit" asp-controller="OrderView" asp-route-id="@item.OrderHeaderCode" asp-route-IsPreview="true"> @Html.DisplayFor(modelItem => item.OrderHeaderCode)</a>
+                    </td>
+                    @*<td>
+                            @Html.DisplayFor(modelItem => item.OrderHeaderProjectCode)
+                        </td>*@
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OrderHeaderdate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UserName)
+                    </td>
+                    @*<td>
+                            @Html.DisplayFor(modelItem => item.OrderTypeName)
+                        </td>*@
+                    @*<td>
+                            @Html.DisplayFor(modelItem => item.OrderHeaderBudgetLineCode)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.OrderHeaderCurrencey)
+                        </td>*@
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Currency)
+                    </td>
+                    @*<td>
+                            @Html.DisplayFor(modelItem => item.OrderHeaderRate)
+                        </td>*@
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ActualTotalAmount)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TotalInbasic)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProjectName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.BudgetLine)
+                    </td>
 
-                <td>
-                    @Html.DisplayFor(modelItem => item.OrderTypeName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ExpectedDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.OrderHeaderNote)
-                </td>
-                <td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OrderTypeName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ExpectedDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OrderHeaderNote)
+                    </td>
+                    <td>
 
-                    @Html.DisplayFor(modelItem => item.SupplierName)
-                    @if (item.NeedDeductionAtsource == true)
-                    {
-                        <div style="color: #251fca;">
-                            @Localizer["بحاجه الى خصم مصدر"]
-                        </div>
-                    }
-                </td>
-                <td style="color:#251fca ;">
-                    @Html.DisplayFor(modelItem => item.LastUserName)
-                </td>
-                <td style="color:#251fca ;">
-                    @Html.DisplayFor(modelItem => item.NotesFromLastAction)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.waitingUser)
-                </td>
-                <td style=" display:inline-block ; width:max-content; ">
-
-
-
-
-
-                    @if (ViewBag.userTypeCode == 1)
-                    {
-
-                        @if (item.StatusCode < 7)
+                        @Html.DisplayFor(modelItem => item.SupplierName)
+                        @if (item.NeedDeductionAtsource == true)
                         {
-                            <a style="color:#007bff ;font-size: small" onclick="PostOrderStatus(@item.OrderHeaderCode,8)">@Localizer["Under Execution  | "]</a>
-
-                            <a style="color:#007bff ;font-size: small" onclick="PostOrderStatus(@item.OrderHeaderCode,9)">@Localizer["  Execute"]</a>
+                            <div style="color: #251fca;">
+                                @Localizer["بحاجه الى خصم مصدر"]
+                            </div>
                         }
-                        @if (item.StatusCode == 8)
+                    </td>
+                    <td style="color:#251fca ;">
+                        @Html.DisplayFor(modelItem => item.LastUserName)
+                    </td>
+                    <td style="color:#251fca ;">
+                        @Html.DisplayFor(modelItem => item.NotesFromLastAction)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.waitingUser)
+                    </td>
+                    <td style=" display:inline-block ; width:max-content; ">
+
+
+
+
+
+                        @if (ViewBag.userTypeCode == 1)
                         {
 
+                            @if (item.StatusCode < 7)
+                            {
+                                <a style="color:#007bff ;font-size: small" onclick="PostOrderStatus(@item.OrderHeaderCode,8)">@Localizer["Under Execution  | "]</a>
 
-                            <a style="color:#007bff ;font-size: medium" onclick="PostOrderStatus(@item.OrderHeaderCode,9)">@Localizer["Execute"]</a>
-                        }
+                                <a style="color:#007bff ;font-size: small" onclick="PostOrderStatus(@item.OrderHeaderCode,9)">@Localizer["  Execute"]</a>
+                            }
+                            @if (item.StatusCode == 8)
+                            {
 
-                        @if (item.StatusCode != 3)
-                        {
-                            <a style="color:mediumturquoise ; font-size: large" onclick="openModal(@item.OrderHeaderCode)"><span class=" fa fa-user " title="Add Supplier"></span></a>
-                            @if (item.StatusCode != 9)
-                            {<a style="color:mediumturquoise ;font-size: large" onclick="openEmpModal(@item.OrderHeaderCode)"><span class=" fa fa-rocket  " title="Transfeer"></span></a>}
+
+                                <a style="color:#007bff ;font-size: medium" onclick="PostOrderStatus(@item.OrderHeaderCode,9)">@Localizer["Execute"]</a>
+                            }
+
+                            @if (item.StatusCode != 3)
+                            {
+                                <a style="color:mediumturquoise ; font-size: large" onclick="openModal(@item.OrderHeaderCode)"><span class=" fa fa-user " title="Add Supplier"></span></a>
+                                @if (item.StatusCode != 9)
+                                {<a style="color:mediumturquoise ;font-size: large" onclick="openEmpModal(@item.OrderHeaderCode)"><span class=" fa fa-rocket  " title="Transfeer"></span></a>}
                                 <a style="color:mediumturquoise ; font-size: large" onclick="openModalActualAmount(@item.OrderHeaderCode)"><span class="fa fa-balance-scale " title="Add Actual Amount"></span></a>
                             }
 
-                    }
-                    else
-                    {
-                        @if (item.StatusCode != 3)
-                        {
-                            <a style="color:forestgreen ;font-size: large" onclick="PostOrderStatus(@item.OrderHeaderCode,1)">  <span class="Editbtn fa fa-check-circle" title="Accept"></span></a>
-                            <a style="color:orange ;font-size: large" onclick="PostOrderStatus(@item.OrderHeaderCode,2)"> <span class="Editbtn fa fa-reply" title="Return"></span></a>
-                            <a asp-action="Edit" asp-controller="OrderView" asp-route-id="@item.OrderHeaderCode" style="font-size: large"><span class="Editbtn fa fa-pen" title="Edit"></span></a>
-                            <a style="color:red ;font-size: large" onclick="PostOrderStatus(@item.OrderHeaderCode,3)"> <span class=" fa fa-ban " title="Reject"></span></a>
-                            <a style="color:mediumturquoise ; font-size: large" onclick="openModal(@item.OrderHeaderCode)"><span class=" fa fa-user " title="Add Supplier"></span></a>
-                            <a style="color:mediumturquoise ; font-size: large" onclick="openModalActualAmount(@item.OrderHeaderCode)"><span class="fa fa-balance-scale " title="Add Actual Amount"></span></a>
                         }
-                    }
+                        else
+                        {
+                            @if (item.StatusCode != 3)
+                            {
+                                <a style="color:forestgreen ;font-size: large" onclick="PostOrderStatus(@item.OrderHeaderCode,1)">  <span class="Editbtn fa fa-check-circle" title="Accept"></span></a>
+                                <a style="color:orange ;font-size: large" onclick="PostOrderStatus(@item.OrderHeaderCode,2)"> <span class="Editbtn fa fa-reply" title="Return"></span></a>
+                                <a asp-action="Edit" asp-controller="OrderView" asp-route-id="@item.OrderHeaderCode" style="font-size: large"><span class="Editbtn fa fa-pen" title="Edit"></span></a>
+                                <a style="color:red ;font-size: large" onclick="PostOrderStatus(@item.OrderHeaderCode,3)"> <span class=" fa fa-ban " title="Reject"></span></a>
+                                <a style="color:mediumturquoise ; font-size: large" onclick="openModal(@item.OrderHeaderCode)"><span class=" fa fa-user " title="Add Supplier"></span></a>
+                                <a style="color:mediumturquoise ; font-size: large" onclick="openModalActualAmount(@item.OrderHeaderCode)"><span class="fa fa-balance-scale " title="Add Actual Amount"></span></a>
+                            }
+                        }
 
-                </td>
-                <td>
-                    <a style="color:dimgrey ;font-size: large" onclick="Print(@item.OrderHeaderCode)">  <span class=" fa fa-print" title="Print"></span></a>
+                    </td>
+                    <td>
+                        <a style="color:dimgrey ;font-size: large" onclick="Print(@item.OrderHeaderCode)">  <span class=" fa fa-print" title="Print"></span></a>
 
-                </td>
-            </tr>
+                    </td>
+                </tr>
             }
         </tbody>
     </table>
@@ -338,6 +353,34 @@
         <i class="fa fa-play label-arrow"></i>
     </div>
 
+</div>
+<div style="display: flex; justify-content: center;     padding-top: 11px; align-items: center;">
+    @*<div>
+            no of items in page
+            <input id="max_records_input" type="number" class="form-control" style="width:70px; margin-top:5px; " value="@ViewBag.max_records"/>
+        </div>*@
+    <div class="my_pagination">
+        @if (ViewBag.pageNumber <= 1)
+        {
+            <a class="pagination_item disabled_pagination_item">Previous</a>
+        }
+        else
+        {
+            <a asp-action="StuckOrders" asp-route-pageNumber="@(ViewBag.pageNumber-1)" class="pag_item pagination_item">Previous</a>
+        }
+        @for (int i = 1; i <= ViewBag.no_of_pages; i++)
+        {
+            <a asp-action="StuckOrders" asp-route-pageNumber="@i" class="pag_item pagination_item @(ViewBag.pageNumber == i ? "active_pagination_item" : "" )" style="width: 32px;">@i</a>
+        }
+        @if (ViewBag.pageNumber >= ViewBag.no_of_pages)
+        {
+            <a class="pagination_item disabled_pagination_item">Next</a>
+        }
+        else
+        {
+            <a asp-action="StuckOrders" asp-route-pageNumber="@(ViewBag.pageNumber+1)" class="pag_item pagination_item">Next</a>
+        }
+    </div>
 </div>
 <input id="SelectedOrderCode" style="display:none ;" />
 <div class="container">
@@ -408,7 +451,7 @@
 <div class="container">
 
 
-    <div class="modal" id="ActualAmountModal"  style="height:500px ; margin-top:100px">
+    <div class="modal" id="ActualAmountModal" style="height:500px ; margin-top:100px">
         <div class="modal-dialog">
             <div class="modal-content">
 
@@ -444,6 +487,128 @@
 
 
 <script>
+    const refill_my_orders = (orders) => {
+        var orders_table_dom = document.getElementById("orders_table_tag");
+        orders_table_dom.innerHTML = "";
+        orders.map(current_order => {
+            orders_table_dom.innerHTML +=
+                (` <tr>
+                        <td>
+                            <a href="OrderView/Edit/${current_order.orderHeaderCode}?IsPreview=true" asp-route-IsPreview="true">${current_order.orderHeaderCode}</a>
+                        </td>
+
+                        <td>
+                            ${display_cs_date(current_order.orderHeaderdate)}
+                        </td>
+                        <td>
+                            ${current_order.userName}
+                        </td>
+
+                        <td>
+                            ${current_order.currency}
+                        </td>
+                        <td>
+                            ${current_order.actualTotalAmount}
+                        </td>
+                        <td>
+                            ${current_order.totalInbasic}
+                        </td>
+                        <td>
+                            ${current_order.projectName}
+                        </td>
+                        <td>
+                            ${current_order.budgetLine}
+                        </td>
+
+                        <td>
+                            ${current_order.orderTypeName}
+                        </td>
+                        <td>
+                            ${display_cs_date(current_order.expectedDate)}
+                        </td>
+                        <td>
+                            ${current_order.orderHeaderNote}
+                        </td>
+                        <td>
+                            ${current_order.supplierName}
+                        </td>
+                        <td style="color:#251fca ;">
+                            ${current_order.statusName}
+                        </td>
+                        <td>
+                            ${current_order.lastUserName}
+                        </td>
+                        <td style="color:#251fca ;">
+                            ${current_order.notesFromLastAction}
+                        </td>
+
+                        <td>
+                            ${current_order.waitingUser}
+                        </td>
+                        <td style=" display:inline-block ; width:max-content; ">
+                        ${@Json.Serialize(ViewBag.userTypeCode) == 1 ? `
+                        ${current_order.statusCode < 7 &&
+                        (`
+                    <a style = "color:#007bff ;font-size: small" onclick = "PostOrderStatus(${current_order.orderHeaderCode},8)" >@Localizer["Under Execution  | "]</a >
+
+                        <a style="color:#007bff ;font-size: small" onclick="PostOrderStatus(${current_order.orderHeaderCode},9)">@Localizer["  Execute"]</a>
+            `)}
+            ${current_order.statusCode == 8 &&
+                (`
+                < a style = "color:#007bff ;font-size: medium" onclick = "PostOrderStatus(${current_order.orderHeaderCode},9)" >@Localizer["Execute"]</a >
+                    `)}
+
+            ${current_order.statusCode != 3 &&
+                (`
+                    < a style = "color:mediumturquoise ; font-size: large" onclick = "openModal(${current_order.orderHeaderCode})" > <span class=" fa fa-user " title="Add Supplier"></span></a >
+                        ${
+                        current_order.statusCode != 9 && `
+                                <a style="color:mediumturquoise ;font-size: large" onclick="openEmpModal(${current_order.orderHeaderCode})"><span class=" fa fa-rocket  " title="Transfeer"></span></a>`
+            }
+            <a style="color:mediumturquoise ; font-size: large" onclick="openModalActualAmount(${current_order.orderHeaderCode})"><span class="fa fa-balance-scale " title="Add Actual Amount"></span></a>
+            `)}
+
+                        ` :`
+               ${current_order.statusCode != 3 &&
+                            `
+                                <a style="color:forestgreen ;font-size: large" onclick="PostOrderStatus(${current_order.orderHeaderCode},1)">  <span class="Editbtn fa fa-check-circle" title="Accept"></span></a>
+                                <a style="color:orange ;font-size: large" onclick="PostOrderStatus(${current_order.orderHeaderCode},2)"> <span class="Editbtn fa fa-reply" title="Return"></span></a>
+                                <a href="OrderView/Edit/${current_order.orderHeaderCode}" style="font-size: large"><span class="Editbtn fa fa-pen" title="Edit"></span></a>
+                                <a style="color:red ;font-size: large" onclick="PostOrderStatus(${current_order.orderHeaderCode},3)"> <span class=" fa fa-ban " title="Reject"></span></a>
+                                <a style="color:mediumturquoise ; font-size: large" onclick="openModal(${current_order.orderHeaderCode})"><span class=" fa fa-user " title="Add Supplier"></span></a>
+                                <a style="color:mediumturquoise ; font-size: large" onclick="openModalActualAmount(${current_order.orderHeaderCode})"><span class="fa fa-balance-scale " title="Add Actual Amount"></span></a>
+                            `}
+                `}
+
+                    </td>
+                    <td>
+                        <a style="color:dimgrey ;font-size: large" onclick="Print(${current_order.orderHeaderCode})">  <span class=" fa fa-print" title="Print"></span></a>
+                        @* <a style="color:mediumturquoise ; font-size: large" onclick="openModal(@item.OrderHeaderCode)"><span class=" fa fa-user " title="Add Supplier"></span></a>*@
+
+                    </td>
+
+                    </tr>`);
+        })
+    }
+    function display_cs_date(cs_date) {
+        var js_date = new Date(cs_date);
+        var date = js_date.getMonth() + 1 < 10 ? "0" + (js_date.getMonth() + 1) : js_date.getMonth() + 1
+        return (js_date.getDate() + "/" + date + "/" + js_date.getFullYear());
+    }
+
+    document.getElementById("search_btn_01").addEventListener('click', () => {
+        $.ajax({
+            url: "/Home/Search_Index",
+            data: { search_query: document.getElementById("search_input_01").value },
+            success: function (data) {
+                console.log(data.result);
+                refill_my_orders(data.result);
+            }
+        });
+        console.log(document.getElementById("search_input_01").value)
+    })
+
+
     function Hidemodal() {
         var loader = document.getElementById("loader");
         loader.style.display = "none";
@@ -514,10 +679,10 @@
         //
     }
 
-      function SaveActualAmount() {
+    function SaveActualAmount() {
         debugger
         var txt = document.getElementById('TxtActualAmount');
-      // var ActualAmount = txt.text;
+        // var ActualAmount = txt.text;
         var ActualAmount = txt.value;
 
         var txtOrderCode = document.getElementById('SelectedOrderCode');
@@ -530,7 +695,7 @@
             data: {
                 OrderCode: OrderCode,
                 AcutalAmount: ActualAmount,
-               
+
             },
             success: function (response) {
                 if (response.message == "ok") {
@@ -565,10 +730,10 @@
 
         var txt = document.getElementById('SelectedOrderCode');
         txt.value = SelectedOrderCode;
-   
 
-            $('#ActualAmountModal').modal('show');
-      
+
+        $('#ActualAmountModal').modal('show');
+
     }
     function openEmpModal(SelectedOrderCode) {
         //debugger
@@ -604,7 +769,7 @@
             confirmButtonText: 'ok',
             showLoaderOnConfirm: true,
             inputValidator: (value) => {
-                if (!value && approvalIsApproved==3) {
+                if (!value && approvalIsApproved == 3) {
                     return 'يجب ادخال سبب الرفض!'
                 }
             },
@@ -878,9 +1043,9 @@
             source, // HTML string or DOM elem ref.
             margins.left, // x coord
             margins.top, { // y coord
-                'width': margins.width, // max width of content on PDF
-                'elementHandlers': specialElementHandlers
-            },
+            'width': margins.width, // max width of content on PDF
+            'elementHandlers': specialElementHandlers
+        },
 
             function (dispose) {
                 // dispose: object with X, Y of the last line add to the PDF

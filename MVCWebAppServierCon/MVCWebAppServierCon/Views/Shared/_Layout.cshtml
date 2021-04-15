@@ -43,9 +43,10 @@
 
     </script>
 </head>
-<body dir="@Localizer["ltr"]" class="sb-nav-fixed" id="bod">
+<body dir="@Localizer["ltr"]" class="sb-nav-fixed sb-sidenav-toggled" id="bod">
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark mynav">
-        <a class="navbar-brand proc" href="..">@Localizer["Procurement"]</a><button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#">
+        <a class="navbar-brand proc" href="..">@Localizer["Procurement"]</a>
+        <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#">
             <i class="fas fa-bars"></i>
         </button>
 
@@ -92,11 +93,6 @@
             <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                 <div class="sb-sidenav-menu">
                     <div class="nav">
-                        @*<div class="sb-sidenav-menu-heading">Core</div>*@
-
-
-                        @*@if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
-                            {*@
 
                         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapse_orders" aria-expanded="false" aria-controls="collapse_orders">
                             <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
@@ -142,6 +138,7 @@
                                 <nav class="sb-sidenav-menu-nested nav">
                                     <a class="nav-link" asp-controller="Order" asp-action="Create"> <div class="sb-nav-link-icon"><i class="fas fa-keyboard"></i></div> @Localizer["Order Type"]</a>
                                     <a class="nav-link" asp-controller="Item" asp-action="Create"> <div class="sb-nav-link-icon"><i class="fas fa-cookie"></i></div> @Localizer["Item"]</a>
+                                    <a class="nav-link" asp-controller="Units" asp-action="index"> <div class="sb-nav-link-icon"><i class="fas fa-cookie"></i></div> @Localizer["Units"]</a>
                                     <a class="nav-link" asp-controller="Structure" asp-action="Create"> <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>@Localizer["Structure"]</a>
                                     <a class="nav-link" asp-controller="User" asp-action="Create"> <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div> @Localizer["User"]</a>
                                     <a class="nav-link" asp-controller="AmountSitting" asp-action="Create"> <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>@Localizer["Amount Settings"]</a>
@@ -301,7 +298,7 @@
             </nav>
         </div>
     </div>
-    <div class="container centerMain" style="margin-top:70px;">
+    <div class="container-fluid" style="margin-top:70px; width: 88%;">
         <partial name="_CookieConsentPartial" />
         <main role="main" class="pb-md-3">
             @RenderBody()

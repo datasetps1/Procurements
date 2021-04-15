@@ -66,6 +66,15 @@
             <th>
                 @Html.DisplayNameFor(model => model.Table_Name_cost4)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Show_Order_Type)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Display_Name_Project)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Display_Name_Activityt)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -125,6 +134,15 @@
             </th>
             <th>
                 @Html.DisplayFor(model => item.Table_Name_cost4)
+            </th>
+            <th>
+                @Html.DisplayFor(model => item.Show_Order_Type)
+            </th>
+            <th>
+                @Html.DisplayFor(model => item.Display_Name_Project)
+            </th>
+            <th>
+                @Html.DisplayFor(model => item.Display_Name_Activityt)
             </th>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.code">Edit</a>

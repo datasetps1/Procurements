@@ -109,10 +109,10 @@ th, td {
     .input_icon:hover {
         font-size: 25px;
         color: #767676;
-        cursor:pointer
+        cursor: pointer
     }
 
-    /**                             login form                              */
+/**                             login form                              */
 
 .login_page_container_87 {
     position: fixed;
@@ -167,6 +167,7 @@ th, td {
     justify-content: center;
     align-items: center;
 }
+
 .form_container_2_87 {
     width: 95%;
 }
@@ -221,4 +222,41 @@ th, td {
     .campany_logo_container_87 {
         margin-bottom: 18px;
     }
+}
+
+.my_pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 61px;
+    margin-top: 12px;
+    background-color: #19a3f4;
+    color: #fff;
+    border-radius: 30px;
+}
+
+.pagination_item {
+    margin: 0 4px;
+    padding: 9px;
+    background-color: #54acdf;
+    border-radius: 30px;
+    text-decoration: none;
+    color: #fff;
+    display:flex;
+    justify-content:center
+}
+
+    .pagination_item:hover {
+        background-color: #fff;
+        color: #000 !important;
+        text-decoration: none;
+    }
+
+.active_pagination_item {
+    background-color: #fff;
+    color: #000 !important;
+}
+
+.disabled_pagination_item:hover{
+    cursor:not-allowed;
 }

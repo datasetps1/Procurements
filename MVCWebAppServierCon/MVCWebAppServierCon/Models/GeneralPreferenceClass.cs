@@ -21,8 +21,15 @@ namespace MVCWebAppServierCon.Models
         public string ConnecWith { get; set; } // finpack or audit
         [Display(Name = "Project Table")]
         public string ProjectTable { get; set; }
+
+        [Display(Name = "Display Name Project")]
+        public string Display_Name_Project { get; set; }
+
         [Display(Name = "Activitiy Table")]
         public string ActivitiyTable { get; set; }
+
+        [Display(Name = "Display Name Activity")]
+        public string Display_Name_Activityt { get; set; }
 
         [Display(Name = "link view name")]
         public string link_view_name { get; set; }
@@ -40,6 +47,9 @@ namespace MVCWebAppServierCon.Models
 
         [Display(Name = "Show Unit")]
         public bool Show_Unit { get; set; }
+
+        [Display(Name = "Show Order Type")]
+        public bool Show_Order_Type { get; set; }
 
         [Display(Name = "Show Doner2")]
         public bool Show_Doner2 { get; set; }
@@ -67,5 +77,6 @@ namespace MVCWebAppServierCon.Models
 
         [Display(Name = "Table Name cost4")]
         public string Table_Name_cost4 { get; set; }
+
     }
 }

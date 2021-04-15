@@ -28,6 +28,7 @@
         padding-right: 15px;
         padding-left: 15px;
     }
+
     .col-xl, .col-xl-auto, .col-xl-12, .col-xl-11, .col-xl-10, .col-xl-9, .col-xl-8, .col-xl-7, .col-xl-6, .col-xl-5, .col-xl-4, .col-xl-3, .col-xl-2, .col-xl-1, .col-lg, .col-lg-auto, .col-lg-12, .col-lg-11, .col-lg-10, .col-lg-9, .col-lg-8, .col-lg-7, .col-lg-6, .col-lg-5, .col-lg-4, .col-lg-3, .col-lg-2, .col-lg-1, .col-md, .col-md-auto, .col-md-12, .col-md-11, .col-md-10, .col-md-9, .col-md-8, .col-md-7, .col-md-6, .col-md-5, .col-md-4, .col-md-3, .col-md-2, .col-md-1, .col-sm, .col-sm-auto, .col-sm-12, .col-sm-11, .col-sm-10, .col-sm-9, .col-sm-8, .col-sm-7, .col-sm-6, .col-sm-5, .col-sm-4, .col-sm-3, .col-sm-2, .col-sm-1, .col, .col-auto, .col-12, .col-11, .col-10, .col-9, .col-8, .col-7, .col-6, .col-5, .col-4, .col-3, .col-2, .col-1 {
         position: relative;
         width: auto;
@@ -79,26 +80,30 @@
                     <input value="@viewModel.headerClass.OrderHeaderCode" type="hidden" id="hi">
 
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <div class="form-group col-md-3">
-                        <label class="control-label">order type</label>
-                        <br />
-                        <select name="headerLst" class="form-control" id="orderType">
-                            <option value="@viewModel.headerClass.OrderHeaderOrderTypeCode">@viewModel.orderType</option>
+                    @if (ViewBag.Show_Order_Type)
+                    {
+                        <div class="form-group col-md-3">
+                            <label class="control-label">order type</label>
+                            <br />
+                            <select name="headerLst" class="form-control" id="orderType">
+                                <option value="@viewModel.headerClass.OrderHeaderOrderTypeCode">@viewModel.orderType</option>
 
-                            @* asp-items="" *@
-                            @foreach (OrderTypeClass ord in ViewBag.OrderType)
-                            {
-                                <option value="@ord.orderTypeCode" onclick="getOrderType(@ord.orderTypeCode)">@ord.orderTypeName</option>
-                            }
-                            @*@foreach (String item in ViewBag.uType)
+                                @* asp-items="" *@
+                                @foreach (OrderTypeClass ord in ViewBag.OrderType)
                                 {
-                                    <option> @Html.DisplayFor(modelItem => item)</option>
-                                }*@
-                        </select>
-                        <span class="text-danger"></span>
-                    </div>
+                                    <option value="@ord.orderTypeCode" onclick="getOrderType(@ord.orderTypeCode)">@ord.orderTypeName</option>
+                                }
+                                @*@foreach (String item in ViewBag.uType)
+                                    {
+                                        <option> @Html.DisplayFor(modelItem => item)</option>
+                                    }*@
+                            </select>
+                            <span class="text-danger"></span>
+                        </div>
+                    }
 
-                    <div class="form-group col-md-3">
+
+                    <div class="form-group @(ViewBag.Show_Order_Type ? "col-md-3" : "col-md-4")">
                         <label class="control-label">Department Name</label>
                         <br />
                         <select name="headerLst" class="form-control" disabled>
@@ -113,7 +118,7 @@
                         <span class="text-danger"></span>
                     </div>
 
-                    <div class="form-group col-md-3">
+                    <div class="form-group @(ViewBag.Show_Order_Type ? "col-md-3" : "col-md-4")">
                         <label class="control-label">currency</label>
                         <select name="headerLst" class="form-control" id="cmbCurrency">
                             <option value="@viewModel.headerClass.OrderHeaderCurrencey">@viewModel.headerClass.Currency</option>
@@ -127,7 +132,7 @@
                     </div>
 
 
-                    <div class="form-group col-md-3">
+                    <div class="form-group @(ViewBag.Show_Order_Type ? "col-md-3" : "col-md-4")">
                         <label class="control-label">order date</label>
                         <input class="form-control" id="date" disabled name="headerLst" value="@viewModel.headerClass.OrderHeaderdate.ToString("yyyy-MM-dd")" maxlength="10" type="date" id="datePicker" />
                         <span class="text-danger"></span>
@@ -137,7 +142,7 @@
                 </div>
                 <div class="row">
                     <div class="form-group col-md-3">
-                        <label class="control-label">Project Name</label>
+                        <label class="control-label">@(ViewBag.Display_Name_Project == null ? "Project" : ViewBag.Display_Name_Project)</label>
                         <br />
 
                         <select name="headerLst" class="form-control" id="project" onchange="SelectedIndexChanged()">
@@ -153,7 +158,7 @@
                     </div>
 
                     <div class="form-group col-md-3">
-                        <label class="control-label">Budget Line</label>
+                        <label class="control-label">@(ViewBag.Display_Name_Activityt == null ? "Budget Line" : ViewBag.Display_Name_Activityt)</label>
                         <br />
                         <select name="headerLst" class="form-control" id="cmbBudgetLine" onchange="CmbBudgeLineSelectedIndexChanged()">
                             @* asp-items="" *@
@@ -190,7 +195,7 @@
                     @if (ViewBag.Show_Doner2)
                     {
                         <div class="form-group col-md-4">
-                            <label id="Doner2_label" for="Doner2_input" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer[ViewBag.Display_Name_Doner2]</label>
+                            <label id="Doner2_label" for="Doner2_input" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer[(ViewBag.Display_Name_Doner2 != null ? ViewBag.Display_Name_Doner2 : "Not Specified")]</label>
                             <select id="Doner2_input" class="form-control" name="headerLst">
                                 <option selected></option>
                                 @* asp-items="" *@
@@ -206,7 +211,7 @@
                     {
                         <div class="form-group col-md-4">
 
-                            <label id="cost3_label" for="cost3_input" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer[ViewBag.Display_Name_cost3]</label>
+                            <label id="cost3_label" for="cost3_input" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer[(ViewBag.Display_Name_cost3 != null ? ViewBag.Display_Name_cost3 : "Not Specified")]</label>
                             <select id="cost3_input" class="form-control" name="headerLst">
                                 <option selected></option>
                                 @* asp-items="" *@
@@ -222,7 +227,7 @@
                     {
                         <div class="form-group col-md-4">
 
-                            <label id="cost4_label" for="cost4_input" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer[ViewBag.Display_Name_cost4]</label>
+                            <label id="cost4_label" for="cost4_input" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer[(ViewBag.Display_Name_cost4 != null ? ViewBag.Display_Name_cost4 : "Not Specified")]</label>
                             <select id="cost4_input" class="form-control" name="headerLst">
                                 <option selected></option>
                                 @* asp-items="" *@
@@ -257,7 +262,7 @@
 
                         @if (ViewBag.Show_Unit)
                         {
-                            <div class="form-group col-md-2">
+                            <div class="form-group col-md-1">
                                 <label class="control-label" style="@Localizer["text-align: left  ;dm irection: ltr"]">@Localizer["Unit"]</label>
                                 <input class="form-control" type="text" id="Unit_input" disabled />
                             </div>
@@ -268,7 +273,7 @@
                             <input type="number" step="any" class="form-control" name="transLst" id="qty" />
                             <span class="text-danger"></span>
                         </div>
-                        <div class="form-group @(ViewBag.Show_Unit ? "col-md-1":"col-md-2")">
+                        <div class="form-group @(ViewBag.Show_Unit ? "col-md-2":"col-md-2")">
                             <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Price"]</label>
                             <input type="number" step="any" class="form-control" name="transLst" id="price" />
                             <span class="text-danger"></span>
@@ -317,8 +322,8 @@
                                 {
                                     <tr style="width: 100%; margin: 0;">
                                         @*<td style="display:none;">
-                                @item.TransactionCode
-                            </td>*@
+                                                @item.TransactionCode
+                                            </td>*@
                                         <td style="display:none;">
                                             @item.TransactionItemCode
                                         </td>

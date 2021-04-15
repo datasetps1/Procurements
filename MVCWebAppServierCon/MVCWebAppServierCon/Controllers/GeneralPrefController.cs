@@ -86,6 +86,9 @@ namespace MVCWebAppServierCon.Controllers
                 Gpref.Show_cost4 = model.Show_cost4;
                 Gpref.Display_Name_cost4 = model.Display_Name_cost4;
                 Gpref.Table_Name_cost4 = model.Table_Name_cost4;
+                Gpref.Show_Order_Type = model.Show_Order_Type;
+                Gpref.Display_Name_Project = model.Display_Name_Project;
+                Gpref.Display_Name_Activityt = model.Display_Name_Activityt;
                 _context.SaveChanges();
             }
             else
@@ -171,6 +174,10 @@ namespace MVCWebAppServierCon.Controllers
                 previous_model.Show_cost4 = model.Show_cost4;
                 previous_model.Display_Name_cost4 = model.Display_Name_cost4;
                 previous_model.Table_Name_cost4 = model.Table_Name_cost4;
+                previous_model.Show_Order_Type = model.Show_Order_Type;
+                previous_model.Display_Name_Project = model.Display_Name_Project;
+                previous_model.Display_Name_Activityt = model.Display_Name_Activityt;
+
                 _context.TblGeneralPreference.Update(previous_model);
                 await _context.SaveChangesAsync();
             }

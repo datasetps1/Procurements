@@ -108,149 +108,211 @@
         visibility: visible;
         opacity: 1;
     }
+
+    .results tr[visible='false'],
+    .no-result {
+        display: none;
+    }
+
+    .results tr[visible='true'] {
+        display: table-row;
+    }
+
+    .counter {
+        padding: 8px;
+        color: #ccc;
+    }
 </style>
-<h1>My orders</h1>
 
-@*<p>
-        <a asp-action="Create">Create New</a>
-    </p>*@
+@if (ViewBag.Error_happend != null)
+{
+    <div>@ViewBag.Error_happend</div>
+}
+else
+{
 
-<div asp-validation-summary="All" class="text-danger" style="margin-top:12px;">
+    <div asp-validation-summary="All" class="text-danger" style="margin-top:12px;">
+    </div>
+    <div style="display:flex; justify-content:space-between">
+        <h1>My orders</h1>
+        <div class="form-group" style="display: flex; align-items: center;">
+            <input id="search_input_01" type="text" class="search form-control" placeholder="What you looking for?">
+            <div style="
+                padding: 12px;
+                color: #fff;
+                background-color: #19a3f4;
+                border-radius: 0 3px 3px 0;
+                cursor:pointer;
+            "
+                 id="search_btn_01"><i class="fas fa-search"></i></div>
+        </div>
+    </div>
+    <div style="position: relative;    width: 100%;overflow: auto;">
 
-    <table class="table table-striped responsive-table text-center table-hover table-bordered">
-        <thead style="background-color:#46688a;color:white ;font-size:smaller ;">
-            <tr>
-                <th>
-                    @Localizer["Code"]
-                </th>
+        <table class="table table-hover table-bordered results" style="width: max-content;">
+            <thead style="background-color: #00a6ff; color: #fff;">
+                <tr>
+                    <th>
+                        @Localizer["Code"]
+                    </th>
 
-                <th>
-                    @Localizer["date"]
-                </th>
+                    <th>
+                        @Localizer["date"]
+                    </th>
 
-                <th>
-                    @Localizer["User Name"]
-                </th>
-                <th>
+                    <th>
+                        @Localizer["User Name"]
+                    </th>
+                    <th>
 
-                    @Localizer["Currency"]
-                </th>
+                        @Localizer["Currency"]
+                    </th>
 
 
-                <th>
-                    @Localizer["Total"]
-                </th>
-                <th>
-                    @Localizer["TotalInBasic"]
-                </th>
-                <th>
+                    <th>
+                        @Localizer["Total"]
+                    </th>
+                    <th>
+                        @Localizer["TotalInBasic"]
+                    </th>
+                    <th>
 
-                    @Localizer["ProjectName"]
-                </th>
-                <th>
+                        @Localizer["ProjectName"]
+                    </th>
+                    <th>
 
-                    @Localizer["BudgetLine"]
-                </th>
+                        @Localizer["BudgetLine"]
+                    </th>
 
-                <th>
-                    @Localizer["OrderType"]
-                </th>
-                <th>
+                    <th>
+                        @Localizer["OrderType"]
+                    </th>
+                    <th>
 
-                    @Localizer["Expected Date"]
-                </th>
-                <th>
-                    @Localizer["Note"]
-                </th>
-                <th>
-                    @Localizer["Supplier"]
-                </th>
-                <th> @Localizer["Status"]</th>
-                <th>@Localizer["Last User"]</th>
-                <th>@Localizer["Last User Notes"]</th>
-                <th>@Localizer["Waiting user"]</th>
-                <th>  @Localizer["Actions"] </th>
-                <th>  @Localizer["print"] </th>
-            </tr>
-        </thead>
-        <tbody style="font-size:smaller ;">
-            @foreach (OrderHeaderClass item in Model)
+                        @Localizer["Expected Date"]
+                    </th>
+                    <th>
+                        @Localizer["Note"]
+                    </th>
+                    <th>
+                        @Localizer["Supplier"]
+                    </th>
+                    <th> @Localizer["Status"]</th>
+                    <th>@Localizer["Last User"]</th>
+                    <th>@Localizer["Last User Notes"]</th>
+                    <th>@Localizer["Waiting user"]</th>
+                    <th>  @Localizer["Actions"] </th>
+                    <th>  @Localizer["print"] </th>
+                </tr>
+            </thead>
+            <tbody id="orders_table_tag">
+                @foreach (OrderHeaderClass item in Model)
+                {
+                    <tr>
+                        <td>
+                            <a asp-action="Edit" asp-controller="OrderView" asp-route-id="@item.OrderHeaderCode" asp-route-IsPreview="true"> @Html.DisplayFor(modelItem => item.OrderHeaderCode)</a>
+
+
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => item.OrderHeaderdate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.UserName)
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Currency)
+                        </td>
+                        @*<td>
+                                @Html.DisplayFor(modelItem => item.OrderHeaderRate)
+                            </td>*@
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ActualTotalAmount)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.TotalInbasic)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ProjectName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.BudgetLine)
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => item.OrderTypeName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ExpectedDate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.OrderHeaderNote)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.SupplierName)
+                        </td>
+                        <td style="color:#251fca ;">
+                            @Html.DisplayFor(modelItem => item.StatusName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.LastUserName)
+                        </td>
+                        <td style="color:#251fca ;">
+                            @Html.DisplayFor(modelItem => item.NotesFromLastAction)
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => item.waitingUser)
+                        </td>
+                        <td>
+                            @if (item.StatusName == "Return" || item.StatusName == "Document")
+                            {
+                                <a asp-action="Edit" asp-controller="OrderView" asp-route-id="@item.OrderHeaderCode"><span class="Editbtn fa fa-pen" title="Edit"></span></a>
+
+                            }
+                            @*   <a style="color:red ;" onclick="PostOrderStatus(@item.OrderHeaderCode,3)"> <span class=" fa fa-ban " title="Reject"></span></a> |*@
+
+                        </td>
+                        <td>
+                            <a style="color:dimgrey ;" onclick="Print(@item.OrderHeaderCode)">  <span class=" fa fa-print" title="Print"></span></a>
+
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div style="display: flex; justify-content: center;     padding-top: 11px; align-items: center;">
+        @*<div>
+                no of items in page
+                <input id="max_records_input" type="number" class="form-control" style="width:70px; margin-top:5px; " value="@ViewBag.max_records"/>
+            </div>*@
+        <div class="my_pagination">
+            @if (ViewBag.pageNumber <= 1)
             {
-            <tr>
-                <td>
-                    <a asp-action="Edit" asp-controller="OrderView" asp-route-id="@item.OrderHeaderCode" asp-route-IsPreview="true"> @Html.DisplayFor(modelItem => item.OrderHeaderCode)</a>
-
-
-                </td>
-
-                <td>
-                    @Html.DisplayFor(modelItem => item.OrderHeaderdate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.UserName)
-                </td>
-
-                <td>
-                    @Html.DisplayFor(modelItem => item.Currency)
-                </td>
-                @*<td>
-            @Html.DisplayFor(modelItem => item.OrderHeaderRate)
-        </td>*@
-                <td>
-                    @Html.DisplayFor(modelItem => item.ActualTotalAmount)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TotalInbasic)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ProjectName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.BudgetLine)
-                </td>
-
-                <td>
-                    @Html.DisplayFor(modelItem => item.OrderTypeName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ExpectedDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.OrderHeaderNote)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.SupplierName)
-                </td>
-                <td style="color:#251fca ;">
-                    @Html.DisplayFor(modelItem => item.StatusName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.LastUserName)
-                </td>
-                <td style="color:#251fca ;">
-                    @Html.DisplayFor(modelItem => item.NotesFromLastAction)
-                </td>
-                
-                <td>
-                    @Html.DisplayFor(modelItem => item.waitingUser)
-                </td>
-                <td>
-                    @if (item.StatusName == "Return" || item.StatusName == "Document")
-                    {
-                        <a asp-action="Edit" asp-controller="OrderView" asp-route-id="@item.OrderHeaderCode"><span class="Editbtn fa fa-pen" title="Edit"></span></a>
-
-                    }
-                    @*   <a style="color:red ;" onclick="PostOrderStatus(@item.OrderHeaderCode,3)"> <span class=" fa fa-ban " title="Reject"></span></a> |*@
-
-                </td>
-                <td>
-                    <a style="color:dimgrey ;" onclick="Print(@item.OrderHeaderCode)">  <span class=" fa fa-print" title="Print"></span></a>
-
-                </td>
-            </tr>
+                <a class="pagination_item disabled_pagination_item">Previous</a>
             }
-        </tbody>
-    </table>
+            else
+            {
+                <a asp-action="MyOrders" asp-route-pageNumber="@(ViewBag.pageNumber-1)" class="pag_item pagination_item">Previous</a>
+            }
+            @for (int i = 1; i <= ViewBag.no_of_pages; i++)
+            {
+                <a asp-action="MyOrders" asp-route-pageNumber="@i" class="pag_item pagination_item @(ViewBag.pageNumber == i ? "active_pagination_item" : "" )" style="width: 32px;">@i</a>
+            }
+            @if (ViewBag.pageNumber >= ViewBag.no_of_pages)
+            {
+                <a class="pagination_item disabled_pagination_item">Next</a>
+            }
+            else
+            {
+                <a asp-action="MyOrders" asp-route-pageNumber="@(ViewBag.pageNumber+1)" class="pag_item pagination_item">Next</a>
+            }
+        </div>
+    </div>
+
     <div id="loader" class="spinner-border text-warning loader" role="status" style="display:none;">
         <span class="sr-only">Loading...</span>
     </div>
@@ -262,211 +324,329 @@
         <i class="fa fa-play label-arrow"></i>
     </div>
 
-</div>
-<div class="container">
-    <input id="SelectedOrderCode" style="display:none ;" />
+    <div class="container">
+        <input id="SelectedOrderCode" style="display:none ;" />
 
-    <div class="modal" id="myModal" data-url='@Url.Action("GetSupplier","Home")' style="height:500px ; margin-top:100px">
-        <div class="modal-dialog">
-            <div class="modal-content">
+        <div class="modal" id="myModal" data-url='@Url.Action("GetSupplier","Home")' style="height:500px ; margin-top:100px">
+            <div class="modal-dialog">
+                <div class="modal-content">
 
-                <!-- Modal Header -->
-                <div class="modal-header">
-                    <h4 class="modal-title">
-                        Add Supplier
-                    </h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">
+                            Add Supplier
+                        </h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div id='modal-content'>
+
+                    </div>
+                    <!-- Modal body -->
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button id="SaveSupplier" type="button" class="btn" data-dismiss="modal" style="background-color:#ffba71; float:left" onclick="SaveSupplier()">Save</button>
+
+                        <button type="button" class="btn" style="background-color:#ffba71;" data-dismiss="modal" onclick="Hidemodal()">Close</button>
+                    </div>
+
                 </div>
-                <div id='modal-content'>
-
-                </div>
-                <!-- Modal body -->
-                <!-- Modal footer -->
-                <div class="modal-footer">
-                    <button id="SaveSupplier" type="button" class="btn" data-dismiss="modal" style="background-color:#ffba71; float:left" onclick="SaveSupplier()">Save</button>
-
-                    <button type="button" class="btn" style="background-color:#ffba71;" data-dismiss="modal" onclick="Hidemodal()">Close</button>
-                </div>
-
             </div>
         </div>
+
+    </div>
+    <div id="pnlOrder" style="display:block; font-size:small ;font-family: Arial">
+
     </div>
 
-</div>
-<div id="pnlOrder" style="display:block; font-size:small ;font-family: Arial">
+    <script>
 
-</div>
+        const refill_my_orders = (orders) => {
+            var orders_table_dom = document.getElementById("orders_table_tag");
+            orders_table_dom.innerHTML = "";
+            orders.map(current_order => {
+                orders_table_dom.innerHTML +=
+                    (` <tr>
+                        <td>
+                            <a href="OrderView/Edit/${current_order.orderHeaderCode}?IsPreview=true" asp-route-IsPreview="true">${current_order.orderHeaderCode}</a>
+                        </td>
 
-<script>
-    function Hidemodal() {
-        var loader = document.getElementById("loader");
-        loader.style.display = "none";
+                        <td>
+                            ${display_cs_date(current_order.orderHeaderdate)}
+                        </td>
+                        <td>
+                            ${current_order.userName}
+                        </td>
 
+                        <td>
+                            ${current_order.currency}
+                        </td>
+                        <td>
+                            ${current_order.actualTotalAmount}
+                        </td>
+                        <td>
+                            ${current_order.totalInbasic}
+                        </td>
+                        <td>
+                            ${current_order.projectName}
+                        </td>
+                        <td>
+                            ${current_order.budgetLine}
+                        </td>
 
-    }
-    function SaveSupplier() {
-        debugger
-        var txt = document.getElementById('cmbSuppliers');
-        var SupplierCode = txt.text;
-        var supplierName = txt.value;
+                        <td>
+                            ${current_order.orderTypeName}
+                        </td>
+                        <td>
+                            ${display_cs_date(current_order.expectedDate)}
+                        </td>
+                        <td>
+                            ${current_order.orderHeaderNote}
+                        </td>
+                        <td>
+                            ${current_order.supplierName}
+                        </td>
+                        <td style="color:#251fca ;">
+                            ${current_order.statusName}
+                        </td>
+                        <td>
+                            ${current_order.lastUserName}
+                        </td>
+                        <td style="color:#251fca ;">
+                            ${current_order.notesFromLastAction}
+                        </td>
 
-        var txtOrderCode = document.getElementById('SelectedOrderCode');
-        OrderCode = txtOrderCode.value;
-        $.ajax({
-            type: "POST",
-            dataType: "json",
-            url: "../OrderView/SaveSupplier",
-            data: {
-                OrderCode: OrderCode,
-                SupplierCode: SupplierCode,
-                supplierName: supplierName
-            },
-            success: function (response) {
-                if (response.message == "ok") {
-                    Swal.fire('Good job!',
-                        'تم حفظ المورد',
-                        'success'
-                    )
-                    var loader = document.getElementById("loader");
-                    loader.style.display = "none";
-                    //document.location = '/Home/Index';
-                }
-            },
-            error: function (response) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'خطأ في التخزين !',
-                    footer: 'save'
-                })
-                console.log("just die... please" + "  " + response.data);
-            },
-        });
+                        <td>
+                            ${current_order.waitingUser}
+                        </td>
+                        <td>
+                            ${current_order.statusName == "Return" || current_order.statusName == "Document"
+                    ? `<a href="OrderView/Edit/${current_order.orderHeaderCode}"><span class="Editbtn fa fa-pen" title="Edit"></span></a>`
+                            : null}
 
+                        </td>
+                        <td>
+                            <a style="color:dimgrey ;" onclick="Print(${current_order.orderHeaderCode})">  <span class=" fa fa-print" title="Print"></span></a>
 
-    }
-    function openModal(SelectedOrderCode) {
-        debugger
-        var loader = document.getElementById("loader");
-        loader.style.display = "block";
-        loader.style.width = "90px";
-        loader.style.height = "90px";
+                        </td>
+                    </tr>`);
+            })
+        }
+        function display_cs_date(cs_date) {
+            var js_date = new Date(cs_date);
+            var date = js_date.getMonth() + 1 < 10 ? "0" + (js_date.getMonth() + 1) : js_date.getMonth() + 1
+            return (js_date.getDate() + "/" + date + "/" + js_date.getFullYear());
+        }
 
-        var txt = document.getElementById('SelectedOrderCode');
-        txt.value = SelectedOrderCode;
-        var url = $('#myModal').data('url');
-
-        $.get(url, function (data) {
-            $('#modal-content').html(data);
-
-            $('#myModal').modal('show');
-        });
-        //
-    }
-
-
-
-    function PostOrderStatus(approvalHeaderCode, approvalIsApproved) {
-        debugger
-        var notes
-        var loader = document.getElementById("loader");
-        loader.style.display = "block";
-        /// enter notes
-        Swal.fire({
-            title: ' ملاحظه',
-            input: 'text',
-            inputAttributes: { autocapitalize: 'off' },
-
-            confirmButtonText: 'ok',
-            showLoaderOnConfirm: true,
-            preConfirm: (login) => {
-                notes = login
-                ///  send to saver
-                var model = { ApprovalHeaderCode: approvalHeaderCode, ApprovalIsApproved: approvalIsApproved };
-                $.ajax({
-                    type: "POST",
-                    dataType: "json",
-                    url: "/Home/CreateOrderStatus",
-                    data: {
-                        ApprovalHeaderCode: approvalHeaderCode, ApprovalIsApproved: approvalIsApproved, Notes: notes
-
-                    },
-                    success: function (response) {
-                        // console.log("handle response :" + response.data);
-                        Swal.fire('Good job!',
-                            'تم الحفظ',
-                            'success'
-                        )
-                        // document.location = '/Home/Index';
-                        loader.style.display = "none";
-                        location.reload();
-                    },
-                    error: function (response) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
-                            text: 'خطأ في التخزين !',
-                            footer: ''
-                        })
-                        console.log("just die... please" + "  " + response.data);
-                        loader.style.display = "none";
-                    },
-                });
-            },
-            allowOutsideClick: () => !Swal.isLoading()
-        }).then((result) => {
-            if (result.value) {
-                /// nothing
-            }
-        })
-
-
-
-
-    }
-      $(function () {
-        $('#btnPrint').click(function () {
-            var doc = new jsPDF();
-            var div = document.getElementById("pnlOrder");
-
-            debugger
+        document.getElementById("search_btn_01").addEventListener('click', () => {
             $.ajax({
-                url: "/Home/PrintOrder",
-                data: { OrderId: 34 },
+                url: "/Home/search_myorders",
+                data: { query: document.getElementById("search_input_01").value },
                 success: function (data) {
-                    // $('#region_content').html(data);
-                    div.innerHTML = data;
+                    console.log(data.result);
+                    refill_my_orders(data.result);
                 }
             });
-            doc.fromHTML($('#pnlOrder').html(), 15, 15, { 'width': 170 });
-            doc.save('sample.pdf');
-            return false;
+            console.log(document.getElementById("search_input_01").value)
+        })
+
+        function Hidemodal() {
+            var loader = document.getElementById("loader");
+            loader.style.display = "none";
+
+
+        }
+        function SaveSupplier() {
+            debugger
+            var txt = document.getElementById('cmbSuppliers');
+            var SupplierCode = txt.text;
+            var supplierName = txt.value;
+
+            var txtOrderCode = document.getElementById('SelectedOrderCode');
+            OrderCode = txtOrderCode.value;
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: "../OrderView/SaveSupplier",
+                data: {
+                    OrderCode: OrderCode,
+                    SupplierCode: SupplierCode,
+                    supplierName: supplierName
+                },
+                success: function (response) {
+                    if (response.message == "ok") {
+                        Swal.fire('Good job!',
+                            'تم حفظ المورد',
+                            'success'
+                        )
+                        var loader = document.getElementById("loader");
+                        loader.style.display = "none";
+                        //document.location = '/Home/Index';
+                    }
+                },
+                error: function (response) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'خطأ في التخزين !',
+                        footer: 'save'
+                    })
+                    console.log("just die... please" + "  " + response.data);
+                },
+            });
+
+
+        }
+        function openModal(SelectedOrderCode) {
+            debugger
+            var loader = document.getElementById("loader");
+            loader.style.display = "block";
+            loader.style.width = "90px";
+            loader.style.height = "90px";
+
+            var txt = document.getElementById('SelectedOrderCode');
+            txt.value = SelectedOrderCode;
+            var url = $('#myModal').data('url');
+
+            $.get(url, function (data) {
+                $('#modal-content').html(data);
+
+                $('#myModal').modal('show');
+            });
+            //
+        }
+
+
+
+        function PostOrderStatus(approvalHeaderCode, approvalIsApproved) {
+            debugger
+            var notes
+            var loader = document.getElementById("loader");
+            loader.style.display = "block";
+            /// enter notes
+            Swal.fire({
+                title: ' ملاحظه',
+                input: 'text',
+                inputAttributes: { autocapitalize: 'off' },
+
+                confirmButtonText: 'ok',
+                showLoaderOnConfirm: true,
+                preConfirm: (login) => {
+                    notes = login
+                    ///  send to saver
+                    var model = { ApprovalHeaderCode: approvalHeaderCode, ApprovalIsApproved: approvalIsApproved };
+                    $.ajax({
+                        type: "POST",
+                        dataType: "json",
+                        url: "/Home/CreateOrderStatus",
+                        data: {
+                            ApprovalHeaderCode: approvalHeaderCode, ApprovalIsApproved: approvalIsApproved, Notes: notes
+
+                        },
+                        success: function (response) {
+                            // console.log("handle response :" + response.data);
+                            Swal.fire('Good job!',
+                                'تم الحفظ',
+                                'success'
+                            )
+                            // document.location = '/Home/Index';
+                            loader.style.display = "none";
+                            location.reload();
+                        },
+                        error: function (response) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'خطأ في التخزين !',
+                                footer: ''
+                            })
+                            console.log("just die... please" + "  " + response.data);
+                            loader.style.display = "none";
+                        },
+                    });
+                },
+                allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+                if (result.value) {
+                    /// nothing
+                }
+            })
+
+
+
+
+        }
+        $(function () {
+            $('#btnPrint').click(function () {
+                var doc = new jsPDF();
+                var div = document.getElementById("pnlOrder");
+
+                debugger
+                $.ajax({
+                    url: "/Home/PrintOrder",
+                    data: { OrderId: 34 },
+                    success: function (data) {
+                        // $('#region_content').html(data);
+                        div.innerHTML = data;
+                    }
+                });
+                doc.fromHTML($('#pnlOrder').html(), 15, 15, { 'width': 170 });
+                doc.save('sample.pdf');
+                return false;
+            });
         });
-    });
 
-    function Print(orderId) {
-        var doc = new jsPDF('p', 'pt', 'a4');
-        doc.setFontSize(5);
-        var options = { background: 'red' };
-        var div = document.getElementById("pnlOrder");
-        div.innerHTML = '';
-        debugger
+        function Print(orderId) {
+            var doc = new jsPDF('p', 'pt', 'a4');
+            doc.setFontSize(5);
+            var options = { background: 'red' };
+            var div = document.getElementById("pnlOrder");
+            div.innerHTML = '';
+            debugger
 
-        $.ajax({
-            url: "/Home/PrintOrder",
-            data: { OrderId: orderId },
-            success: function (data) {
+            $.ajax({
+                url: "/Home/PrintOrder",
+                data: { OrderId: orderId },
+                success: function (data) {
 
-                div.innerHTML = data;
-               
-                 html2pdf().from(div).save();
-            }
-        });
+                    div.innerHTML = data;
 
-
-    }
+                    html2pdf().from(div).save();
+                }
+            });
 
 
+        }
+
+        //$(document).ready(function () {
+        //    $(".search").keyup(function () {
+        //        var searchTerm = $(".search").val();
+        //        var listItem = $('.results tbody').children('tr');
+        //        var searchSplit = searchTerm.replace(/ /g, "'):containsi('")
+
+        //        $.extend($.expr[':'], {
+        //            'containsi': function (elem, i, match, array) {
+        //                return (elem.textContent || elem.innerText || '').toLowerCase().indexOf((match[3] || "").toLowerCase()) >= 0;
+        //            }
+        //        });
+
+        //        $(".results tbody tr").not(":containsi('" + searchSplit + "')").each(function (e) {
+        //            $(this).attr('visible', 'false');
+        //        });
+
+        //        $(".results tbody tr:containsi('" + searchSplit + "')").each(function (e) {
+        //            $(this).attr('visible', 'true');
+        //        });
+
+        //        var jobCount = $('.results tbody tr[visible="true"]').length;
+        //        $('.counter').text(jobCount + ' item');
+
+        //        if (jobCount == '0') { $('.no-result').show(); }
+        //        else { $('.no-result').hide(); }
+        //    });
+        //});
 
 
-</script>
+    </script>
+
+
+}

@@ -66,6 +66,7 @@ namespace MVCWebAppServierCon.Models
         
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime? ExpectedDate { get; set; }
+
         [NotMapped]
         [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = true)]
         public double TotalInbasic { get; set; }
