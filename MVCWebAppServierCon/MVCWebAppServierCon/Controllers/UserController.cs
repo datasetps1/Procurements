@@ -107,9 +107,9 @@ namespace MVCWebAppServierCon.Controllers
             ViewBag.max_records = max_records;
             var no_of_record = _sc.TblUser.Count();
 
-            if (no_of_record % 2 != 0)
+            if (no_of_record % max_records != 0)
             {
-                ViewBag.no_of_pages = (no_of_record + 1) / max_records;
+                ViewBag.no_of_pages = (no_of_record + max_records) / max_records;
             }
             else
             {

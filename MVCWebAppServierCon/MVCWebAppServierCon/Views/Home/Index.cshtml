@@ -215,6 +215,9 @@
                 @*//  <th>  @Localizer["Add Supplier"] </th>*@
             </tr>
         </thead>
+        <script>
+            console.log(@Json.Serialize(Model))
+        </script>
         <tbody style="font-size:smaller ;" id="orders_table_tag">
             @foreach (OrderHeaderClass item in Model)
             {
@@ -366,11 +369,11 @@
         }
         else
         {
-            <a asp-action="StuckOrders" asp-route-pageNumber="@(ViewBag.pageNumber-1)" class="pag_item pagination_item">Previous</a>
+            <a asp-action="index" asp-route-pageNumber="@(ViewBag.pageNumber-1)" class="pag_item pagination_item">Previous</a>
         }
         @for (int i = 1; i <= ViewBag.no_of_pages; i++)
         {
-            <a asp-action="StuckOrders" asp-route-pageNumber="@i" class="pag_item pagination_item @(ViewBag.pageNumber == i ? "active_pagination_item" : "" )" style="width: 32px;">@i</a>
+            <a asp-action="index" asp-route-pageNumber="@i" class="pag_item pagination_item @(ViewBag.pageNumber == i ? "active_pagination_item" : "" )" style="width: 32px;">@i</a>
         }
         @if (ViewBag.pageNumber >= ViewBag.no_of_pages)
         {
@@ -378,7 +381,7 @@
         }
         else
         {
-            <a asp-action="StuckOrders" asp-route-pageNumber="@(ViewBag.pageNumber+1)" class="pag_item pagination_item">Next</a>
+            <a asp-action="index" asp-route-pageNumber="@(ViewBag.pageNumber+1)" class="pag_item pagination_item">Next</a>
         }
     </div>
 </div>

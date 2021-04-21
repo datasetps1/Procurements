@@ -307,6 +307,11 @@ namespace MVCWebAppServierCon.Controllers
 
                     foreach (var t in orders)
                     {
+
+                        if (t.OrderHeaderCode == 726)
+                        {
+                            var ss = 0;
+                        }
                         var approv = _sc.TblApproval.Where(s => s.ApprovalHeaderCode == t.OrderHeaderCode).OrderBy(a => a.ApprovalCode).ToList();
                         ApprovalClass lastApproval = approv.LastOrDefault();
                         if (lastApproval != null && (lastApproval.ApprovalIsApproved == (int)Enums.ApprovalStatus.Reject || lastApproval.ApprovalIsApproved == (int)Enums.ApprovalStatus.Excuted) || lastApproval.ApprovalIsApproved == (int)Enums.ApprovalStatus.Stuck)
@@ -317,11 +322,19 @@ namespace MVCWebAppServierCon.Controllers
                         {
                             try
                             {
-                                t.OrderTypeName = _sc.TblOrderType.Where(u => u.orderTypeCode == t.OrderHeaderOrderTypeCode).FirstOrDefault().orderTypeName;
+                                var show_order_type = _sc.TblGeneralPreference.Select(g => g.Show_Order_Type).FirstOrDefault();
+                                if (show_order_type)
+                                {
+                                    var order_01 = _sc.TblOrderType.Where(u => u.orderTypeCode == t.OrderHeaderOrderTypeCode).FirstOrDefault();
+                                    if (order_01 != null)
+                                    {
+                                        t.OrderTypeName = order_01.orderTypeName;
+                                    }
+                                }
                                 t.ProjectName = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ProjectTable).FirstOrDefaultAsync(), t.OrderHeaderProjectCode.ToString(), connection);
 
                                 t.BudgetLine = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ActivitiyTable).FirstOrDefaultAsync(), t.OrderHeaderBudgetLineCode.ToString(), connection);
-                                //t.Currency = getData.getTblCodeName(currency_table, t.OrderHeaderCurrencey.ToString(), connection);
+                                t.Currency = getData.getTblCodeName(currency_table, t.OrderHeaderCurrencey.ToString(), connection);
                                 t.UserName = _sc.TblUser.Where(u => u.userCode == t.OrderHeaderUserId).FirstOrDefault().userName;
                                 t.StatusName = GetStatusName(lastApproval.ApprovalIsApproved);
                                 t.StatusCode = lastApproval.ApprovalIsApproved;
@@ -422,7 +435,11 @@ namespace MVCWebAppServierCon.Controllers
                     var show_order_type = _sc.TblGeneralPreference.Select(g => g.Show_Order_Type).FirstOrDefault();
                     if (show_order_type)
                     {
-                        t.OrderTypeName = _sc.TblOrderType.Where(u => u.orderTypeCode == t.OrderHeaderOrderTypeCode).FirstOrDefault().orderTypeName;
+                        var order_01 = _sc.TblOrderType.Where(u => u.orderTypeCode == t.OrderHeaderOrderTypeCode).FirstOrDefault();
+                        if (order_01 != null)
+                        {
+                            t.OrderTypeName = order_01.orderTypeName;
+                        }
                     }
 
                     t.ProjectName = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ProjectTable).FirstOrDefaultAsync(), t.OrderHeaderProjectCode.ToString(), connection);
@@ -537,6 +554,10 @@ namespace MVCWebAppServierCon.Controllers
 
             foreach (var t in orders)
             {
+                if(t.OrderHeaderCode == 726)
+                {
+                    var ss = 0;
+                }
                 var approv = _sc.TblApproval.Where(s => s.ApprovalHeaderCode == t.OrderHeaderCode).OrderBy(a => a.ApprovalCode).ToList();
                 ApprovalClass lastApproval = approv.LastOrDefault();
                 if (lastApproval != null && lastApproval.ApprovalIsApproved == (int)(int)Enums.ApprovalStatus.Reject)
@@ -548,7 +569,11 @@ namespace MVCWebAppServierCon.Controllers
                     var show_order_type = _sc.TblGeneralPreference.Select(g => g.Show_Order_Type).FirstOrDefault();
                     if (show_order_type)
                     {
-                        t.OrderTypeName = _sc.TblOrderType.Where(u => u.orderTypeCode == t.OrderHeaderOrderTypeCode).FirstOrDefault().orderTypeName;
+                        var order_01 = _sc.TblOrderType.Where(u => u.orderTypeCode == t.OrderHeaderOrderTypeCode).FirstOrDefault();
+                        if (order_01 != null)
+                        {
+                            t.OrderTypeName = order_01.orderTypeName;
+                        }
                     }
 
                     t.ProjectName = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ProjectTable).FirstOrDefaultAsync(), t.OrderHeaderProjectCode.ToString(), connection);
@@ -595,9 +620,9 @@ namespace MVCWebAppServierCon.Controllers
             ViewBag.pageNumber = pageNumber;
             ViewBag.max_records = max_records;
             var no_of_record = orders2.Count();
-            if (no_of_record % 2 != 0)
+            if (no_of_record % max_records != 0)
             {
-                ViewBag.no_of_pages = (no_of_record + 1) / max_records;
+                ViewBag.no_of_pages = (no_of_record + max_records) / max_records;
             }
             else
             {
@@ -679,7 +704,11 @@ namespace MVCWebAppServierCon.Controllers
                 var show_order_type = _sc.TblGeneralPreference.Select(g => g.Show_Order_Type).FirstOrDefault();
                 if (show_order_type)
                 {
-                    t.OrderTypeName = _sc.TblOrderType.Where(u => u.orderTypeCode == t.OrderHeaderOrderTypeCode).FirstOrDefault().orderTypeName;
+                    var order_01 = _sc.TblOrderType.Where(u => u.orderTypeCode == t.OrderHeaderOrderTypeCode).FirstOrDefault();
+                    if (order_01 != null)
+                    {
+                        t.OrderTypeName = order_01.orderTypeName;
+                    }
                 }
                 t.ProjectName = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ProjectTable).FirstOrDefaultAsync(), t.OrderHeaderProjectCode.ToString(), connection);
 
@@ -759,9 +788,10 @@ namespace MVCWebAppServierCon.Controllers
                 ViewBag.pageNumber = pageNumber;
                 ViewBag.max_records = max_records;
                 var no_of_record = _sc.TblOrderHeader.Where(o => o.OrderHeaderUserId == user.userCode).Count();
-                if (no_of_record % 2 != 0)
+
+                if (no_of_record % max_records != 0)
                 {
-                    ViewBag.no_of_pages = (no_of_record + 1) / max_records;
+                    ViewBag.no_of_pages = (no_of_record + max_records) / max_records;
                 }
                 else
                 {
@@ -779,7 +809,11 @@ namespace MVCWebAppServierCon.Controllers
                     var show_order_type = _sc.TblGeneralPreference.Select(g => g.Show_Order_Type).FirstOrDefault();
                     if (show_order_type)
                     {
-                        t.OrderTypeName = _sc.TblOrderType.Where(u => u.orderTypeCode == t.OrderHeaderOrderTypeCode).FirstOrDefault().orderTypeName;
+                        var order_01 = _sc.TblOrderType.Where(u => u.orderTypeCode == t.OrderHeaderOrderTypeCode).FirstOrDefault();
+                        if (order_01 != null)
+                        {
+                            t.OrderTypeName = order_01.orderTypeName;
+                        }
                     }
                     t.ProjectName = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ProjectTable).FirstOrDefaultAsync(), t.OrderHeaderProjectCode.ToString(), connection);
 
@@ -853,7 +887,15 @@ namespace MVCWebAppServierCon.Controllers
             {
 
                 var t = _sc.TblOrderHeader.Where(x => x.OrderHeaderCode == a.ApprovalHeaderCode).FirstOrDefault();
-                t.OrderTypeName = _sc.TblOrderType.Where(u => u.orderTypeCode == t.OrderHeaderOrderTypeCode).FirstOrDefault().orderTypeName;
+                var show_order_type = _sc.TblGeneralPreference.Select(g => g.Show_Order_Type).FirstOrDefault();
+                if (show_order_type)
+                {
+                    var order_01 = _sc.TblOrderType.Where(u => u.orderTypeCode == t.OrderHeaderOrderTypeCode).FirstOrDefault();
+                    if (order_01 != null)
+                    {
+                        t.OrderTypeName = order_01.orderTypeName;
+                    }
+                }
                 t.ProjectName = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ProjectTable).FirstOrDefaultAsync(), t.OrderHeaderProjectCode.ToString(), connection);
 
                 t.BudgetLine = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ActivitiyTable).FirstOrDefaultAsync(), t.OrderHeaderBudgetLineCode.ToString(), connection);
@@ -878,8 +920,23 @@ namespace MVCWebAppServierCon.Controllers
 
         //public async Task<IActionResult>
 
-        public async Task<IActionResult> GetAllOrdersBydate(DateTime FromDate, DateTime ToDate, string Project, string BudgetLine, int Department, bool ShowStuckOrdersOnly, string Employee, string Supplier, bool ShowExecutedOnly, bool ShowUnderExecutedOnly, bool ShowRejectedOnly, double FromAmount, double ToAmount, int FromId, int ToId)
+        public async Task<IActionResult> GetAllOrdersBydate(DateTime FromDate, DateTime ToDate, string Project, string BudgetLine, int Department, bool ShowStuckOrdersOnly, string Employee, string Supplier, bool ShowExecutedOnly, bool ShowUnderExecutedOnly, bool ShowRejectedOnly, double FromAmount, double ToAmount, int FromId, int ToId, int? pageNumber, int? max_records)
         {
+            //paging _______________________________________________
+
+            if (pageNumber == null || pageNumber <= 0)
+            {
+                pageNumber = 1;
+            }
+
+            if (max_records == null || max_records <= 0)
+            {
+                max_records = 10;
+            }
+            ViewBag.pageNumber = pageNumber;
+            ViewBag.max_records = max_records;
+            //paging _______________________________________________
+
             if (FromDate.ToString() == "01/01/0001 12:00:00 AM")
             {
                 FromDate = DateTime.Now.AddMonths(-1);
@@ -973,6 +1030,21 @@ namespace MVCWebAppServierCon.Controllers
             if (ShowUnderExecutedOnly == true) { orders2 = orders2.Where(o => o.StatusCode == 8).ToList(); }
             if (ShowExecutedOnly == true) { orders2 = orders2.Where(o => o.StatusCode == 9).ToList(); }
             if (ShowRejectedOnly == true) { orders2 = orders2.Where(o => o.StatusCode == 3).ToList(); }
+
+            var no_of_record = orders2.Count();
+
+            if (no_of_record % max_records != 0)
+            {
+                ViewBag.no_of_pages = (no_of_record + max_records) / max_records;
+            }
+            else
+            {
+                ViewBag.no_of_pages = (no_of_record) / max_records;
+            }
+
+            orders2 = orders2.Skip(((int)pageNumber - 1) * (int)max_records).Take((int)max_records).ToList();
+
+
             ViewBag.Orders = orders2;
 
             // return View(orders2);

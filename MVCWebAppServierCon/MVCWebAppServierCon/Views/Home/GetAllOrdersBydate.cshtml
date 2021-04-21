@@ -129,11 +129,40 @@
 @*<p>
         <a asp-action="Create">Create New</a>
     </p>*@
+<div style="display:flex; justify-content:space-between;padding: 14px 0; display:none;" id="pagination_and_search_element_temp">
+    <div style="display: flex; justify-content: center;  align-items: center;">
+        <div class="my_pagination" style="margin-top: 0;">
+            @if (ViewBag.pageNumber <= 1)
+            {
+                <a class="pagination_item disabled_pagination_item">Previous</a>
+            }
+            else
+            {
+                <a onclick="get_page(@(ViewBag.pageNumber-1))" class="pag_item pagination_item">Previous</a>
+            }
+            @for (int i = 1; i <= ViewBag.no_of_pages; i++)
+            {
+                <a onclick="get_page(@i)" class="pag_item pagination_item @(ViewBag.pageNumber == i ? "active_pagination_item" : "" )" style="width: 32px;">@i</a>
+            }
+            @if (ViewBag.pageNumber >= ViewBag.no_of_pages)
+            {
+                <a class="pagination_item disabled_pagination_item">Next</a>
+            }
+            else
+            {
+                <a onclick="get_page(@(ViewBag.pageNumber+1))" class="pag_item pagination_item">Next</a>
+            }
+        </div>
+    </div>
+</div>
+<script>
 
-<div class="text-danger" style="margin-top:12px;">
+    document.getElementById('pagination_and_search_element').innerHTML = document.getElementById('pagination_and_search_element_temp').innerHTML
+</script>
+<div style="position: relative;    width: 100% !important; overflow: auto;">
 
-    <table class="table table-striped responsive-table text-center table-hover table-bordered">
-        <thead style="background-color:#46688a;color:white ;font-size:smaller ;">
+    <table class="table table-hover table-bordered results" style="width: max-content !important;">
+        <thead style="background-color: #00a6ff; color: #fff;">
             <tr>
                 <th>
                     @Localizer["Code"]
@@ -194,99 +223,99 @@
             @* @foreach (var item in Model)*@
             @foreach (OrderHeaderClass item in Model)
             {
-            <tr>
-                <td>
-                    <a asp-action="Edit" asp-controller="OrderView" asp-route-id="@item.OrderHeaderCode" asp-route-IsPreview="true" target="_blank"> @Html.DisplayFor(modelItem => item.OrderHeaderCode)</a>
+                <tr>
+                    <td>
+                        <a asp-action="Edit" asp-controller="OrderView" asp-route-id="@item.OrderHeaderCode" asp-route-IsPreview="true" target="_blank"> @Html.DisplayFor(modelItem => item.OrderHeaderCode)</a>
 
-                    @*  <a onclick="openModal(@item.OrderHeaderCode)" style="color:red;"> @Html.DisplayFor(modelItem => item.OrderHeaderCode)</a>*@
+                        @*  <a onclick="openModal(@item.OrderHeaderCode)" style="color:red;"> @Html.DisplayFor(modelItem => item.OrderHeaderCode)</a>*@
 
-                </td>
+                    </td>
 
-                <td>
-                    @Html.DisplayFor(modelItem => item.OrderHeaderdate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.UserName)
-                </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OrderHeaderdate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UserName)
+                    </td>
 
-                <td>
-                    @Html.DisplayFor(modelItem => item.Currency)
-                </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Currency)
+                    </td>
 
-                <td>
+                    <td>
 
-                    @Html.DisplayFor(modelItem => item.ActualTotalAmount)
-                </td>
-                <td>
+                        @Html.DisplayFor(modelItem => item.ActualTotalAmount)
+                    </td>
+                    <td>
 
 
-                    @Html.DisplayFor(modelItem => item.TotalInbasic)
+                        @Html.DisplayFor(modelItem => item.TotalInbasic)
 
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ProjectName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.BudgetLine)
-                </td>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProjectName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.BudgetLine)
+                    </td>
 
-                <td>
-                    @Html.DisplayFor(modelItem => item.OrderTypeName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ExpectedDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.OrderHeaderNote)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.SupplierName)
-                </td>
-                <td style="color:#251fca ;">
-                    @Html.DisplayFor(modelItem => item.StatusName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.LastUserName)
-                </td>
-                <td style="color:#251fca ;">
-                    @Html.DisplayFor(modelItem => item.NotesFromLastAction)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.waitingUser)
-                </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OrderTypeName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ExpectedDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OrderHeaderNote)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SupplierName)
+                    </td>
+                    <td style="color:#251fca ;">
+                        @Html.DisplayFor(modelItem => item.StatusName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LastUserName)
+                    </td>
+                    <td style="color:#251fca ;">
+                        @Html.DisplayFor(modelItem => item.NotesFromLastAction)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.waitingUser)
+                    </td>
 
-                @*<td>
-            @if (item.StatusName == "Return" || item.StatusName == "Document")
-            {
-                <a asp-action="Edit" asp-controller="OrderView" asp-route-id="@item.OrderHeaderCode"><span class="Editbtn fa fa-pen" title="Edit"></span></a>
+                    @*<td>
+                            @if (item.StatusName == "Return" || item.StatusName == "Document")
+                            {
+                                <a asp-action="Edit" asp-controller="OrderView" asp-route-id="@item.OrderHeaderCode"><span class="Editbtn fa fa-pen" title="Edit"></span></a>
 
-            }
-            <a style="color:red ;" onclick="PostOrderStatus(@item.OrderHeaderCode,3)"> <span class=" fa fa-ban " title="Reject"></span></a> |
+                            }
+                            <a style="color:red ;" onclick="PostOrderStatus(@item.OrderHeaderCode,3)"> <span class=" fa fa-ban " title="Reject"></span></a> |
 
-        </td>*@
-                <td>
-                    <a style="color:dimgrey; font-size: large " onclick="Print(@item.OrderHeaderCode)">  <span class=" fa fa-print" title="Print"></span></a>
-                    @if (item.Freaze == false)
-                    {
+                        </td>*@
+                    <td>
+                        <a style="color:dimgrey; font-size: large " onclick="Print(@item.OrderHeaderCode)">  <span class=" fa fa-print" title="Print"></span></a>
+                        @if (item.Freaze == false)
+                        {
 
-                        <a style="color:red ; font-size: large " onclick="FreazeOrder(@item.OrderHeaderCode)"> <span class=" fa fa-ban " title="Cancel"></span></a>
-                    }
+                            <a style="color:red ; font-size: large " onclick="FreazeOrder(@item.OrderHeaderCode)"> <span class=" fa fa-ban " title="Cancel"></span></a>
+                        }
 
-                </td>
-                <td>
-                    @if (item.Freaze == true)
-                    {
-                        <div style="color:red ; font-size: large ">@Localizer["Canceled"]</div>
-                    }
+                    </td>
+                    <td>
+                        @if (item.Freaze == true)
+                        {
+                            <div style="color:red ; font-size: large ">@Localizer["Canceled"]</div>
+                        }
 
-                </td>
-                <td>
-                   
-                    <div style="color:red ; font-size: large ">@item.FreazeNote</div>
-                    
+                    </td>
+                    <td>
 
-                </td>
-            </tr>
+                        <div style="color:red ; font-size: large ">@item.FreazeNote</div>
+
+
+                    </td>
+                </tr>
             }
         </tbody>
     </table>
@@ -410,7 +439,7 @@
             preConfirm: (login) => {
                 notes = login
                 ///  send to saver
-                var model = { ApprovalHeaderCode: approvalHeaderCode};
+                var model = { ApprovalHeaderCode: approvalHeaderCode };
                 $.ajax({
                     type: "POST",
                     dataType: "json",

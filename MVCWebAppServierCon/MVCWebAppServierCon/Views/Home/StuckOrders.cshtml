@@ -190,6 +190,9 @@
                 <th>  Complete Activity</th>
             </tr>
         </thead>
+        <script>
+            console.log(@Json.Serialize(ViewBag.orders))
+        </script>
         <tbody style="font-size:smaller ;" id="orders_table_tag">
 
             @foreach (OrderHeaderClass item in ViewBag.orders)

@@ -39,18 +39,18 @@
     <div class="row" style="margin-top:10px ;">
     </div>
     <div class="row">
-        <div class="form-group col-md-2" style="margin-top:10px ;">
+        <div class="form-group col-md-2">
             <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["From date"]</label>
             <input id="fromdate" type="date" class="form-control" style="width:170px ; " />
 
         </div>
-        <div class="form-group col-md-2" style="margin-top:10px ;">
+        <div class="form-group col-md-2">
             <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["To date"]</label>
-            <input id="todate" type="date" class="form-control" style="width:170px ;margin-left:10px" />
+            <input id="todate" type="date" class="form-control" style="width:170px ;" />
 
         </div>
 
-        <div class="form-group col-md-2" style="margin-top:10px ;margin-left:5px">
+        <div class="form-group col-md-2">
             @{ string disabled = @ViewBag.UserDepartmentCodeEnabled == false ? "disabled" : ""; }
             <label for="inputState" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Department"]</label>
             <select id="cmbDepartment" class="form-control" name="headerLst" @disabled>
@@ -67,28 +67,37 @@
 
         </div>
 
-        <div class="form-group col-md-3 ">
-            <br />
-            <br />
-            <input id="ShowStuckOrdersOnly" type="radio" name="radio" />
-            <label class="form-check-label" for="ShowStuckOrdersOnly" style="width:auto">@Localizer["Show Stuck Orders Only"]</label>
+        <div class="form-group col-md-6">
+            <label for="inputState" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Options"]</label>
+            <div style="background-color: #d5efff; border-radius: 6px; padding: 10px;">
+                <div style="display:flex; justify-content:space-around;">
+                    <div>
+                        <input id="ShowStuckOrdersOnly" type="radio" name="radio" />
+                        <label class="form-check-label" for="ShowStuckOrdersOnly" style="width:auto">@Localizer["Show Stuck Orders Only"]</label>
+                    </div>
 
-            <br />
+                    <div>
+                        <input id="ShowExecutedOrdersOnly" type="radio" name="radio" />
+                        <label class="form-check-label" for="ShowExecutedOrdersOnly" style="width:auto">@Localizer["Show Executed Only"]</label>
+                    </div>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-top:5px;">
+                    <div>
+                        <input id="ShowUnderExecutedOrdersOnly" type="radio" name="radio" />
+                        <label class="form-check-label" for="ShowUnderExecutedOrdersOnly" style="width:auto">@Localizer["Show Under Executed Only"]</label>
+                    </div>
 
+                    <div>
+                        <input id="ShowRejectedOnly" type="radio" name="radio" />
+                        <label class="form-check-label" for="ShowRejectedOnly" style="width:auto">@Localizer["Show Rejected Only"]</label>
+                    </div>
 
-            <input id="ShowExecutedOrdersOnly" type="radio" name="radio" />
-            <label class="form-check-label" for="ShowExecutedOrdersOnly" style="width:auto">@Localizer["Show Executed Only"]</label>
-            <br />
-            <input id="ShowUnderExecutedOrdersOnly" type="radio" name="radio" />
-            <label class="form-check-label" for="ShowUnderExecutedOrdersOnly" style="width:auto">@Localizer["Show Under Executed Only"]</label>
-            <br />
-            <input id="ShowRejectedOnly" type="radio" name="radio" />
-            <label class="form-check-label" for="ShowRejectedOnly" style="width:auto">@Localizer["Show Rejected Only"]</label>
-            <br />
-            <input id="None" type="radio" name="radio" />
-            <label class="form-check-label" for="None" style="width:auto">@Localizer["None"]</label>
-
-
+                    <div>
+                        <input id="None" type="radio" name="radio" />
+                        <label class="form-check-label" for="None" style="width:auto">@Localizer["None"]</label>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="form-group col-md-1 ">
 
@@ -96,20 +105,20 @@
     </div>
 
     <div class="row" style="margin-top:-5px ;">
-        <div class="form-group col-md-2" style="margin-top:-5px ;">
+        <div class="form-group col-md-3" style="margin-top:-5px ;">
             <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["From Amount"]</label>
-            <input id="FromAmount" type="number" class="form-control" style="width:90px ;margin-left:2px" />
+            <input id="FromAmount" type="number" class="form-control" style="margin-left:2px" />
 
         </div>
 
-        <div class="form-group col-md-2" style="margin-top:-5px ;">
+        <div class="form-group col-md-3" style="margin-top:-5px ;">
             <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["To Amount"]</label>
-            <input id="ToAmount" type="number" class="form-control" style="width:90px " />
+            <input id="ToAmount" type="number" class="form-control" />
 
         </div>
-        <div class="form-group col-md-2" style="margin-top:-5px ;  @Localizer["text-align: left;"]">
+        <div class="form-group col-md-3" style="margin-top:-5px ;  @Localizer["text-align: left;"]">
             <label id="lblEmployee" for="Employee" style="@Localizer["text-align: left "]">@Localizer["Employee"]</label>
-            <select id="cmbEmp" class="form-control" style="width:130px">
+            <select id="cmbEmp" class="form-control">
                 <option selected></option>
 
                 @foreach (UserClass emp in ViewBag.Employee)
@@ -122,7 +131,7 @@
         <div class="form-group col-md-3" style="margin-top:-5px;  @Localizer["text-align: left;"]">
 
             <label id="LblSupplier" for="Supplier" style="@Localizer["text-align: left "]">@Localizer["Supplier"]</label>
-            <select id="cmbSupplier" class="form-control" name="cmbSupplier" style="width:160px">
+            <select id="cmbSupplier" class="form-control" name="cmbSupplier">
                 <option selected></option>
 
                 @foreach (CodeNameModel Account in ViewBag.Supplier)
@@ -138,7 +147,7 @@
         <div class="form-group col-md-3" style="@Localizer["text-align: left;"]">
 
             <label id="LblProject" for="project">@Localizer["Project"]</label>
-            <select id="cmbProject" class="form-control" name="cmbProject" style="width:auto">
+            <select id="cmbProject" class="form-control" name="cmbProject">
                 <option selected></option>
 
                 @foreach (CodeNameModel costs in ViewBag.Project)
@@ -148,13 +157,13 @@
             </select>
         </div>
 
-        <div class="form-group col-md-2">
+        <div class="form-group col-md-3">
             <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["From order code"]</label>
             <input id="FromId" type="number" class="form-control" style="margin-left:2px" />
 
         </div>
 
-        <div class="form-group col-md-2">
+        <div class="form-group col-md-3">
             <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["To order code"]</label>
             <input id="ToId" type="number" class="form-control" style=" " />
 
@@ -163,10 +172,12 @@
             @* BudgetLine*@
         </div>
 
-        <div class="form-group col-md-3">
-            <input id="search" type="button" class="form-control btn-primary" value="@Localizer["Execute"]" style="margin-top:22px ; margin-left:55px" />
-        </div>
+    </div>
 
+    <div class="row" style="margin-top:10px;">
+        <div class="form-group col-md-3">
+            <input id="search" type="button" class="form-control btn-primary" value="@Localizer["Execute"]" style="background-color: #00a6ff; cursor:pointer;" />
+        </div>
     </div>
 
 
@@ -178,6 +189,10 @@
 <div id="loader" class="spinner-border text-warning loader" role="status" style="display:none;">
     <span class="sr-only">Loading...</span>
 </div>
+<div style="display:flex; justify-content:space-between;padding: 14px 0;" id="pagination_and_search_element">
+    
+</div>
+
 <div id="searchResults">
 
 </div>
@@ -206,29 +221,110 @@
             li.val() + '. ' + li.text()
         );
     });
-  $('#cmbEmp').editableSelect();
-     $('#cmbEmp')
-                                  .editableSelect()
-                                    .on('select.editable-select', function (e, li) {
+    $('#cmbEmp').editableSelect();
+    $('#cmbEmp')
+        .editableSelect()
+        .on('select.editable-select', function (e, li) {
 
-                                        var txt = document.getElementById('cmbEmp');
-                                        txt.text = li.val();
-
-
-                                    });
-         $('#cmbSupplier').editableSelect();
-     $('#cmbSupplier')
-                                  .editableSelect()
-                                    .on('select.editable-select', function (e, li) {
-
-                                        var txt = document.getElementById('cmbSupplier');
-                                        txt.text = li.val();
+            var txt = document.getElementById('cmbEmp');
+            txt.text = li.val();
 
 
-                                    });
+        });
+    $('#cmbSupplier').editableSelect();
+    $('#cmbSupplier')
+        .editableSelect()
+        .on('select.editable-select', function (e, li) {
+
+            var txt = document.getElementById('cmbSupplier');
+            txt.text = li.val();
+
+
+        });
 
 
     var url = '@Url.Action("GetAllOrdersBydate", "Home")';
+
+    function get_page(pageNumber) {
+        debugger
+        // var x= $('#cmbProject').siblings('.es-list').find('li.selected').data('value')
+        //  var y= $('#cmbProject').siblings('.es-list').find('li.selected').text()
+        var y = $('#cmbProject').text()
+        var loader = document.getElementById("loader");
+        loader.style.display = "block";
+        var ShowStuckOrdersOnly = document.getElementById('ShowStuckOrdersOnly');
+        var ShowUnderExecutedOnly = document.getElementById('ShowUnderExecutedOrdersOnly');
+        var ShowExecutedOnly = document.getElementById('ShowExecutedOrdersOnly');
+        var ShowRejectedOnly = document.getElementById('ShowRejectedOnly');
+        var dep = document.getElementById('cmbDepartment');
+
+        var OrderHeaderProjectCode = "0";
+        var OrderHeaderBudgetLineCode = "0";
+        var employeeCode = "0";
+        var ProjectCode = document.getElementById('cmbProject');
+
+        if (ProjectCode.value != undefined) {
+
+            OrderHeaderProjectCode = ProjectCode.value;
+        }
+
+        if ($('#cmbProject').value == "") {
+            OrderHeaderProjectCode = "0";
+        }
+
+        var BudgetLineCode = document.getElementById('cmbBudgetLine');
+        // BudgetLineCode != 'undefined' ||
+        if (BudgetLineCode != null) {
+            if (BudgetLineCode.text != undefined) {
+                OrderHeaderBudgetLineCode = BudgetLineCode.text;
+            }
+        }
+
+        var Employee = document.getElementById('cmbEmp');
+        var employeeCode = Employee.value; // this return emp Name
+
+
+        if ($('#cmbProject').text() != "") {
+            OrderHeaderProjectCode = ProjectCode.value;
+        }
+        if ($('#cmbBudgetLine').text() != "") {
+            OrderHeaderBudgetLineCode = BudgetLineCode.value;
+        }
+
+        debugger
+        var Supplier = document.getElementById('cmbSupplier');
+        var SupplierCode = Supplier.value; // this return supp name
+        var FromAmount = 0
+        if ($('#FromAmount').val() != "") {
+            FromAmount = parseFloat($('#FromAmount').val());
+        }
+
+        var ToAmount = 0
+        if ($('#ToAmount').val() != "") {
+            ToAmount = parseFloat($('#ToAmount').val());
+        }
+
+        document.getElementById('pagination_and_search_element').style.display = "flex";
+
+        $('#searchResults').load(url, {
+            FromDate: $('#fromdate').val(),
+            ToDate: $('#todate').val(),
+            Project: OrderHeaderProjectCode,
+            BudgetLine: OrderHeaderBudgetLineCode,
+            Department: dep.value,
+            ShowStuckOrdersOnly: ShowStuckOrdersOnly.checked,
+            Employee: employeeCode,
+            Supplier: SupplierCode,
+            ShowExecutedOnly: ShowExecutedOnly.checked,
+            ShowUnderExecutedOnly: ShowUnderExecutedOnly.checked,
+            ShowRejectedOnly: ShowRejectedOnly.checked,
+            FromAmount,
+            ToAmount,
+            FromId: document.getElementById('FromId').value == "" ? -1 : document.getElementById('FromId').value,
+            ToId: document.getElementById('ToId').value == "" ? -1 : document.getElementById('ToId').value,
+            pageNumber: pageNumber,
+        });
+    }
 
     $('#search').click(function () {
         debugger
@@ -290,6 +386,8 @@
               ToAmount=  parseFloat($('#ToAmount').val());
         }
 
+        document.getElementById('pagination_and_search_element').style.display = "flex";
+
         $('#searchResults').load(url, {
             FromDate: $('#fromdate').val(),
             ToDate: $('#todate').val(),
@@ -305,7 +403,8 @@
             FromAmount,
             ToAmount,
             FromId: document.getElementById('FromId').value == "" ? -1 : document.getElementById('FromId').value ,
-            ToId: document.getElementById('ToId').value == "" ? -1 : document.getElementById('ToId').value
+            ToId: document.getElementById('ToId').value == "" ? -1 : document.getElementById('ToId').value,
+
         });
 
     });
