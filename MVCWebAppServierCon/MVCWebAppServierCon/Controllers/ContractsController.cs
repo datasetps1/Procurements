@@ -84,6 +84,7 @@ namespace MVCWebAppServierCon.Controllers
 
 
         [HttpPost]
+        [Authorize(Roles ="Admin, SaveContract")]
         public async Task<ActionResult> Create(Contracts model)
         {
             //var errors = ModelState.Values.SelectMany(v => v.Errors);
@@ -133,6 +134,7 @@ namespace MVCWebAppServierCon.Controllers
 
         }
         [HttpPost]
+        [Authorize(Roles = "Admin, DeleteContract")]
         public ActionResult Delete(int id)
         {
             try
