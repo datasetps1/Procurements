@@ -1031,18 +1031,18 @@ namespace MVCWebAppServierCon.Controllers
             if (ShowExecutedOnly == true) { orders2 = orders2.Where(o => o.StatusCode == 9).ToList(); }
             if (ShowRejectedOnly == true) { orders2 = orders2.Where(o => o.StatusCode == 3).ToList(); }
 
-            var no_of_record = orders2.Count();
+            //var no_of_record = orders2.Count();
 
-            if (no_of_record % max_records != 0)
-            {
-                ViewBag.no_of_pages = (no_of_record + max_records) / max_records;
-            }
-            else
-            {
-                ViewBag.no_of_pages = (no_of_record) / max_records;
-            }
+            //if (no_of_record % max_records != 0)
+            //{
+            //    ViewBag.no_of_pages = (no_of_record + max_records) / max_records;
+            //}
+            //else
+            //{
+            //    ViewBag.no_of_pages = (no_of_record) / max_records;
+            //}
 
-            orders2 = orders2.Skip(((int)pageNumber - 1) * (int)max_records).Take((int)max_records).ToList();
+            //orders2 = orders2.Skip(((int)pageNumber - 1) * (int)max_records).Take((int)max_records).ToList();
 
 
             ViewBag.Orders = orders2;
@@ -1670,7 +1670,7 @@ namespace MVCWebAppServierCon.Controllers
             var table = "";
             var Approvalstable = "";
             var approv = _sc.TblApproval.Where(s => s.ApprovalHeaderCode == order.OrderHeaderCode).OrderBy(a => a.ApprovalCode).ToList().Distinct().ToList();
-            approv = approv.GroupBy(o => new { o.ApprovalUserId })
+            approv = approv.GroupBy(o => new { o.ApprovalUserId , o.ApprovalIsApproved })
                               .Select(o => o.LastOrDefault()).ToList();
             approv = approv.OrderBy(a => a.ApprovalCode).ToList();
             //var approv2 = _sc.TblApproval.Where(s => s.ApprovalHeaderCode == order.OrderHeaderCode).OrderBy(a => a.ApprovalCode).ToList();
@@ -1751,6 +1751,15 @@ namespace MVCWebAppServierCon.Controllers
                     {
                         Approvalstable = Approvalstable + "<tr>" +
                            "<td>" + "returned by" + "</td>" +
+                           "<td>" + _sc.TblStructure.Where(x => x.structureRank == approUser.userTypeCode).Select(x => x.structureName).FirstOrDefault() + "</td>" +
+                           "<td>" + approUser.userName + "</td>" +
+                            "<td>" + approv[i].ApprovalCreationDate.ToString("dd/MM/yyyy") + "</td>" +
+                        "</tr>";
+                    }
+                    else if (approv[i].ApprovalIsApproved == 7)
+                    {
+                        Approvalstable = Approvalstable + "<tr>" +
+                           "<td>" + "Stuck " + "</td>" +
                            "<td>" + _sc.TblStructure.Where(x => x.structureRank == approUser.userTypeCode).Select(x => x.structureName).FirstOrDefault() + "</td>" +
                            "<td>" + approUser.userName + "</td>" +
                             "<td>" + approv[i].ApprovalCreationDate.ToString("dd/MM/yyyy") + "</td>" +

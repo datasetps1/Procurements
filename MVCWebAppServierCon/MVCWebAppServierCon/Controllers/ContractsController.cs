@@ -72,7 +72,14 @@ namespace MVCWebAppServierCon.Controllers
 
         public IActionResult Create()
         {
-            ViewBag.LstFiles = _sc.TblContracts.ToList();
+            var contracts = _sc.TblContracts.ToList();
+            List<Contracts> contracts_list = new List<Contracts>();
+            foreach(var c in contracts)
+            {
+                c.DayesNumber = (int)(c.ToDate - c.FromDate).TotalDays;
+                contracts_list.Add(c);
+            }
+            ViewBag.LstFiles = contracts_list;
 
             var getData = new getAuditData();
             IList<CodeNameModel> SuppliersList = new List<CodeNameModel>();
@@ -84,7 +91,7 @@ namespace MVCWebAppServierCon.Controllers
 
 
         [HttpPost]
-        [Authorize(Roles ="Admin, SaveContract")]
+        [Authorize(Roles = "Admin, SaveContract")]
         public async Task<ActionResult> Create(Contracts model)
         {
             //var errors = ModelState.Values.SelectMany(v => v.Errors);
@@ -110,7 +117,7 @@ namespace MVCWebAppServierCon.Controllers
                     await model.File.CopyToAsync(stream);
                     stream.Close();
                 }
-
+                var days_no = (int)(model.FromDate - model.ToDate).TotalDays;
                 Contracts ContractTPost = new Contracts
                 {
                     Name = model.Name,
@@ -118,6 +125,7 @@ namespace MVCWebAppServierCon.Controllers
                     FromDate = model.FromDate,
                     ToDate = model.ToDate,
                     SupplierCode = model.SupplierCode,
+                    DayesNumber = days_no
                 };
 
                 _sc.Add(ContractTPost);

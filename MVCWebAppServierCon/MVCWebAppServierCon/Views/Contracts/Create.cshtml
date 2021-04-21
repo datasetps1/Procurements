@@ -15,56 +15,60 @@
 
     <form enctype="multipart/form-data" asp-controller="Contracts" asp-action="Create"
           method="post" class="mt-3">
-        <div class="form-group row">
-            <label asp-for="Name" class="col-sm-2 col-form-label"></label>
-            <div class="col-sm-10">
-                <input asp-for="Name" class="form-control" placeholder="Name">
-                <span asp-validation-for="Name" class="text-danger"></span>
+
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label asp-for="Name" class="col-form-label"></label>
+                <div>
+                    <input asp-for="Name" class="form-control" placeholder="Name">
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group col-md-4">
+                <label class="col-sm-2 col-form-label" for="SupplierCode" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["supplier"]</label>
+                <select asp-for="SupplierCode" class="form-control">
+
+                    <option selected></option>
+
+                    @foreach (CodeNameModel obj in ViewBag.lstsuppliers)
+                    {
+                        <option value="@obj.Code">@obj.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group col-md-4">
+                <label asp-for="FromDate" class="col-form-label"></label>
+                <div>
+                    <input asp-for="FromDate" class="form-control" placeholder="FromDate" type="date">
+                    <span asp-validation-for="FromDate" class="text-danger"></span>
+                </div>
             </div>
         </div>
-        <div class="form-group row">
-            <label class="col-sm-2 col-form-label" for="SupplierCode" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["supplier"]</label>
-            <select asp-for="SupplierCode" class="form-control col-sm-10">
-
-                <option selected></option>
-
-                @foreach (CodeNameModel obj in ViewBag.lstsuppliers)
-                {
-                    <option value="@obj.Code">@obj.Name</option>
-                }
-            </select>
-        </div>
-        <div class="form-group row">
-            <label asp-for="FromDate" class="col-sm-2 col-form-label"></label>
-            <div class="col-sm-10">
-                <input asp-for="FromDate" class="form-control" placeholder="FromDate" type="date">
-                <span asp-validation-for="FromDate" class="text-danger"></span>
+        <div class="row">
+            <div class="form-group col-md-6">
+                <label asp-for="ToDate" class=" col-form-label"></label>
+                <div>
+                    <input asp-for="ToDate" class="form-control" placeholder="FromDate" type="date">
+                    <span asp-validation-for="ToDate" class="text-danger"></span>
+                </div>
             </div>
-        </div>
 
-        <div class="form-group row">
-            <label asp-for="ToDate" class="col-sm-2 col-form-label"></label>
-            <div class="col-sm-10">
-                <input asp-for="ToDate" class="form-control" placeholder="FromDate" type="date">
-                <span asp-validation-for="ToDate" class="text-danger"></span>
-            </div>
-        </div>
+            <div class="form-group col-md-6" style="padding-top:14px;">
 
-        <div class="form-group row ">
-
-            <label class="control-label col-sm-2 " asp-for="File"> File </label>
-            <div class="custom-file   col-sm-10">
-                <input type="file" asp-for="File" class="form-control custom-file-input" id="ufile" />
-                <label class="custom-file-label"> Choose File ...</label>
-                <span asp-validation-for="File" class="text-danger"></span>
+                <label class="control-label" asp-for="File"> File </label>
+                <div class="custom-file">
+                    <input type="file" asp-for="File" class="form-control custom-file-input" id="ufile" />
+                    <label class="custom-file-label"> Choose File ...</label>
+                    <span asp-validation-for="File" class="text-danger"></span>
+                </div>
             </div>
         </div>
 
         @*<div asp-validation-summary="All" class="text-danger"></div>*@
 
         <div class="form-group row">
-            <div class="col-sm-10">
-                <button type="submit" class="btn btn-primary">Create</button>
+            <div class="col-md-10">
+                <button type="submit" class="btn btn-primary" style="background-color: #00a6ff; color:#fff;">Create</button>
             </div>
         </div>
 
@@ -121,9 +125,9 @@
 
 </div>
 
-<div class="rowPage">
+<div class="rowPage" style="margin-left: 2rem !important;">
     <table class="table">
-        <thead>
+        <thead style="background-color: #00a6ff; color: #fff;">
             <tr>
                 <th>
                     @Localizer["Name"]
@@ -132,13 +136,13 @@
                     @Localizer["From Date"]
                 </th>
                 <th>
-                    @Localizer["supplier Name"]
-                </th>
-                <th>
                     @Localizer["To Date"]
                 </th>
                 <th>
-                    @Localizer["Dayes Number"]
+                    @Localizer["supplier Name"]
+                </th>
+                <th>
+                    @Localizer["Days Number"]
                 </th>
                 <th>   @Localizer["Action"]</th>
             </tr>
@@ -147,49 +151,49 @@
 
             @foreach (Contracts item in ViewBag.LstFiles)
             {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FromDate)
-                </td>
-                @if (item.SupplierCode == null)
-                {
+                <tr>
                     <td>
-                        null
+                        @Html.DisplayFor(modelItem => item.Name)
                     </td>
-                }
-                else
-                {
-                    @*<td>
-                        some supplier
-                    </td>*@
-                    @foreach (CodeNameModel m in ViewBag.lstsuppliers)
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FromDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ToDate)
+                    </td>
+                    @if (item.SupplierCode == null)
                     {
-                        @if(m.Code == item.SupplierCode)
-                        {
-                            <td>
-                                @m.Name
-                            </td>
-                        }
-                        
+                        <td>
+                            null
+                        </td>
                     }
-                }
-                <td>
-                    @Html.DisplayFor(modelItem => item.ToDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DayesNumber)
-                </td>
-                <td>
-                    <a class="btn btn-primary btn-sm" asp-action="Download" asp-controller="Contracts"
-                       asp-route-id="@item.Code" style="font-size:small ;float: left;">
-                        Download
-                    </a>
-                    <a class="btn btn-primary btn-sm" style="color:white; font-size: small" onclick="Delete(@item.Code)"> Delete</a>
-                </td>
-            </tr>
+                    else
+                    {
+                        @*<td>
+                                some supplier
+                            </td>*@
+                        @foreach (CodeNameModel m in ViewBag.lstsuppliers)
+                        {
+                            @if (m.Code == item.SupplierCode)
+                            {
+                                <td>
+                                    @m.Name
+                                </td>
+                            }
+
+                        }
+                    }
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DayesNumber)
+                    </td>
+                    <td>
+                        <a class="btn btn-primary btn-sm" asp-action="Download" asp-controller="Contracts"
+                           asp-route-id="@item.Code" style="font-size:small ;float: left;">
+                            Download
+                        </a>
+                        <a class="btn btn-primary btn-sm" style="color:white; font-size: small" onclick="Delete(@item.Code)"> Delete</a>
+                    </td>
+                </tr>
 
 
             }
