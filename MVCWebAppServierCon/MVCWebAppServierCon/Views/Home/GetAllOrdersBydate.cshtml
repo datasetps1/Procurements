@@ -16,30 +16,12 @@
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
 
-<!-- BS JavaScript -->
-@*<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>*@
-
-
-
-
-@*<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.min.js"></script>*@
-
-@*<script src="https://cdn.rawgit.com/simonbengtsson/jsPDF/requirejs-fix-dist/dist/jspdf.debug.js"></script>
-    <script src="https://unpkg.com/jspdf-autotable@2.3.2"></script>
-
-
-    <script src="https://raw.githack.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>*@
-
-
-@*<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>*@
-@*<script type="text/javascript" src="~/lib/bootstrap/dist/js/bootstrap.js"></script>*@
 
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.min.js"></script>
 
 <script src="https://cdn.rawgit.com/simonbengtsson/jsPDF/requirejs-fix-dist/dist/jspdf.debug.js"></script>
-<script src="https://unpkg.com/jspdf-autotable@2.3.2"></script>
+@*<script src="https://unpkg.com/jspdf-autotable@2.3.2"></script>*@
 
 <script src="https://raw.githack.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
 
@@ -130,39 +112,49 @@
         <a asp-action="Create">Create New</a>
     </p>*@
 @*<div style="display:flex; justify-content:space-between;padding: 14px 0; display:none;" id="pagination_and_search_element_temp">
-    <div style="display: flex; justify-content: center;  align-items: center;">
-        <div class="my_pagination" style="margin-top: 0;">
-            @if (ViewBag.pageNumber <= 1)
-            {
-                <a class="pagination_item disabled_pagination_item">Previous</a>
-            }
-            else
-            {
-                <a onclick="get_page(@(ViewBag.pageNumber-1))" class="pag_item pagination_item">Previous</a>
-            }
-            @for (int i = 1; i <= ViewBag.no_of_pages; i++)
-            {
-                <a onclick="get_page(@i)" class="pag_item pagination_item @(ViewBag.pageNumber == i ? "active_pagination_item" : "" )" style="width: 32px;">@i</a>
-            }
-            @if (ViewBag.pageNumber >= ViewBag.no_of_pages)
-            {
-                <a class="pagination_item disabled_pagination_item">Next</a>
-            }
-            else
-            {
-                <a onclick="get_page(@(ViewBag.pageNumber+1))" class="pag_item pagination_item">Next</a>
-            }
+        <div style="display: flex; justify-content: center;  align-items: center;">
+            <div class="my_pagination" style="margin-top: 0;">
+                @if (ViewBag.pageNumber <= 1)
+                {
+                    <a class="pagination_item disabled_pagination_item">Previous</a>
+                }
+                else
+                {
+                    <a onclick="get_page(@(ViewBag.pageNumber-1))" class="pag_item pagination_item">Previous</a>
+                }
+                @for (int i = 1; i <= ViewBag.no_of_pages; i++)
+                {
+                    <a onclick="get_page(@i)" class="pag_item pagination_item @(ViewBag.pageNumber == i ? "active_pagination_item" : "" )" style="width: 32px;">@i</a>
+                }
+                @if (ViewBag.pageNumber >= ViewBag.no_of_pages)
+                {
+                    <a class="pagination_item disabled_pagination_item">Next</a>
+                }
+                else
+                {
+                    <a onclick="get_page(@(ViewBag.pageNumber+1))" class="pag_item pagination_item">Next</a>
+                }
+            </div>
         </div>
     </div>
+    <script>
+
+        document.getElementById('pagination_and_search_element').innerHTML = document.getElementById('pagination_and_search_element_temp').innerHTML
+    </script>*@
+<div style="margin-bottom:5px;display:flex;">
+    <div style="padding: 10px;
+    background-color: #19a3f4;
+    border: 1px solid #19a3f4;
+    color: #fff;">Total in basic currency : </div>
+    <div style="padding: 10px;
+    border: 1px solid #19a3f4;">
+        @ViewBag.Total
+    </div>
 </div>
-<script>
+<div class="text-danger" style="margin-top:12px;">
 
-    document.getElementById('pagination_and_search_element').innerHTML = document.getElementById('pagination_and_search_element_temp').innerHTML
-</script>*@
-<div style="position: relative;    width: 100% !important; overflow: auto;">
-
-    <table class="table table-hover table-bordered results" style="width: max-content !important;">
-        <thead style="background-color: #00a6ff; color: #fff;">
+    <table class="table table-striped responsive-table text-center table-hover table-bordered">
+        <thead style="background-color: #00a6ff;color:white ;font-size:smaller ;">
             <tr>
                 <th>
                     @Localizer["Code"]
@@ -357,7 +349,9 @@
     </div>
 
 </div>
+
 <script type="text/javascript">
+    console.log(@Json.Serialize(ViewBag.date_test))
     $(document).ready(function () {
 
         var loader = document.getElementById("loader");

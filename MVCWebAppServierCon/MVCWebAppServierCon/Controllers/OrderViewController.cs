@@ -387,6 +387,8 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
             }
 
             var user = _sc.TblUser.Where(u => u.userName.Equals(User.Identity.Name)).FirstOrDefault();
+            ViewBag.users = _sc.TblUser.Where(u => u.userTypeCode == 5).ToList();
+
             var stru = _sc.TblStructure.ToList();
             var items = _sc.TblItem.ToList();
             if (stru.Count < 1)
@@ -407,11 +409,19 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
             ViewBag.DepartmentName = _sc.TblDepartment.ToList();
             ViewBag.OrderType = _sc.TblOrderType.ToList();
             ViewBag.ItemName = _sc.TblItem.ToList();
-            ViewBag.UserDepartmentName = _sc.TblDepartment.Where(x => x.departmentCode == user.userDepartmentCode).Select(u => u.departmentName).FirstOrDefault();
+            var user_dep = _sc.TblDepartment.Where(x => x.departmentCode == user.userDepartmentCode).Select(u => new { name = u.departmentName, code = u.departmentCode }).FirstOrDefault();
+            ViewBag.UserDepartmentName = user_dep.name;
+            ViewBag.UserDepartmentCode = user_dep.code;
 
             ViewBag.Units = _sc.Units.ToList();
 
             return View();
+        }
+
+        public object GetDepartmentName(int dep_Code)
+        {
+            var dep = _sc.TblDepartment.Where(x => x.departmentCode == dep_Code).Select(u => new { name = u.departmentName, code = u.departmentCode }).FirstOrDefault();
+            return new { name = dep.name, code = dep.code };
         }
         //string[] headerlst,
         [HttpPost]
@@ -423,7 +433,7 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
             try
             {
                 OrderHeaderClass ohc = new OrderHeaderClass();
-                ohc.OrderHeaderdepartmentCode = user.userDepartmentCode;
+                ohc.OrderHeaderdepartmentCode = headerlst.OrderHeaderdepartmentCode;
                 ohc.OrderHeaderProjectCode = headerlst.OrderHeaderProjectCode;
                 //ohc.OrderHeaderdate = headerlst.OrderHeaderdate;
                 ohc.OrderHeaderOrderTypeCode = headerlst.OrderHeaderOrderTypeCode;
@@ -434,6 +444,7 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
                 ohc.OrderHeaderRealTotal = headerlst.OrderHeaderRealTotal;
                 ohc.ActualTotalAmount = headerlst.OrderHeaderRealTotal;
                 ohc.OrderHeaderNote = headerlst.OrderHeaderNote;
+                ohc.ToEmployeeCode = headerlst.ToEmployeeCode;
                 ohc.OrderHeaderUserId = user.userCode;
                 ohc.OrderHeaderCreationDate = DateTime.Now;
                 ohc.OrderHeaderDeviceIp = 1;
@@ -611,6 +622,8 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
             // ViewBag.BudgetLine = projLoad("TBLCost8");
             List<CodeNameModel> lst = new List<CodeNameModel>();
 
+            ViewBag.users = _sc.TblUser.Where(u => u.userTypeCode == 5).ToList();
+
             if (connect_with == Constants.audit)
             {
                 ViewBag.BudgetLine = getData.getTableData("VRelationalBudgetLineWithFunder", "  WHERE (FirstCostCenterCode = '" + model.headerClass.OrderHeaderProjectCode + "' ) ", connection);
@@ -757,9 +770,6 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
             {
                 try
                 {
-
-
-
                     string usr = _sc.TblUser.Where(u => u.userName.Equals(User.Identity.Name)).Select(u => u.userCode).FirstOrDefault();
                     OrderHeaderClass t1 = new OrderHeaderClass();
                     TransactionClass t2 = new TransactionClass();
@@ -772,6 +782,7 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
 
                     res1.OrderHeaderdate = headerlst.OrderHeaderdate;
                     res1.OrderHeaderOrderTypeCode = headerlst.OrderHeaderOrderTypeCode;
+                    res1.ToEmployeeCode = headerlst.ToEmployeeCode;
                     if (headerlst.OrderHeaderBudgetLineCode != null)
                     {
                         res1.OrderHeaderBudgetLineCode = headerlst.OrderHeaderBudgetLineCode;

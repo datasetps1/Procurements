@@ -337,6 +337,7 @@ namespace MVCWebAppServierCon.Controllers
                                 t.Currency = getData.getTblCodeName(currency_table, t.OrderHeaderCurrencey.ToString(), connection);
                                 t.UserName = _sc.TblUser.Where(u => u.userCode == t.OrderHeaderUserId).FirstOrDefault().userName;
                                 t.StatusName = GetStatusName(lastApproval.ApprovalIsApproved);
+                                t.LastApprovalDate = lastApproval.ApprovalCreationDate;
                                 t.StatusCode = lastApproval.ApprovalIsApproved;
                                 t.LastUserName = _sc.TblUser.Where(u => u.userCode == lastApproval.ApprovalUserId).FirstOrDefault().userName;
                                 t.waitingUser = _sc.TblUser.Where(u => u.userCode == lastApproval.ToUser).FirstOrDefault().userName;
@@ -380,7 +381,7 @@ namespace MVCWebAppServierCon.Controllers
                     RejectedOrders = orders2.Where(x => x.StatusCode == 3 && x.OrderHeaderdate < DateTime.Now.AddDays(-5)).ToList();
 
                     orders2 = orders2.Except(RejectedOrders).ToList();
-
+                    orders2 = orders2.OrderByDescending(o => o.LastApprovalDate).ToList();
 
                     // for paging -----------------------------------------------------
 
@@ -583,6 +584,7 @@ namespace MVCWebAppServierCon.Controllers
                     t.UserName = _sc.TblUser.Where(u => u.userCode == t.OrderHeaderUserId).FirstOrDefault().userName;
                     t.StatusName = GetStatusName(lastApproval.ApprovalIsApproved);
                     t.StatusCode = lastApproval.ApprovalIsApproved;
+                    t.LastApprovalDate = lastApproval.ApprovalCreationDate;
                     t.LastUserName = _sc.TblUser.Where(u => u.userCode == lastApproval.ApprovalUserId).FirstOrDefault().userName;
                     t.waitingUser = _sc.TblUser.Where(u => u.userCode == lastApproval.ToUser).FirstOrDefault().userName;
                     t.TotalInbasic = t.ActualTotalAmount * t.OrderHeaderRate;
@@ -614,6 +616,8 @@ namespace MVCWebAppServierCon.Controllers
             RejectedOrders = orders2.Where(x => x.StatusCode == 3 && x.OrderHeaderdate < DateTime.Now.AddDays(-5)).ToList();
 
             orders2 = orders2.Except(RejectedOrders).ToList();
+
+            orders2 = orders2.OrderByDescending(o => o.LastApprovalDate).ToList();
 
             // for paging -----------------------------------------------------
 
@@ -920,38 +924,40 @@ namespace MVCWebAppServierCon.Controllers
 
         //public async Task<IActionResult>
 
-        public async Task<IActionResult> GetAllOrdersBydate(DateTime FromDate, DateTime ToDate, string Project, string BudgetLine, int Department, bool ShowStuckOrdersOnly, string Employee, string Supplier, bool ShowExecutedOnly, bool ShowUnderExecutedOnly, bool ShowRejectedOnly, double FromAmount, double ToAmount, int FromId, int ToId, int? pageNumber, int? max_records)
+        public async Task<IActionResult> GetAllOrdersBydate(DateTime FromDate, DateTime ToDate, string Project, string BudgetLine, int Department, bool ShowStuckOrdersOnly, string Employee, string WaitingEmployee, string Supplier, bool ShowExecutedOnly, bool ShowUnderExecutedOnly, bool ShowRejectedOnly, double FromAmount, double ToAmount, int FromId, int ToId, int? pageNumber, int? max_records)
         {
             //paging _______________________________________________
 
-            if (pageNumber == null || pageNumber <= 0)
-            {
-                pageNumber = 1;
-            }
+            //if (pageNumber == null || pageNumber <= 0)
+            //{
+            //    pageNumber = 1;
+            //}
 
-            if (max_records == null || max_records <= 0)
-            {
-                max_records = 10;
-            }
-            ViewBag.pageNumber = pageNumber;
-            ViewBag.max_records = max_records;
+            //if (max_records == null || max_records <= 0)
+            //{
+            //    max_records = 10;
+            //}
+            //ViewBag.pageNumber = pageNumber;
+            //ViewBag.max_records = max_records;
             //paging _______________________________________________
 
-            if (FromDate.ToString() == "01/01/0001 12:00:00 AM")
-            {
-                FromDate = DateTime.Now.AddMonths(-1);
-            }
-            if (ToDate.ToString() == "01/01/0001 12:00:00 AM")
+            //if (FromDate.ToString() == "01/01/0001 12:00:00 AM")
+            //{
+            //    FromDate = DateTime.Now.AddMonths(-1);
+            //}
+            if (ToDate.ToString() == "1/1/0001 12:00:00 AM" || ToDate.ToString() == "01/01/0001 12:00:00 AM")
             {
                 ToDate = DateTime.Now;
             }
+            ViewBag.date_test = ToDate.ToString();
+
             var user = _sc.TblUser.Where(u => u.userName.Equals(User.Identity.Name)).FirstOrDefault();
             var orders = new List<OrderHeaderClass>();
             var orders2 = new List<OrderHeaderClass>();
             var getData = new getAuditData();
 
-            orders = _sc.TblOrderHeader.Where(o => o.OrderHeaderdate >= FromDate && o.OrderHeaderdate <= ToDate).ToList();
             orders = _sc.TblOrderHeader.ToList();
+            orders = orders.Where(o => o.OrderHeaderdate >= FromDate && o.OrderHeaderdate <= ToDate).ToList();
 
             if (Project != null && Project != "0")
             {
@@ -1001,6 +1007,7 @@ namespace MVCWebAppServierCon.Controllers
 
             foreach (var t in orders)
             {
+
                 var approv = _sc.TblApproval.Where(s => s.ApprovalHeaderCode == t.OrderHeaderCode).OrderBy(a => a.ApprovalCode).ToList();
                 ApprovalClass lastApproval = approv.LastOrDefault();
 
@@ -1026,11 +1033,19 @@ namespace MVCWebAppServierCon.Controllers
                 orders2.Add(t);
 
             }
+
+            if (WaitingEmployee != "" && WaitingEmployee != "0" && WaitingEmployee != null)
+            {
+                orders2 = orders2.Where(o => o.waitingUser == WaitingEmployee).ToList();
+
+            }
             if (ShowStuckOrdersOnly == true) { orders2 = orders2.Where(o => o.StatusCode == 7).ToList(); }
             if (ShowUnderExecutedOnly == true) { orders2 = orders2.Where(o => o.StatusCode == 8).ToList(); }
             if (ShowExecutedOnly == true) { orders2 = orders2.Where(o => o.StatusCode == 9).ToList(); }
             if (ShowRejectedOnly == true) { orders2 = orders2.Where(o => o.StatusCode == 3).ToList(); }
 
+            var Total = orders2.Sum(o => o.TotalInbasic);
+            ViewBag.Total = Math.Round(Total * 100) / 100;
             //var no_of_record = orders2.Count();
 
             //if (no_of_record % max_records != 0)
@@ -1095,36 +1110,43 @@ namespace MVCWebAppServierCon.Controllers
         }
 
         [HttpPost]
-        public JsonResult CreateOrderStatus(int ApprovalHeaderCode, int ApprovalIsApproved, string Notes)
+        public JsonResult CreateOrderStatus(int ApprovalHeaderCode, int ApprovalIsApproved, string Notes, string ToEmployeeCode)
         {
             // save approval status in tblapprovals
             //ApprovalIsApproved means :Status
             // Enums enums = new Enums();
 
+            
 
             string nextRankUser = "";
             var user = _sc.TblUser.Where(u => u.userName.Equals(User.Identity.Name)).FirstOrDefault();
             var order = _sc.TblOrderHeader.Where(u => u.OrderHeaderCode == ApprovalHeaderCode).FirstOrDefault();
 
-            if (ApprovalIsApproved == (int)Enums.ApprovalStatus.Created || ApprovalIsApproved == (int)Enums.ApprovalStatus.Accept || ApprovalIsApproved == (int)Enums.ApprovalStatus.Edit)
+            if (ToEmployeeCode == null || ToEmployeeCode == "")
             {
-                nextRankUser = GetNextUser(order, user);
+                if (ApprovalIsApproved == (int)Enums.ApprovalStatus.Created || ApprovalIsApproved == (int)Enums.ApprovalStatus.Accept || ApprovalIsApproved == (int)Enums.ApprovalStatus.Edit)
+                {
+                    nextRankUser = GetNextUser(order, user);
+                }
+                else if (ApprovalIsApproved == (int)Enums.ApprovalStatus.Return)
+                {
+                    nextRankUser = GetPrevoiusUser(order, user);
+                }
+
+
+                if (ApprovalIsApproved == (int)Enums.ApprovalStatus.Reject || ApprovalIsApproved == (int)Enums.ApprovalStatus.Excuted)
+                {
+                    nextRankUser = order.OrderHeaderUserId;
+
+                }
+                if (ApprovalIsApproved == (int)Enums.ApprovalStatus.UnderExecution)
+                {
+                    nextRankUser = user.userCode;
+                }
             }
-            else if (ApprovalIsApproved == (int)Enums.ApprovalStatus.Return)
+            else
             {
-                nextRankUser = GetPrevoiusUser(order, user);
-            }
-
-
-            if (ApprovalIsApproved == (int)Enums.ApprovalStatus.Reject || ApprovalIsApproved == (int)Enums.ApprovalStatus.Excuted)
-            {
-                nextRankUser = order.OrderHeaderUserId;
-
-            }
-            if (ApprovalIsApproved == (int)Enums.ApprovalStatus.UnderExecution)
-            {
-                nextRankUser = user.userCode;
-
+                nextRankUser = ToEmployeeCode;
             }
 
             try
@@ -1161,9 +1183,6 @@ namespace MVCWebAppServierCon.Controllers
         {
 
             var user = _sc.TblUser.Where(u => u.userName.Equals(User.Identity.Name)).FirstOrDefault();
-
-
-
 
             try
             {
@@ -1204,15 +1223,12 @@ namespace MVCWebAppServierCon.Controllers
         {
             // get amonts which are in the range of order total ,and get ranks amounts that less than user ranks 
             int nextRank = 0;
-            string nextRankUser = "";
+            string nextRankUser =   "";
             List<AmountSittingClass> amountsRanks = new List<AmountSittingClass>();
-
-
 
 
             amountsRanks = _sc.TblAmountSitting.Where(a => a.amountTo >= (int)order.OrderHeaderRealTotal * order.OrderHeaderRate && a.amountFrom <= (int)order.OrderHeaderRealTotal * order.OrderHeaderRate && a.amountStructure < user.userTypeCode).OrderBy(a => a.amountStructure).ToList(); // get user amount range
             nextRank = amountsRanks.Select(a => a.amountStructure).LastOrDefault();
-
 
 
             // get next User
@@ -1669,7 +1685,7 @@ namespace MVCWebAppServierCon.Controllers
             order.TotalInbasic = order.ActualTotalAmount * order.OrderHeaderRate;
             var table = "";
             var Approvalstable = "";
-            var approv = _sc.TblApproval.Where(s => s.ApprovalHeaderCode == order.OrderHeaderCode).OrderBy(a => a.ApprovalCode).ToList().Distinct().ToList();
+            var approv = _sc.TblApproval.Where(s => s.ApprovalHeaderCode == order.OrderHeaderCode && s.ApprovalIsApproved != -1).OrderBy(a => a.ApprovalCode).ToList().Distinct().ToList();
             approv = approv.GroupBy(o => new { o.ApprovalUserId , o.ApprovalIsApproved })
                               .Select(o => o.LastOrDefault()).ToList();
             approv = approv.OrderBy(a => a.ApprovalCode).ToList();

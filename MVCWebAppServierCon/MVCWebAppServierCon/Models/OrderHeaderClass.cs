@@ -57,6 +57,10 @@ namespace MVCWebAppServierCon.Models
 
         [NotMapped]
         public string StatusName { get; set; }
+
+        [NotMapped]
+        public DateTime LastApprovalDate { get; set; }
+
         [NotMapped]
         public int StatusCode { get; set; }
         [NotMapped]
@@ -90,5 +94,6 @@ namespace MVCWebAppServierCon.Models
 
         public string Doner { get; set; }
 
+        public string ToEmployeeCode { get; set; }
     }
 }

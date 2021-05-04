@@ -10,25 +10,31 @@ namespace MVCWebAppServierCon.Models
 {
     public class Contracts
     {
-       
-            [Key]
-            public int Code { get; set; }
 
-            [Required]
-            public String FilePath { get; set; }
-            [Required]
-            public DateTime FromDate { get; set; }
-            [Required]
-            public DateTime ToDate { get; set; }
-            [Required]
-            public String Name { get; set; }
-            [Required]
-            [NotMapped]
-            public IFormFile File { get; set; }
+        [Key]
+        public int Code { get; set; }
 
-            [NotMapped]
-            public int DayesNumber { get; set; }
+        [Required]
+        public String FilePath { get; set; }
+        [Required]
+        public DateTime FromDate { get; set; }
+        [Required]
+        public DateTime ToDate { get; set; }
+        [Required]
+        public String Name { get; set; }
+        [Required]
+        [NotMapped]
+        public IFormFile File { get; set; }
 
-            public string SupplierCode { get; set; }
+        [NotMapped]
+        public int DayesNumber { get; set; }
+
+        public string SupplierCode { get; set; }
+
+        [Required]
+        public String Note { get; set; }
+
+        [Required]
+        public double Amount { get; set; }
     }
 }

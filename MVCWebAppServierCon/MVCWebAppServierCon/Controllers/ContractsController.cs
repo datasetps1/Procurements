@@ -76,7 +76,7 @@ namespace MVCWebAppServierCon.Controllers
             List<Contracts> contracts_list = new List<Contracts>();
             foreach(var c in contracts)
             {
-                c.DayesNumber = (int)(c.ToDate - c.FromDate).TotalDays;
+                c.DayesNumber = (int)(c.ToDate - DateTime.Now).TotalDays;
                 contracts_list.Add(c);
             }
             ViewBag.LstFiles = contracts_list;
@@ -117,7 +117,6 @@ namespace MVCWebAppServierCon.Controllers
                     await model.File.CopyToAsync(stream);
                     stream.Close();
                 }
-                var days_no = (int)(model.FromDate - model.ToDate).TotalDays;
                 Contracts ContractTPost = new Contracts
                 {
                     Name = model.Name,
@@ -125,7 +124,8 @@ namespace MVCWebAppServierCon.Controllers
                     FromDate = model.FromDate,
                     ToDate = model.ToDate,
                     SupplierCode = model.SupplierCode,
-                    DayesNumber = days_no
+                    Note = model.Note,
+                    Amount = model.Amount,
                 };
 
                 _sc.Add(ContractTPost);

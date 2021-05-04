@@ -116,17 +116,18 @@
             <input id="ToAmount" type="number" class="form-control" />
 
         </div>
-        <div class="form-group col-md-3" style="margin-top:-5px ;  @Localizer["text-align: left;"]">
-            <label id="lblEmployee" for="Employee" style="@Localizer["text-align: left "]">@Localizer["Employee"]</label>
-            <select id="cmbEmp" class="form-control">
+
+        <div class="form-group col-md-3" style="@Localizer["text-align: left;"]">
+
+            <label id="LblProject" for="project">@Localizer["Project"]</label>
+            <select id="cmbProject" class="form-control" name="cmbProject">
                 <option selected></option>
 
-                @foreach (UserClass emp in ViewBag.Employee)
+                @foreach (CodeNameModel costs in ViewBag.Project)
                 {
-                    <option value="@emp.userCode">@emp.userName</option>
+                    <option value="@costs.Code">@costs.Name</option>
                 }
             </select>
-
         </div>
         <div class="form-group col-md-3" style="margin-top:-5px;  @Localizer["text-align: left;"]">
 
@@ -143,20 +144,6 @@
         </div>
     </div>
     <div class="row" style="margin-top:-5px ;">
-
-        <div class="form-group col-md-3" style="@Localizer["text-align: left;"]">
-
-            <label id="LblProject" for="project">@Localizer["Project"]</label>
-            <select id="cmbProject" class="form-control" name="cmbProject">
-                <option selected></option>
-
-                @foreach (CodeNameModel costs in ViewBag.Project)
-                {
-                    <option value="@costs.Code">@costs.Name</option>
-                }
-            </select>
-        </div>
-
         <div class="form-group col-md-3">
             <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["From order code"]</label>
             <input id="FromId" type="number" class="form-control" style="margin-left:2px" />
@@ -168,8 +155,31 @@
             <input id="ToId" type="number" class="form-control" style=" " />
 
         </div>
-        <div class="form-group col-md-3" id="div1">
-            @* BudgetLine*@
+
+        <div class="form-group col-md-3" style="margin-top:-5px ;  @Localizer["text-align: left;"]">
+            <label id="lblEmployee" for="Employee" style="@Localizer["text-align: left "]">@Localizer["Employee"]</label>
+            <select id="cmbEmp" class="form-control">
+                <option selected></option>
+
+                @foreach (UserClass emp in ViewBag.Employee)
+                {
+                    <option value="@emp.userCode">@emp.userName</option>
+                }
+            </select>
+
+        </div>
+
+        <div class="form-group col-md-3" style="margin-top:-5px ;  @Localizer["text-align: left;"]">
+            <label id="lblEmployee" for="WaitingEmployee" style="@Localizer["text-align: left "]">@Localizer["Waiting Employee"]</label>
+            <select id="cmbWaitEmp" name="WaitingEmployee" class="form-control">
+                <option selected></option>
+
+                @foreach (UserClass emp in ViewBag.Employee)
+                {
+                    <option value="@emp.userCode">@emp.userName</option>
+                }
+            </select>
+
         </div>
 
     </div>
@@ -231,6 +241,16 @@
 
 
         });
+    $('#cmbWaitEmp').editableSelect();
+    $('#cmbWaitEmp')
+        .editableSelect()
+        .on('select.editable-select', function (e, li) {
+
+            var txt = document.getElementById('cmbWaitEmp');
+            txt.text = li.val();
+
+
+        });
     $('#cmbSupplier').editableSelect();
     $('#cmbSupplier')
         .editableSelect()
@@ -246,7 +266,7 @@
     var url = '@Url.Action("GetAllOrdersBydate", "Home")';
 
     function get_page(pageNumber) {
-        debugger
+        //debugger
         // var x= $('#cmbProject').siblings('.es-list').find('li.selected').data('value')
         //  var y= $('#cmbProject').siblings('.es-list').find('li.selected').text()
         var y = $('#cmbProject').text()
@@ -282,7 +302,9 @@
 
         var Employee = document.getElementById('cmbEmp');
         var employeeCode = Employee.value; // this return emp Name
-
+        debugger
+        var waitEmployeeCode = document.getElementById('cmbWaitEmp').value; // this return emp Name
+        console.log(waitEmployeeCode)
 
         if ($('#cmbProject').text() != "") {
             OrderHeaderProjectCode = ProjectCode.value;
@@ -291,7 +313,7 @@
             OrderHeaderBudgetLineCode = BudgetLineCode.value;
         }
 
-        debugger
+        ssssssssssssssssssss
         var Supplier = document.getElementById('cmbSupplier');
         var SupplierCode = Supplier.value; // this return supp name
         var FromAmount = 0
@@ -314,6 +336,7 @@
             Department: dep.value,
             ShowStuckOrdersOnly: ShowStuckOrdersOnly.checked,
             Employee: employeeCode,
+            WaitingEmployee: waitEmployeeCode,
             Supplier: SupplierCode,
             ShowExecutedOnly: ShowExecutedOnly.checked,
             ShowUnderExecutedOnly: ShowUnderExecutedOnly.checked,
@@ -365,6 +388,9 @@
         var Employee = document.getElementById('cmbEmp');
         var employeeCode = Employee.value; // this return emp Name
 
+        
+        var waitEmployeeCode = document.getElementById('cmbWaitEmp').value; // this return emp Name
+        console.log(waitEmployeeCode)
 
         if ($('#cmbProject').text() != "" ) {
            OrderHeaderProjectCode  = ProjectCode.value;
@@ -396,6 +422,7 @@
             Department: dep.value,
             ShowStuckOrdersOnly: ShowStuckOrdersOnly.checked,
             Employee: employeeCode,
+            WaitingEmployee: waitEmployeeCode,
             Supplier: SupplierCode,
             ShowExecutedOnly: ShowExecutedOnly.checked,
             ShowUnderExecutedOnly: ShowUnderExecutedOnly.checked,

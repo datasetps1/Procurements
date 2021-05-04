@@ -82,7 +82,7 @@
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     @if (ViewBag.Show_Order_Type)
                     {
-                        <div class="form-group col-md-3">
+                        <div class="form-group col-md-4">
                             <label class="control-label">order type</label>
                             <br />
                             <select name="headerLst" class="form-control" id="orderType">
@@ -102,11 +102,30 @@
                         </div>
                     }
 
+                    <div class="form-group  @(ViewBag.Show_Order_Type ? "col-md-2" : "col-md-3")">
+                        <script>console.log(@Json.Serialize(viewModel.headerClass.ToEmployeeCode))</script>
+                        <label style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["To Employee"]</label>
+                        <select id="user_select_input" class="form-control" disabled>
+                            <option></option>
+                            @foreach (UserClass itm in ViewBag.users)
+                            {
+                                if (@viewModel.headerClass.ToEmployeeCode == itm.userCode)
+                                {
+                                    <option value="@itm.userCode" selected>@itm.userName</option>
+                                }
+                                else
+                                {
+                                    <option value="@itm.userCode">@itm.userName</option>
+                                }
+                            }
+                        </select>
+                    </div>
 
-                    <div class="form-group @(ViewBag.Show_Order_Type ? "col-md-3" : "col-md-4")">
+
+                    <div class="form-group @(ViewBag.Show_Order_Type ? "col-md-2" : "col-md-3")">
                         <label class="control-label">Department Name</label>
                         <br />
-                        <select name="headerLst" class="form-control" disabled>
+                        <select id="department_select_input" name="headerLst" class="form-control" disabled>
                             <option value="@viewModel.headerClass.OrderHeaderdepartmentCode"> @viewModel.departmentName </option>
 
                             @* asp-items="" *@
@@ -118,7 +137,7 @@
                         <span class="text-danger"></span>
                     </div>
 
-                    <div class="form-group @(ViewBag.Show_Order_Type ? "col-md-3" : "col-md-4")">
+                    <div class="form-group @(ViewBag.Show_Order_Type ? "col-md-2" : "col-md-3")">
                         <label class="control-label">currency</label>
                         <select name="headerLst" class="form-control" id="cmbCurrency">
                             <option value="@viewModel.headerClass.OrderHeaderCurrencey">@viewModel.headerClass.Currency</option>
@@ -132,7 +151,7 @@
                     </div>
 
 
-                    <div class="form-group @(ViewBag.Show_Order_Type ? "col-md-3" : "col-md-4")">
+                    <div class="form-group @(ViewBag.Show_Order_Type ? "col-md-2" : "col-md-3")">
                         <label class="control-label">order date</label>
                         <input class="form-control" id="date" disabled name="headerLst" value="@viewModel.headerClass.OrderHeaderdate.ToString("yyyy-MM-dd")" maxlength="10" type="date" id="datePicker" />
                         <span class="text-danger"></span>
@@ -447,8 +466,53 @@
 
                 @ViewBag.message
                 @section Scripts{
-                    <script>
+                                <script>
 
+
+                                    document.getElementById("user_select_input").addEventListener("change", () => {
+                                        console.log(document.getElementById("user_select_input").value);
+                                        var user_code = document.getElementById("user_select_input").value;
+                                        var dep_id = -1;
+                                        var users_array = @Json.Serialize(ViewBag.users)
+                                            console.log(users_array)
+                                        users_array.map(user => {
+                                            if (user.userCode == user_code) {
+                                                dep_id = user.userDepartmentCode
+                                            }
+                                        });
+
+                                        console.log(dep_id)
+                                        $.ajax({
+                                            url: '@Url.Action("GetDepartmentName")',
+                                            data: { dep_Code: dep_id },
+                                            success: (result) => {
+                                                console.log(result.code)
+                                                document.getElementById("department_select_input").value = result.code
+                                            }
+                                        })
+                                    });
+                                    //if there is to employee then fill the department input
+                                    var to_emp_code = @Json.Serialize(@viewModel.headerClass.ToEmployeeCode)
+                        if (to_emp_code != null) {
+                            var users_array = @Json.Serialize(ViewBag.users)
+                                console.log(users_array);
+                            var dep_id = -1;
+
+                            users_array.map(user => {
+                                if (user.userCode == to_emp_code) {
+                                    dep_id = user.userDepartmentCode
+                                }
+                            });
+
+                            $.ajax({
+                                url: '@Url.Action("GetDepartmentName")',
+                                data: { dep_Code: dep_id },
+                                success: (result) => {
+                                    console.log(result.code)
+                                    document.getElementById("department_select_input").value = result.code
+                                }
+                            });
+                        }
 
                         $('.btnDelete').on("click", function () {
 
@@ -518,7 +582,7 @@
                             }
 
                         });
-                    </script>
+                                </script>
                 }
 
             </div>
@@ -727,7 +791,10 @@
             if (CheckData(OrderHeaderProjectCode, "يجب ادخال المشروع") == false) { return; }
         }
         var OrderTypeCode = document.getElementById('orderType');
-        var OrderHeaderOrderTypeCode = OrderTypeCode.value;
+        if (@Json.Serialize(ViewBag.Show_Order_Type) == true) {
+            var OrderHeaderOrderTypeCode = OrderTypeCode.value;
+        }
+
         var BudgetLineCode = document.getElementById('cmbBudgetLine');
         // BudgetLineCode != 'undefined' ||
         if (BudgetLineCode != null) {
@@ -742,21 +809,28 @@
         var OrderHeaderCurrencey = currencey.value;
 
         if (CheckData(OrderHeaderCurrencey, "يجب ادخال العمله") == false) { return; }
-        if (CheckData(OrderHeaderOrderTypeCode, "يجب ادخال نوع الطلبيه ") == false) { return; }
+
+        if (@Json.Serialize(ViewBag.Show_Order_Type) == true) {
+            if (CheckData(OrderHeaderOrderTypeCode, "يجب ادخال نوع الطلبيه ") == false) { return; }
+        }
 
         var headerModel = {
 
             //  OrderHeaderdepartmentCode: OrderHeaderdepartmentCode,
             OrderHeaderProjectCode: OrderHeaderProjectCode,
             OrderHeaderdate: $('#date').val(),
-            OrderHeaderOrderTypeCode: OrderHeaderOrderTypeCode,
             OrderHeaderBudgetLineCode: OrderHeaderBudgetLineCode,
             OrderHeaderCurrencey: OrderHeaderCurrencey,
             OrderHeaderRate: $("#rateText").val(),
             OrderHeaderNote: $("#txtNote").val(),
             OrderHeaderRealTotal: $('#realTot').val(),
             ExpectedDate: $('#txtExpectedDate').val(),
+            ToEmployeeCode: document.getElementById("user_select_input").value,
         };
+
+        if (@Json.Serialize(ViewBag.Show_Order_Type) == true) {
+            headerModel.OrderHeaderOrderTypeCode = OrderHeaderOrderTypeCode;
+        }
 
         if (@Json.Serialize(ViewBag.Show_Doner2) == true) {
             headerModel.Doner = document.getElementById('Doner2_input').value;
@@ -786,6 +860,7 @@
             ShowMessage("يجب ادخال اصناف ")
             return;
         }
+        debugger
 
         $.ajax({
             type: "POST",
@@ -802,7 +877,7 @@
                     //console.log(length);
                     PostOrderStatus(id, status);
                     addPic(id);
-
+                    document.location = '/Home/Index';
                 }
 
                 //  document.location = '/Home/Index';
@@ -874,7 +949,11 @@ if (approvalIsApproved == 1) {
             dataType: "json",
             url: "/Home/CreateOrderStatus",
             data: {
-                ApprovalHeaderCode: approvalHeaderCode, ApprovalIsApproved: approvalIsApproved, Notes: Note
+                ApprovalHeaderCode: approvalHeaderCode,
+                ApprovalIsApproved: approvalIsApproved,
+                Notes: Note,
+
+                ToEmployeeCode: ""
 
             },
             success: function (response) {

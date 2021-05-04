@@ -45,7 +45,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="form-group col-md-6">
+            <div class="form-group col-md-4">
                 <label asp-for="ToDate" class=" col-form-label"></label>
                 <div>
                     <input asp-for="ToDate" class="form-control" placeholder="FromDate" type="date">
@@ -53,13 +53,29 @@
                 </div>
             </div>
 
-            <div class="form-group col-md-6" style="padding-top:14px;">
+            <div class="form-group col-md-4" style="padding-top:14px;">
 
                 <label class="control-label" asp-for="File"> File </label>
                 <div class="custom-file">
                     <input type="file" asp-for="File" class="form-control custom-file-input" id="ufile" />
                     <label class="custom-file-label"> Choose File ...</label>
                     <span asp-validation-for="File" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group col-md-4">
+                <label asp-for="Amount" class=" col-form-label"></label>
+                <div>
+                    <input asp-for="Amount" class="form-control" placeholder="Amount" type="number">
+                    <span asp-validation-for="Amount" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-12">
+                <label asp-for="Note" class=" col-form-label"></label>
+                <div>
+                    <textarea asp-for="Note" class="form-control" placeholder="Enter Note ..."></textarea>
+                    <span asp-validation-for="Note" class="text-danger"></span>
                 </div>
             </div>
         </div>
@@ -144,6 +160,12 @@
                 <th>
                     @Localizer["Days Number"]
                 </th>
+                <th>
+                    @Localizer["Amount"]
+                </th>
+                <th>
+                    @Localizer["Note"]
+                </th>
                 <th>   @Localizer["Action"]</th>
             </tr>
         </thead>
@@ -156,10 +178,10 @@
                         @Html.DisplayFor(modelItem => item.Name)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.FromDate)
+                        @item.FromDate.ToShortDateString()
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.ToDate)
+                        @item.ToDate.ToShortDateString()
                     </td>
                     @if (item.SupplierCode == null)
                     {
@@ -172,6 +194,9 @@
                         @*<td>
                                 some supplier
                             </td>*@
+                        @*<td>
+                        </td>*@
+
                         @foreach (CodeNameModel m in ViewBag.lstsuppliers)
                         {
                             @if (m.Code == item.SupplierCode)
@@ -185,6 +210,12 @@
                     }
                     <td>
                         @Html.DisplayFor(modelItem => item.DayesNumber)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Amount)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Note)
                     </td>
                     <td>
                         <a class="btn btn-primary btn-sm" asp-action="Download" asp-controller="Contracts"
@@ -234,5 +265,33 @@
             </form>
         </div>
     </div>*@
-
-
+@*<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="FilePath" class="control-label"></label>
+                <input asp-for="FilePath" class="form-control" />
+                <span asp-validation-for="FilePath" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FromDate" class="control-label"></label>
+                <input asp-for="FromDate" class="form-control" />
+                <span asp-validation-for="FromDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ToDate" class="control-label"></label>
+                <input asp-for="ToDate" class="form-control" />
+                <span asp-validation-for="ToDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>*@
