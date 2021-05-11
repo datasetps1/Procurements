@@ -1,44 +1,56 @@
 ﻿@model IEnumerable<IdentityRole>
 
-@{ 
+@{
     ViewBag.Title = "All Roles";
 }
+<style>
+    .check_box_item {
+        width: 24%;
+        margin-top: 12px;
+        background-color: #ebf7ff;
+        border-radius: 12px;
+        transition: 0.2s;
+    }
 
+
+    .label_style {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 0;
+        display: flex;
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+    }
+</style>
 <h1>All Roles</h1>
 
 @if (Model.Any())
 {
-<div class="row">
 
-    <div class="form-group col-sm-4">
-        <a class="btn btn-primary mb-3" style="width:auto" asp-action="CreateRole"
-           asp-controller="administration">Add new role</a>
+    <a class="btn" style="background-color:#19a3f4; color:#fff;" asp-action="CreateRole"
+       asp-controller="administration">Add new role</a>
+
+    <div style=" display: flex; flex-wrap: wrap;">
+        @foreach (var role in Model)
+        {
+            <div class="check_box_item" style="margin-right:1%;">
+                <div class="label_style" style="" for="@role.NormalizedName">
+                    <div>
+                        @role.Name
+                    </div>
+                    <div>
+                        <a asp-action="RemoveRole" asp-route-roleId="@role.Id"><i class="fas fa-trash" style="font-size: 20px; color: red; cursor: pointer;"></i></a>
+                        <a asp-action="EditRole" asp-route-id="@role.Id"><i class="fas fa-pen-fancy" style="font-size: 20px; color: #1474ab; cursor: pointer;"></i></a>
+                        <a asp-action="EditRole" asp-route-id="@role.Id"><i class="fas fa-user-plus" style="font-size: 20px; color: #19d6f4; cursor: pointer;"></i></a>
+                    </div>
+                </div>
+            </div>
+        }
     </div>
-    <div  class="form-group col-sm-4">
-        <a class="btn btn-primary mb-3" asp-controller="User" asp-action="EditUsersView" >Back to Permissions</a>
-    </div>
- </div>
-    foreach (var role in Model)
-    {
-    <div class="card mb-3">
-        <div class="card-header">
-            Role Id : @role.Id
-        </div>
-        <div class="card-body">
-            <h5 class="card-title" style="font-weight:bold">@role.Name</h5>
-        </div>
-        <div class="card-footer">
-            <a class="btn btn-primary" asp-action="EditRole"
-               asp-controller="Administration" asp-route-id="@role.Id">
-                Edit
-            </a>
-            <a href="#" class="btn btn-primary">Delete</a>
-        </div>
-    </div>
-    }
-    }
-    else
-    {
+}
+else
+{
     <div class="card">
         <div class="card-header">
             No roles created yet
@@ -53,4 +65,4 @@
             </a>
         </div>
     </div>
-    }
+}

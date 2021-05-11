@@ -79,7 +79,7 @@ namespace MVCWebAppServierCon.Controllers
                      (user.userTypeCode + "").Contains(query) ||
                      (user.userActive + "").Contains(query) ||
                      (user.userDepartmentCode + "").Contains(query) ||
-                    (user.userNote != null && user.userNote.ToUpper().Contains(query)) 
+                    (user.userNote != null && user.userNote.ToUpper().Contains(query))
                     )
                 {
                     users_result.Add(user);
@@ -353,9 +353,9 @@ namespace MVCWebAppServierCon.Controllers
 
             VUserRoles uvc = new VUserRoles();
 
-
+            //user roles names
             ViewBag.Name = EditUsersViewLst(id);
-
+            ViewBag.Roles = roleManager.Roles;
 
             // var res2 = AspNetRoleManager<AspNetUserManager>.Where(u => u.UserId == id).FirstOrDefault();
             // ViewBag.UserRole = res2;
@@ -364,6 +364,19 @@ namespace MVCWebAppServierCon.Controllers
 
         }
 
+        [HttpPost]
+        public async Task<IActionResult> change_roles(string[] roles, string user_id)
+        {
+            //delete the previous 
+            var user = await userManager.FindByIdAsync(user_id);
+            var old_roles = await userManager.GetRolesAsync(user);
+            await userManager.RemoveFromRolesAsync(user, old_roles);
+
+            await userManager.AddToRolesAsync(user, roles);
+
+            //add the new roles
+            return RedirectToAction("create");
+        }
 
         //public ActionResult getUserRoles(string UserId)
         //{
