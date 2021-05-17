@@ -1,0 +1,85 @@
+﻿@model IEnumerable<MVCWebAppServierCon.Controllers.ApprovalViewModel>
+
+
+<div style="display: flex; justify-content: center;    margin-top: 100px;  margin-bottom: 25px;">
+    <form asp-action="DisplayApprovals" method="get">
+            <label class="control-label">Order Code</label>
+        <div class="form-group" style=" width: 400px;display: flex; align-items: center;">
+            <input name="orderCode"  type="number" class="search form-control" placeholder="What you looking for?">
+            <button style=" padding: 12px; color: #fff; background-color: #19a3f4; border-radius: 0 3px 3px 0; cursor: pointer;outline: auto;"  id="search_btn_01">
+                <i class="fas fa-search"></i>
+            </button>
+
+        </div>
+    </form>
+
+</div>
+
+<div class="text-danger" style="margin-top: 12px;">
+
+    <table class="table table-striped responsive-table text-center table-hover table-bordered">
+        <thead style="background-color: #00a6ff;color:white ;font-size:smaller ;">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.ApprovalHeaderCode)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ApprovalIsApproved)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ApprovalStatus)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ApprovalNote)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ApprovalUserName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ApprovalCreationDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ApprovalDeviceIp)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ToUserName)
+                </th>
+                <th>Operations</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ApprovalHeaderCode)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ApprovalIsApproved)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ApprovalStatus)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ApprovalNote)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ApprovalUserName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ApprovalCreationDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ApprovalDeviceIp)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ToUserName)
+                    </td>
+                    <td>
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

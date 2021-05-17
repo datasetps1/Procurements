@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using MVCWebAppServierCon.Models;
 using MVCWebAppServierCon.ViewModels;
+using MVCWebAppServierCon.Controllers;
 
 namespace MVCWebAppServierCon.Models
 {
@@ -111,6 +112,8 @@ namespace MVCWebAppServierCon.Models
 
             base.OnModelCreating(builder);
         }
+
+        public DbSet<MVCWebAppServierCon.Controllers.ApprovalViewModel> ApprovalViewModel { get; set; }
 
     }
 }

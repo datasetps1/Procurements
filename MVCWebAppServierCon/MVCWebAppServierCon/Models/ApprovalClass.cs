@@ -21,6 +21,7 @@ namespace MVCWebAppServierCon.Models
 
         [Required]
         public String ApprovalUserId { get; set; }  // we will use it as from User
+
         [Required]
         public DateTime ApprovalCreationDate { get; set; }
         [Required]
