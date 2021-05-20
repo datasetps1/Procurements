@@ -82,7 +82,7 @@
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     @if (ViewBag.Show_Order_Type)
                     {
-                        <div class="form-group col-md-4">
+                        <div class="form-group col-md-3" style="padding:0 5px;">
                             <label class="control-label">order type</label>
                             <br />
                             <select name="headerLst" class="form-control" id="orderType">
@@ -102,8 +102,7 @@
                         </div>
                     }
 
-                    <div class="form-group  @(ViewBag.Show_Order_Type ? "col-md-2" : "col-md-3")">
-                        <script>console.log(@Json.Serialize(viewModel.headerClass.ToEmployeeCode))</script>
+                    <div class="form-group  @(ViewBag.Show_Order_Type ? "col-md-3" : "col-md-3")" style="padding:0 5px;">
                         <label style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["To Employee"]</label>
                         <select id="user_select_input" class="form-control" disabled>
                             <option></option>
@@ -122,7 +121,7 @@
                     </div>
 
 
-                    <div class="form-group @(ViewBag.Show_Order_Type ? "col-md-2" : "col-md-3")">
+                    <div class="form-group @(ViewBag.Show_Order_Type ? "col-md-2" : "col-md-3")" style="padding:0 5px;">
                         <label class="control-label">Department Name</label>
                         <br />
                         <select id="department_select_input" name="headerLst" class="form-control" disabled>
@@ -137,7 +136,7 @@
                         <span class="text-danger"></span>
                     </div>
 
-                    <div class="form-group @(ViewBag.Show_Order_Type ? "col-md-2" : "col-md-3")">
+                    <div class="form-group @(ViewBag.Show_Order_Type ? "col-md-1" : "col-md-2")" style="padding:0 5px;">
                         <label class="control-label">currency</label>
                         <select name="headerLst" class="form-control" id="cmbCurrency">
                             <option value="@viewModel.headerClass.OrderHeaderCurrencey">@viewModel.headerClass.Currency</option>
@@ -150,13 +149,18 @@
                         <span class="text-danger"></span>
                     </div>
 
+                    <div class="form-group col-md-1" style="padding:0 5px;">
+                        <label class="control-label">Rate</label>
+                        <input type="number" step="any" class="form-control" name="headerLst" value="@viewModel.headerClass.OrderHeaderRate" id="rateText" />
+                        <span class="text-danger"></span>
+                    </div>
 
-                    <div class="form-group @(ViewBag.Show_Order_Type ? "col-md-2" : "col-md-3")">
+
+                    <div class="form-group @(ViewBag.Show_Order_Type ? "col-md-2" : "col-md-3")" style="padding:0 5px;">
                         <label class="control-label">order date</label>
                         <input class="form-control" id="date" disabled name="headerLst" value="@viewModel.headerClass.OrderHeaderdate.ToString("yyyy-MM-dd")" maxlength="10" type="date" id="datePicker" />
                         <span class="text-danger"></span>
                     </div>
-
 
                 </div>
                 <div class="row">
@@ -197,17 +201,23 @@
                             <label id="TxtTotalBudget" for="" style="@Localizer["text-align: left  ;direction: ltr"]">@ViewBag.Budget</label>
                         </div>
                     </div>
-
-                    <div class="form-group col-md-3">
-                        <label class="control-label">Rate</label>
-                        <input type="number" step="any" class="form-control" name="headerLst" value="@viewModel.headerClass.OrderHeaderRate" id="rateText" />
-                        <span class="text-danger"></span>
-                    </div>
                     <div class="form-group col-md-3">
                         <label class="control-label">Expected Date</label>
                         <input class="form-control" id="txtExpectedDate" name="headerLst" value="@viewModel.headerClass.ExpectedDate?.ToString("yyyy-MM-dd")" maxlength="10" type="date" id="datePicker" />
                         <span class="text-danger"></span>
                     </div>
+
+                    @if (ViewBag.Show_ToDate)
+                    {
+                        <div class="form-group col-md-3">
+
+                            <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["To Date"]</label>
+                            <input id="txtToDate" type="date" class="form-control" name="headerLst" value="@viewModel.headerClass.ToDate?.ToString("yyyy-MM-dd")" />
+
+                            <span class="text-danger"></span>
+                        </div>
+                    }
+
                 </div>
 
                 <div class="row">
@@ -343,12 +353,8 @@
                                         @*<td style="display:none;">
                                                 @item.TransactionCode
                                             </td>*@
-                                        <td style="display:none;">
-                                            @item.TransactionItemCode
-                                        </td>
-                                        <td class="col-md-2">
-                                            @item.ItemName
-                                        </td>
+                                        <td style="display:none;">@item.TransactionItemCode</td>
+                                        <td class="col-md-2">@item.ItemName</td>
 
                                         @*var items = @Json.Serialize(ViewBag.ItemName);*@
                                         @*var units = @Json.Serialize(ViewBag.Units);*@
@@ -375,40 +381,31 @@
                                                 }
                                             }
                                         }
-                                        <td class="col-md-1">
-                                            @item.TransactionQty
-                                        </td>
-                                        <td class="col-md-1">
-                                            @item.TransactionPrice
-                                        </td>
-                                        <td class="col-md-1">
-                                            @{var x = @item.TransactionPrice * item.TransactionQty; } @x
-                                        </td>
-                                        <td class="col-md-3">
-                                            @item.TransactionNote
-                                        </td>
+                                        <td class="col-md-1">@item.TransactionQty</td>
+                                        <td class="col-md-1">@item.TransactionPrice</td>
+                                        <td class="col-md-1">@{var x = @item.TransactionPrice * item.TransactionQty; } @x</td>
+                                        <td class="col-md-3">@item.TransactionNote</td>
                                         <td class="col-md-2">
                                             @{ if (@item.TransactionDate.ToString("yyyy-MM-dd") != "0001-01-01")
                                                 {
                                                     @item.TransactionDate.ToString("yyyy-MM-dd")
                                                 }
-                                            }
-
-                                        </td>
-                                        <td class="@(ViewBag.Show_Unit ? "col-md-1":"col-md-2")">
-                                            <a class="Editbtn" href="#">
-                                                <span class="Editbtn fa fa-pen"></span>
-                                            </a>
-                                            <a href="#" onclick="Remove(this ,  @x )">
-                                                <span class=" fa fa-trash"></span>
-                                            </a>
-
+                                        }
+                                    </td>
+                                    <td class="@(ViewBag.Show_Unit ? "col-md-1":"col-md-2")">
+                                        <a class="Editbtn" href="#" onclick="handle_edit_trans(@item.TransactionItemCode,'@item.ItemName' ,@item.TransactionQty , @item.TransactionPrice, @x, '@item.TransactionNote','@item.TransactionDate.ToString("yyyy-MM-dd")')">
+                                            <span class="Editbtn fa fa-pen"></span>
+                                        </a>
+                                        <a href="#" onclick="Remove(this ,  @x )">
+                                            <span class=" fa fa-trash"></span>
+                                        </a>
 
 
-                                        </td>
 
-                                    </tr>
-                                }
+                                    </td>
+
+                                </tr>
+                            }
 
                             </tbody>
                         </table>
@@ -466,31 +463,31 @@
 
                 @ViewBag.message
                 @section Scripts{
-                                <script>
+                    <script>
 
 
-                                    document.getElementById("user_select_input").addEventListener("change", () => {
-                                        console.log(document.getElementById("user_select_input").value);
-                                        var user_code = document.getElementById("user_select_input").value;
-                                        var dep_id = -1;
-                                        var users_array = @Json.Serialize(ViewBag.users)
-                                            console.log(users_array)
-                                        users_array.map(user => {
-                                            if (user.userCode == user_code) {
-                                                dep_id = user.userDepartmentCode
-                                            }
-                                        });
+                        document.getElementById("user_select_input").addEventListener("change", () => {
+                            console.log(document.getElementById("user_select_input").value);
+                            var user_code = document.getElementById("user_select_input").value;
+                            var dep_id = -1;
+                            var users_array = @Json.Serialize(ViewBag.users)
+                                console.log(users_array)
+                            users_array.map(user => {
+                                if (user.userCode == user_code) {
+                                    dep_id = user.userDepartmentCode
+                                }
+                            });
 
-                                        console.log(dep_id)
-                                        $.ajax({
-                                            url: '@Url.Action("GetDepartmentName")',
-                                            data: { dep_Code: dep_id },
-                                            success: (result) => {
-                                                console.log(result.code)
-                                                document.getElementById("department_select_input").value = result.code
-                                            }
-                                        })
-                                    });
+                            console.log(dep_id)
+                            $.ajax({
+                                url: '@Url.Action("GetDepartmentName")',
+                                data: { dep_Code: dep_id },
+                                success: (result) => {
+                                    console.log(result.code)
+                                    document.getElementById("department_select_input").value = result.code
+                                }
+                            })
+                        });
                                     //if there is to employee then fill the department input
                                     var to_emp_code = @Json.Serialize(@viewModel.headerClass.ToEmployeeCode)
                         if (to_emp_code != null) {
@@ -531,47 +528,90 @@
 
 
                         $('.Editbtn').on('click', function () {
-                            var total;
-                            debugger
-                            var $row = $(this).closest('tr');
-                            var $columns = $row.find('td');
-                            $.each($columns, function (i, item) {
+                            //var total;
+                            //debugger
+                            //var $row = $(this).closest('tr');
+                            //var $columns = $row.find('td');
+                            //$.each($columns, function (i, item) {
+                            //    debugger
+                            //    if (i == 0) {
 
-                                if (i == 0) {
+                            //        $('#itemName').val(parseInt(item.innerHTML));
 
-                                    $('#itemName').val(parseInt(item.innerHTML));
+                            //    }
+                            //    if (i == 2) {
+                            //        $("#qty").val(parseFloat(item.innerHTML));
+                            //    }
+                            //    if (i == 3) {
+                            //        $("#price").val(parseFloat(item.innerHTML));
+                            //        //alert(item.innerHTML)
+                            //    }
+                            //    if (i == 4) {
+                            //        total = item.innerHTML
 
-                                }
-                                if (i == 2) {
-                                    $("#qty").val(parseFloat(item.innerHTML));
-                                }
-                                if (i == 3) {
-                                    $("#price").val(parseFloat(item.innerHTML));
-                                    //alert(item.innerHTML)
-                                }
-                                if (i == 4) {
-                                    total = item.innerHTML
+                            //    }
 
-                                }
+                            //    if (i == 5) {
+                            //        $("#note").val(item.innerHTML);
 
-                                if (i == 5) {
-                                    $("#note").val(item.innerHTML);
+                            //    }
+                            //    if (i == 6) {
+                            //        //
+                            //        var msec = Date.parse(item.innerHTML.replace(/\s+/g, '').concat("T12:00:00-06:30"));
 
-                                }
-                                if (i == 6) {
-                                    //
-                                    var msec = Date.parse(item.innerHTML.replace(/\s+/g, '').concat("T12:00:00-06:30"));
+                            //        var d = new Date(msec);
 
-                                    var d = new Date(msec);
-
-                                    document.getElementById("TransDate").value = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
-
-
-                                }
+                            //        document.getElementById("TransDate").value = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
 
 
-                            });
+                            //    }
+
+
+                            //});
                             $(this).parent().parent().remove();
+
+                        });
+
+                        function handle_edit_trans(TransactionItemCode, item_name, quntity, price, total, item_note, date) {
+                            debugger
+                            $('#itemName').val(item_name);
+                            //fill the unit if it is exist
+                            if (@Json.Serialize(ViewBag.Show_Unit) == true) {
+                                var items = @Json.Serialize(ViewBag.ItemName);
+                                var units = @Json.Serialize(ViewBag.Units);
+
+                                for (var i = 0; i < items.length; i++) {
+                                    if (items[i].itemCode == TransactionItemCode) {
+                                        var unit_id = items[i].unit_Id;
+                                        var unit_name = "";
+
+                                        for (var i = 0; i < units.length; i++) {
+                                            if (units[i].id == unit_id) {
+                                                unit_name = units[i].name;
+                                                break;
+                                            }
+                                        }
+                                        document.getElementById("Unit_input").value = unit_name;
+                                        break;
+                                    }
+                                }
+                            }
+                            $("#qty").val(quntity);
+                            $("#price").val(price);
+                            var total = parseFloat(total);
+                            $("#note").val(item_note);
+
+                            var msec = Date.parse(date.replace(/\s+/g, '').concat("T12:00:00-06:30"));
+
+                            var d = new Date(msec);
+
+                            document.getElementById("TransDate").value = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+
+                            console.log({
+                                TransactionItemCode, item_name, quntity, price, item_note, date
+                            })
+
+
                             var realTotal = parseFloat(document.getElementById("realTot").value) - (total);
                             if (parseFloat(realTotal) < 0) {
                                 document.getElementById("realTot").value = 0;
@@ -580,9 +620,8 @@
                                 document.getElementById("realTot").value = realTotal;
                                 document.getElementById("realBasicTot").value = realTotal * parseFloat(document.getElementById("rateText").value);
                             }
-
-                        });
-                                </script>
+                        }
+                    </script>
                 }
 
             </div>
@@ -832,6 +871,10 @@
             headerModel.OrderHeaderOrderTypeCode = OrderHeaderOrderTypeCode;
         }
 
+        if (@Json.Serialize(ViewBag.Show_ToDate) == true) {
+            headerModel.ToDate = $('#txtToDate').val();
+        }
+
         if (@Json.Serialize(ViewBag.Show_Doner2) == true) {
             headerModel.Doner = document.getElementById('Doner2_input').value;
         }
@@ -842,20 +885,32 @@
             headerModel.Cost4 = document.getElementById('cost4_input').value;
         }
 
-
+        debugger
         var TableData = new Array();
 
+        if (@Json.Serialize(ViewBag.Show_Unit)) {
+            $('#myTable tr').each(function (row, tr) {
+                TableData[row] = {
 
-        $('#myTable tr').each(function (row, tr) {
-            TableData[row] = {
-                "TransactionItemCode": $(tr).find('td:eq(0)').text()
-                , "TransactionQty": $(tr).find('td:eq(2)').text()
-                , "TransactionPrice": $(tr).find('td:eq(3)').text()
-                , "TransactionNote": $(tr).find('td:eq(5)').text()
-                , "TransactionDate": $(tr).find('td:eq(6)').text()
-                //, "TransactionCreationDate": new Date();
-            }
-        });
+                    "TransactionItemName": $(tr).find('td:eq(1)').text()
+                    , "TransactionQty": $(tr).find('td:eq(3)').text()
+                    , "TransactionPrice": $(tr).find('td:eq(4)').text()
+                    , "TransactionNote": $(tr).find('td:eq(6)').text()
+                    , "TransactionDate": $(tr).find('td:eq(7)').text()
+                }
+            });
+        } else {
+            $('#myTable tr').each(function (row, tr) {
+                TableData[row] = {
+                    "TransactionItemName": $(tr).find('td:eq(1)').text()
+                    , "TransactionQty": $(tr).find('td:eq(2)').text()
+                    , "TransactionPrice": $(tr).find('td:eq(3)').text()
+                    , "TransactionNote": $(tr).find('td:eq(5)').text()
+                    , "TransactionDate": $(tr).find('td:eq(6)').text()
+                }
+            });
+        }
+
         if (TableData.length == 0) {
             ShowMessage("يجب ادخال اصناف ")
             return;
@@ -1076,11 +1131,15 @@ for (var i = 0; i < rows; i++) {
         if (CheckData(document.getElementById('price').value, "يجب ادخال السعر") == false) { return; }
 
         document.getElementById("itemRowTbl").style.visibility = "visible";
-        var itemcode = document.getElementById('itemName').value;
+        debugger
+
+        var itemcode = document.getElementById('itemName').text;
+
         if (@Json.Serialize(ViewBag.Show_Unit) == true) {
             var UnitName = document.getElementById('Unit_input').value;
         }
-        var itemName = $("#itemName option:selected").text();
+
+        var itemName = document.getElementById('itemName').value;
         var qty = document.getElementById('qty').value;
         var price = document.getElementById('price').value;
         var note = document.getElementById('note').value;
@@ -1088,6 +1147,7 @@ for (var i = 0; i < rows; i++) {
 
         var table = document.getElementById("myTable");
         var row = table.insertRow(0);
+        debugger
         if (@Json.Serialize(ViewBag.Show_Unit) == true) {
             var cell0 = row.insertCell(0); cell0.style.display = 'none';
             var cell1 = row.insertCell(1); cell1.className = "col-md-2";

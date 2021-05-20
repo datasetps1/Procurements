@@ -17,7 +17,6 @@
 <script src="~/lib/jquery/selectbox/dist/jquery-editable-select.js"></script>
 <link href="~/lib/jquery/selectbox/dist/jquery-editable-select.css" rel="stylesheet" />
 
-
 @*<script src="//code.jquery.com/jquery-1.12.4.min.js"></script>
     <script src="//rawgithub.com/indrimuska/jquery-editable-select/master/dist/jquery-editable-select.min.js"></script>
     <link href="//rawgithub.com/indrimuska/jquery-editable-select/master/dist/jquery-editable-select.min.css" rel="stylesheet">*@
@@ -68,7 +67,7 @@
 
                     @if (ViewBag.Show_Order_Type)
                     {
-                        <div class="form-group col-md-4">
+                        <div class="form-group col-md-3">
                             <br />
                             <label for="inputState" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Order Type"]</label>
                             <select id="inputState3" class="form-control" name="headerLst">
@@ -85,7 +84,7 @@
                         </div>
                     }
 
-                    <div class="form-group  @(ViewBag.Show_Order_Type ? "col-md-2" : "col-md-3")">
+                    <div class="form-group  @(ViewBag.Show_Order_Type ? "col-md-3" : "col-md-3")">
 
                         <br />
                         <label style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["To Employee"]</label>
@@ -120,15 +119,15 @@
                             <span class="text-danger"></span>
                         </div>*@
 
-                    <div class="form-group @(ViewBag.Show_Order_Type ? "col-md-3" : "col-md-3")">
+                    <div class="form-group @(ViewBag.Show_Order_Type ? "col-md-2" : "col-md-3")">
                         <br />
                         <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Department Name"]</label>
-                        <input id="department_code_input" value="@ViewBag.UserDepartmentCode" style="display:none;"/>
+                        <input id="department_code_input" value="@ViewBag.UserDepartmentCode" style="display:none;" />
                         <input value="@ViewBag.UserDepartmentName" type="text" class="form-control" id="txtdep" disabled />
                         <span class="text-danger"></span>
                     </div>
 
-                    <div class="form-group @(ViewBag.Show_Order_Type ? "col-md-1" : "col-md-3")">
+                    <div class="form-group @(ViewBag.Show_Order_Type ? "col-md-1" : "col-md-2")">
                         <br />
                         <label for="inputState" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Currency"]</label>
                         <select id="cmbCurrency" class="form-control" name="headerLst">
@@ -139,6 +138,13 @@
                             }
                         </select>
 
+                        <span class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-1">
+                        <br />
+                        <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Rate"]</label>
+                        @* value="@ViewBag.Rate" *@
+                        <input type="number" step="any" class="form-control" name="headerLst" id="rateText" />
                         <span class="text-danger"></span>
                     </div>
                     <div class="form-group @(ViewBag.Show_Order_Type ? "col-md-2" : "col-md-3")">
@@ -175,7 +181,7 @@
                         </select>
                         <span class="text-danger"></span>
                     </div>
-                    <div class="form-group col-md-4" id="div1">
+                    <div class="form-group col-md-3" id="div1">
                         @*<label id="inputState4Lbl" for="inputState" style="@Localizer["text-align: left  ;direction: ltr;visibility:hidden"]">@Localizer["Budget Line"]</label>
                             <select id="inputState4" class="form-control" name="headerLst" style="visibility:hidden">
                                 <option selected></option>
@@ -189,19 +195,23 @@
                             </select>*@
                     </div>
                     <div class="form-group col-md-3">
-                        <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Rate"]</label>
-                        @* value="@ViewBag.Rate" *@
-                        <input type="number" step="any" class="form-control" name="headerLst" id="rateText" />
-                        <span class="text-danger"></span>
-                    </div>
-                    <div class="form-group col-md-2" style="margin-left: -12px;">
 
                         <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Expected Date"]</label>
                         @*<input id="txtExpectedDate" type="date" class="form-control" value="@ViewBag.OrderDate.ToString("yyyy-MM-dd")" name="headerLst" style="width:162px ;" />*@
-                        <input id="txtExpectedDate" type="date" class="form-control" value="" name="headerLst" style="width:162px ;" />
+                        <input id="txtExpectedDate" type="date" class="form-control" value="" name="headerLst" />
 
                         <span class="text-danger"></span>
                     </div>
+                    @if (ViewBag.Show_ToDate)
+                    {
+                        <div class="form-group col-md-3">
+
+                            <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["To Date"]</label>
+                            <input id="txtToDate" type="date" class="form-control" value="" name="headerLst" />
+
+                            <span class="text-danger"></span>
+                        </div>
+                    }
                 </div>
 
                 <div class="row">
@@ -280,7 +290,7 @@
                         }
 
 
-                        <div class="form-group @(ViewBag.Show_Unit ? "col-md-1":"col-md-2")">
+                        <div class="form-group @(ViewBag.Show_Unit ? "col-md-1" : "col-md-2")">
                             <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Quantity"]</label>
                             <input type="number" step="any" class="form-control" name="transLst" id="qty" />
                             <span class="text-danger"></span>
@@ -326,7 +336,7 @@
                                     <th class="col-md-1" style="color:#fff;">@Localizer["Total"]</th>
                                     <th class="col-md-3" style="color:#fff;">@Localizer["Item Note"]</th>
                                     <th class="col-md-2" style="color:#fff;">@Localizer["Date"]</th>
-                                    <th class="@(ViewBag.Show_Unit ? "col-md-1":"col-md-2")" style="color:#fff;">@Localizer["Remove"]</th>
+                                    <th class="@(ViewBag.Show_Unit ? "col-md-1" : "col-md-2")" style="color:#fff;">@Localizer["Remove"]</th>
                                 </tr>
                             </thead>
                             @* this body used to display the item for the user when add an item *@
@@ -688,6 +698,12 @@
         if (@Json.Serialize(ViewBag.Show_Order_Type) == true) {
             headerModel.OrderHeaderOrderTypeCode = OrderHeaderOrderTypeCode;
         }
+
+        if (@Json.Serialize(ViewBag.Show_ToDate) == true) {
+            headerModel.ToDate = $('#txtToDate').val();
+        }
+
+
         if (@Json.Serialize(ViewBag.Show_Doner2) == true) {
             headerModel.Doner = document.getElementById('Doner2_input').value;
         }
@@ -701,31 +717,50 @@
         debugger
         var TableData = new Array();
 
+        if (@Json.Serialize(ViewBag.Show_Unit)) {
+            $('#myTable tr').each(function (row, tr) {
+                TableData[row] = {
+                    "TransactionItemName": $(tr).find('td:eq(1)').text()
+                    , "TransactionQty": $(tr).find('td:eq(3)').text()
+                    , "TransactionPrice": $(tr).find('td:eq(4)').text()
+                    , "TransactionNote": $(tr).find('td:eq(6)').text()
+                    , "TransactionDate": $(tr).find('td:eq(7)').text()
+                }
+            });
+        } else {
+            $('#myTable tr').each(function (row, tr) {
+                TableData[row] = {
+                    "TransactionItemName": $(tr).find('td:eq(1)').text()
+                    , "TransactionQty": $(tr).find('td:eq(2)').text()
+                    , "TransactionPrice": $(tr).find('td:eq(3)').text()
+                    , "TransactionNote": $(tr).find('td:eq(5)').text()
+                    , "TransactionDate": $(tr).find('td:eq(6)').text()
+                }
+            });
+        }
 
-        $('#myTable tr').each(function (row, tr) {
-            TableData[row] = {
-                "TransactionItemName": $(tr).find('td:eq(1)').text()
-                , "TransactionQty": $(tr).find('td:eq(2)').text()
-                , "TransactionPrice": $(tr).find('td:eq(3)').text()
-                , "TransactionNote": $(tr).find('td:eq(5)').text()
-                , "TransactionDate": $(tr).find('td:eq(6)').text()
-
-            }
-        });
         if (TableData.length == 0) {
             ShowMessage("يجب ادخال اصناف ")
             return;
         }
+
+        var data = {
+            headerLst: headerModel,
+            TransLst: TableData,
+            ExpectedDate: $('#txtExpectedDate').val(),
+            OrderHeaderdate: $('#date').val(),
+        }
+
+        if (@Json.Serialize(ViewBag.Show_ToDate) == true) {
+            data.ToDate = $('#txtToDate').val();
+        }
+
+        debugger
         $.ajax({
             type: "POST",
             dataType: "json",
             url: "../OrderView/PostOrder",
-            data: {
-                headerLst: headerModel,
-                TransLst: TableData,
-                ExpectedDate: $('#txtExpectedDate').val(),
-                OrderHeaderdate: $('#date').val(),
-            },
+            data: data,
             success: function (response) {
                 console.log("handle response :" + response.data);
                 if (response.data > 0) {
@@ -733,9 +768,6 @@
                     addPic(response.data);
                      document.location = '/Home/Index';
                 }
-
-
-
             },
             error: function (response) {
                 Swal.fire({
@@ -993,6 +1025,7 @@
 
         var itemcode = document.getElementById('itemName').text;
         var itemName = document.getElementById('itemName').value;
+        debugger
         if (@Json.Serialize(ViewBag.Show_Unit) == true) {
             var UnitName = document.getElementById('Unit_input').value;
         }

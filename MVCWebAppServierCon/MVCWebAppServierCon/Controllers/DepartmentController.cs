@@ -18,7 +18,7 @@ namespace MVCWebAppServierCon.Controllers
 
         private readonly IConfiguration configuration;
 
- 
+
         public DepartmentController(SecondConnClass sc, IConfiguration config)
         {
             _sc = sc;
@@ -57,7 +57,7 @@ namespace MVCWebAppServierCon.Controllers
             if (users.Count < 1)
             {
                 TempData["ErrorMessage"] = "error";
-                return RedirectToAction("create","User");
+                return RedirectToAction("create", "User");
             }
             var stru = _sc.TblStructure.ToList();
             if (stru.Count < 1)
@@ -68,6 +68,35 @@ namespace MVCWebAppServierCon.Controllers
             ViewBag.Department = _sc.TblDepartment.ToList();
             ViewBag.Users = users;
             ViewBag.DepartmentUser = departmentuser;
+
+            var structur = _sc.TblStructure.ToList();
+            HttpRequest Request = HttpContext.Request;
+            var requestLangauge = Request.HttpContext.Features.Get<Microsoft.AspNetCore.Localization.IRequestCultureFeature>().RequestCulture.Culture.Name;
+
+            structur.ForEach(current =>
+            {
+                var display_name = requestLangauge == "en-US" ? current.structureName2 : current.structureName;
+                if (current.structureRank == 1)
+                {
+                    ViewBag.Procurement_Section = display_name;
+                }
+                else if (current.structureRank == 2)
+                {
+                    ViewBag.General_Manager = display_name;
+                }
+                else if (current.structureRank == 3)
+                {
+                    ViewBag.Financial_department = display_name;
+                }
+                else if (current.structureRank == 4)
+                {
+                    ViewBag.Manager = display_name;
+                }
+                else if (current.structureRank == 5)
+                {
+                    ViewBag.head = display_name;
+                }
+            });
 
             //ViewBag.ProjectName = projLoad();
             return View();

@@ -75,6 +75,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Display_Name_Activityt)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Show_ToDate)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -143,6 +146,9 @@
             </th>
             <th>
                 @Html.DisplayFor(model => item.Display_Name_Activityt)
+            </th>
+            <th>
+                @Html.DisplayFor(model => item.Show_ToDate)
             </th>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.code">Edit</a>

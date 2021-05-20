@@ -78,5 +78,8 @@ namespace MVCWebAppServierCon.Models
         [Display(Name = "Table Name cost4")]
         public string Table_Name_cost4 { get; set; }
 
+        [Display(Name = "Show ToDate")]
+        public bool Show_ToDate { get; set; }
+
     }
 }

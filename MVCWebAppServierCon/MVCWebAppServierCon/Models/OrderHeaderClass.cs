@@ -67,9 +67,13 @@ namespace MVCWebAppServierCon.Models
         public string LastUserName { get; set; }
         [NotMapped]
         public string waitingUser { get; set; }
-        
+
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime? ExpectedDate { get; set; }
+
+
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
+        public DateTime? ToDate { get; set; }
 
         [NotMapped]
         [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = true)]

@@ -9,7 +9,7 @@
 <h4>GeneralPreferenceClass</h4>
 <hr />
 <div class="row">
-    <div class="col-md-9">
+    <div class="col-md-12">
         <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="code" />
@@ -60,7 +60,7 @@
 
                     <span asp-validation-for="Show_Doner2" class="text-danger"></span>
                 </div>
-                <div class="form-group col-sm-2">
+                <div class="form-group col-sm-1">
                     <label asp-for="Show_cost3"></label><br>
 
                     <input id="trueShow_cost3" type="radio" asp-for="Show_cost3" value="true">
@@ -71,7 +71,7 @@
 
                     <span asp-validation-for="Show_cost3" class="text-danger"></span>
                 </div>
-                <div class="form-group col-sm-2">
+                <div class="form-group col-sm-1">
                     <label asp-for="Show_cost4"></label><br>
 
                     <input id="trueShow_cost4" type="radio" asp-for="Show_cost4" value="true">
@@ -81,6 +81,18 @@
                     <label for="falseShow_cost4">false</label><br>
 
                     <span asp-validation-for="Show_cost4" class="text-danger"></span>
+                </div>
+
+                <div class="form-group col-sm-2">
+                    <label asp-for="Show_Order_Type"></label><br>
+
+                    <input id="trueShow_Order_Type" type="radio" asp-for="Show_Order_Type" value="true">
+                    <label for="trueShow_Order_Type">true</label><br>
+
+                    <input id="falseShow_Order_Type" type="radio" asp-for="Show_Order_Type" value="false">
+                    <label for="falseShow_Order_Type">false</label><br>
+
+                    <span asp-validation-for="Show_Order_Type" class="text-danger"></span>
                 </div>
 
                 <div class="form-group col-sm-2">

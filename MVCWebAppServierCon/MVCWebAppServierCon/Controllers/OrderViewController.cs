@@ -365,6 +365,7 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
             ViewBag.Show_Doner2 = general_prefernce.Show_Doner2;
             ViewBag.Show_cost3 = general_prefernce.Show_cost3;
             ViewBag.Show_cost4 = general_prefernce.Show_cost4;
+            ViewBag.Show_ToDate = general_prefernce.Show_ToDate;
             ViewBag.Display_Name_Project = general_prefernce.Display_Name_Project;
 
             if (ViewBag.Show_Doner2)
@@ -410,8 +411,12 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
             ViewBag.OrderType = _sc.TblOrderType.ToList();
             ViewBag.ItemName = _sc.TblItem.ToList();
             var user_dep = _sc.TblDepartment.Where(x => x.departmentCode == user.userDepartmentCode).Select(u => new { name = u.departmentName, code = u.departmentCode }).FirstOrDefault();
-            ViewBag.UserDepartmentName = user_dep.name;
-            ViewBag.UserDepartmentCode = user_dep.code;
+            if (user_dep != null)
+            {
+                ViewBag.UserDepartmentName = user_dep.name;
+                ViewBag.UserDepartmentCode = user_dep.code;
+            }
+
 
             ViewBag.Units = _sc.Units.ToList();
 
@@ -425,7 +430,7 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
         }
         //string[] headerlst,
         [HttpPost]
-        public async Task<JsonResult> PostOrder(OrderHeaderClass headerlst, List<TransactionClass> transLst, string ExpectedDate, string OrderHeaderdate)
+        public async Task<JsonResult> PostOrder(OrderHeaderClass headerlst, List<TransactionClass> transLst, string ExpectedDate, string ToDate, string OrderHeaderdate)
         {
             // return new JsonResult(new { success = true });
             var getData = new getAuditData();
@@ -449,6 +454,10 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
                 ohc.OrderHeaderCreationDate = DateTime.Now;
                 ohc.OrderHeaderDeviceIp = 1;
                 ohc.ExpectedDate = headerlst.ExpectedDate != null ? headerlst.ExpectedDate : new DateTime(int.Parse(ExpectedDate.Split('-')[0]), int.Parse(ExpectedDate.Split('-')[1]), int.Parse(ExpectedDate.Split('-')[2]));
+                if (_sc.TblGeneralPreference.FirstOrDefault().Show_ToDate)
+                {
+                    ohc.ToDate = headerlst.ToDate != null ? headerlst.ToDate : new DateTime(int.Parse(ToDate.Split('-')[0]), int.Parse(ToDate.Split('-')[1]), int.Parse(ToDate.Split('-')[2]));
+                }
 
                 ohc.OrderHeaderdate = new DateTime(int.Parse(OrderHeaderdate.Split('-')[0]), int.Parse(OrderHeaderdate.Split('-')[1]), int.Parse(OrderHeaderdate.Split('-')[2]));
 
@@ -555,6 +564,7 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
             ViewBag.Show_Doner2 = general_prefernce.Show_Doner2;
             ViewBag.Show_cost3 = general_prefernce.Show_cost3;
             ViewBag.Show_cost4 = general_prefernce.Show_cost4;
+            ViewBag.Show_ToDate = general_prefernce.Show_ToDate;
             ViewBag.Display_Name_Project = general_prefernce.Display_Name_Project;
             ViewBag.Display_Name_Activityt = general_prefernce.Display_Name_Activityt;
 
@@ -593,6 +603,7 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
             foreach (TransactionClass tc in model.transClass)
             {
                 TransactionViewModel tvm = new TransactionViewModel();
+                tvm.TransactionItemCode = tc.TransactionItemCode;
                 tvm.ItemName = _sc.TblItem.Where(i => i.itemCode == tc.TransactionItemCode).Select(i => i.itemName).FirstOrDefault();
                 tvm.TransactionQty = tc.TransactionQty;
                 tvm.TransactionItemCode = tc.TransactionItemCode;
@@ -809,6 +820,10 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
 
                         TransactionClass trans = new TransactionClass();
                         trans = tc;
+
+                        var item_code = _sc.TblItem.Where(u => u.itemName.Equals(trans.TransactionItemName)).Select(u => u.itemCode).FirstOrDefault();
+
+                        tc.TransactionItemCode = item_code;
 
                         trans.TransactionUserId = usr;
                         trans.TransactionOrderHeaderCode = id;
