@@ -3,88 +3,78 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MVCWebAppServierCon.Migrations
 {
-    public partial class editcontractstable : Migration
+    public partial class addnewproperitytogeneralpref : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            //migrationBuilder.AddColumn<double>(
-            //    name: "Amount",
-            //    table: "TblContracts",
-            //    nullable: false,
-            //    defaultValue: 0.0);
-
-            //migrationBuilder.AddColumn<string>(
-            //    name: "Note",
-            //    table: "TblContracts",
-            //    nullable: false,
-            //    defaultValue: "");
+            migrationBuilder.AddColumn<bool>(
+                name: "Show_ToEmployee",
+                table: "TblGeneralPreference",
+                nullable: false,
+                defaultValue: false);
 
             migrationBuilder.UpdateData(
                 table: "SalesQouteHeader",
                 keyColumn: "Id",
                 keyValue: -4,
                 column: "CreationDate",
-                value: new DateTime(2021, 4, 26, 13, 54, 15, 340, DateTimeKind.Local).AddTicks(4816));
+                value: new DateTime(2021, 5, 23, 14, 54, 47, 732, DateTimeKind.Local).AddTicks(3339));
 
             migrationBuilder.UpdateData(
                 table: "SalesQouteHeader",
                 keyColumn: "Id",
                 keyValue: -3,
                 column: "CreationDate",
-                value: new DateTime(2021, 4, 26, 13, 54, 15, 343, DateTimeKind.Local).AddTicks(7086));
+                value: new DateTime(2021, 5, 23, 14, 54, 47, 735, DateTimeKind.Local).AddTicks(2491));
 
             migrationBuilder.UpdateData(
                 table: "SalesQouteHeader",
                 keyColumn: "Id",
                 keyValue: -2,
                 column: "CreationDate",
-                value: new DateTime(2021, 4, 26, 13, 54, 15, 343, DateTimeKind.Local).AddTicks(7126));
+                value: new DateTime(2021, 5, 23, 14, 54, 47, 735, DateTimeKind.Local).AddTicks(2528));
 
             migrationBuilder.UpdateData(
                 table: "SalesQouteHeader",
                 keyColumn: "Id",
                 keyValue: -1,
                 column: "CreationDate",
-                value: new DateTime(2021, 4, 26, 13, 54, 15, 343, DateTimeKind.Local).AddTicks(7158));
+                value: new DateTime(2021, 5, 23, 14, 54, 47, 735, DateTimeKind.Local).AddTicks(2535));
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "Amount",
-                table: "TblContracts");
-
-            migrationBuilder.DropColumn(
-                name: "Note",
-                table: "TblContracts");
+                name: "Show_ToEmployee",
+                table: "TblGeneralPreference");
 
             migrationBuilder.UpdateData(
                 table: "SalesQouteHeader",
                 keyColumn: "Id",
                 keyValue: -4,
                 column: "CreationDate",
-                value: new DateTime(2021, 4, 13, 13, 26, 7, 611, DateTimeKind.Local).AddTicks(3693));
+                value: new DateTime(2021, 5, 23, 13, 56, 17, 939, DateTimeKind.Local).AddTicks(5215));
 
             migrationBuilder.UpdateData(
                 table: "SalesQouteHeader",
                 keyColumn: "Id",
                 keyValue: -3,
                 column: "CreationDate",
-                value: new DateTime(2021, 4, 13, 13, 26, 7, 615, DateTimeKind.Local).AddTicks(2946));
+                value: new DateTime(2021, 5, 23, 13, 56, 17, 942, DateTimeKind.Local).AddTicks(5897));
 
             migrationBuilder.UpdateData(
                 table: "SalesQouteHeader",
                 keyColumn: "Id",
                 keyValue: -2,
                 column: "CreationDate",
-                value: new DateTime(2021, 4, 13, 13, 26, 7, 615, DateTimeKind.Local).AddTicks(3003));
+                value: new DateTime(2021, 5, 23, 13, 56, 17, 942, DateTimeKind.Local).AddTicks(5933));
 
             migrationBuilder.UpdateData(
                 table: "SalesQouteHeader",
                 keyColumn: "Id",
                 keyValue: -1,
                 column: "CreationDate",
-                value: new DateTime(2021, 4, 13, 13, 26, 7, 615, DateTimeKind.Local).AddTicks(3013));
+                value: new DateTime(2021, 5, 23, 13, 56, 17, 942, DateTimeKind.Local).AddTicks(5940));
         }
     }
 }

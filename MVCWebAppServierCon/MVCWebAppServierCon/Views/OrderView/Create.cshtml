@@ -83,24 +83,26 @@
                             <span class="text-danger"></span>
                         </div>
                     }
+                    @if (ViewBag.Show_ToEmployee)
+                    {
+                        <div class="form-group  @(ViewBag.Show_Order_Type ? "col-md-3" : "col-md-3")">
 
-                    <div class="form-group  @(ViewBag.Show_Order_Type ? "col-md-3" : "col-md-3")">
-
-                        <br />
-                        <label style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["To Employee"]</label>
-                        <input style="display:none;" id="to_employee_input" />
-                        <select id="user_select_input" class="form-control">
-                            <option selected></option>
-                            @* asp-items="" *@
-                            @foreach (UserClass itm in ViewBag.users)
-                            {
-                                <option value="@itm.userCode">@itm.userName</option>
-
-                            }
+                            <br />
+                            <label style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["To Employee"]</label>
+                            <input style="display:none;" id="to_employee_input" />
+                            <select id="user_select_input" class="form-control">
+                                <option selected></option>
+                                @* asp-items="" *@
+                                @foreach (UserClass itm in ViewBag.users)
+                                {
+                                    <option value="@itm.userCode">@itm.userName</option>
+                                }
 
 
-                        </select>
-                    </div>
+                            </select>
+                        </div>
+                    }
+
 
                     @*<div class="form-group col-md-3">
                             <br />
@@ -438,168 +440,171 @@
 <script>
 
 
-    document.getElementById("user_select_input").addEventListener("change", () => {
-        console.log(document.getElementById("user_select_input").value);
-        var user_code = document.getElementById("user_select_input").value;
-        var dep_id = -1;
-        var users_array = @Json.Serialize(ViewBag.users)
-            console.log(users_array)
-        users_array.map(user => {
-            if (user.userCode == user_code) {
-                dep_id = user.userDepartmentCode
-            }
-        });
+    if (@Json.Serialize(ViewBag.Show_ToEmployee)) {
+        document.getElementById("user_select_input").addEventListener("change", () => {
+            console.log(document.getElementById("user_select_input").value);
+            var user_code = document.getElementById("user_select_input").value;
+            var dep_id = -1;
+            var users_array = @Json.Serialize(ViewBag.users)
+                console.log(users_array)
+            users_array.map(user => {
+                if (user.userCode == user_code) {
+                    dep_id = user.userDepartmentCode
+                }
+            });
 
-        console.log(dep_id)
-        $.ajax({
-            url: '@Url.Action("GetDepartmentName")',
-            data: { dep_Code: dep_id },
-            success: (result) => {
-                console.log(result.name)
-                document.getElementById("txtdep").value = result.name
-                document.getElementById("department_code_input").value = result.code
-            }
-        })
-    });
+            console.log(dep_id)
+            $.ajax({
+                url: '@Url.Action("GetDepartmentName")',
+                data: { dep_Code: dep_id },
+                success: (result) => {
+                    console.log(result.name)
+                    document.getElementById("txtdep").value = result.name
+                    document.getElementById("department_code_input").value = result.code
+                }
+            })
+        });
+    }
+
 
     function CheckExpectedDate() {
-        debugger
+                                debugger
         if ($('#txtExpectedDate').val() == '') {
-             Swal.fire({
-                    icon: 'error',
+                                    Swal.fire({
+                                    icon: 'error',
                     title: 'خطأ',
                      text: ' يجب ادخال التاريخ المتوقع للنشاط   '  ,
                     footer: 'PostOrder'
-                 })
+                                        })
             return false
         }
-        if ($('#NumberOfDayesAfter').val() == '0' || $('#NumberOfDayesAfter').val() == '') {
-            return true
-        }
-         var excepteddate = new Date($('#txtExpectedDate').val());
-          var now =new Date(Date.now());
-            var diffTime = Math.abs(excepteddate - now);
-        var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                                if ($('#NumberOfDayesAfter').val() == '0' || $('#NumberOfDayesAfter').val() == '') {
+                                    return true
+                                }
+                                var excepteddate = new Date($('#txtExpectedDate').val());
+                                var now =new Date(Date.now());
+                                var diffTime = Math.abs(excepteddate - now);
+                                var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-        if (diffDays < $('#NumberOfDayesAfter').val()) {
-                var now3 = new Date();
-                now3.setDate(now3.getDate() - 4);
+                                if (diffDays < $('#NumberOfDayesAfter').val()) {
+                                    var now3 = new Date();
+                                    now3.setDate(now3.getDate() - 4);
 
-                 Swal.fire({
-                    icon: 'error',
+                                    Swal.fire({
+                                    icon: 'error',
                     title: 'خطأ',
                      text: ' يجب ان يكون التاريخ المتوقع للنشاط بعد  '  + $('#NumberOfDayesAfter').val() + ' ايام ' ,
                     footer: 'PostOrderStatus'
-                 })
+                                    })
             return false
-        }
-        return true
+                                }
+                                return true
 
     }
 
 
 
-    function CheckOrderDate() {
-        debugger
-        if ($('#NumberOfDayesBefore').val() == '0' || $('#NumberOfDayesBefore').val() == '') {
-            return true
+                            function CheckOrderDate() {
+                                debugger
+                                if ($('#NumberOfDayesBefore').val() == '0' || $('#NumberOfDayesBefore').val() == '') {
+                                    return true
         }
-        var orderddate = new Date($('#date').val());
-        var now = new Date(Date.now());
-        var diffTime = Math.abs(now - orderddate);
-        var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                                var orderddate = new Date($('#date').val());
+                                var now = new Date(Date.now());
+                                var diffTime = Math.abs(now - orderddate);
+                                var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-        if (diffDays > $('#NumberOfDayesBefore').val()) {
-            var now3 = new Date();
-            now3.setDate(now3.getDate() - 4);
+                                if (diffDays > $('#NumberOfDayesBefore').val()) {
+                                    var now3 = new Date();
+                                    now3.setDate(now3.getDate() - 4);
 
-            Swal.fire({
-                icon: 'error',
+                                    Swal.fire({
+                                    icon: 'error',
                 title: 'خطأ',
                 text: ' يجب ان يكون تاريخ الطلبيه اقل من ' + $('#NumberOfDayesBefore').val() + ' ايام ',
                 footer: 'PostOrderStatus'
-            })
+                                    })
             return false
-        }
-        return true
+                                }
+                                return true
 
     }
-    function CheckForm() {
-        var IsError=true;
-        if($("#rateText").val() == 0 || $("#rateText").val() == '') {
-            Swal.fire({
-                    icon: 'error',
+                            function CheckForm() {
+                                var IsError=true;
+                                if($("#rateText").val() == 0 || $("#rateText").val() == '') {
+                                    Swal.fire({
+                                    icon: 'error',
                     title: 'خطأ',
                      text: 'يجب ادخال سعر الصرف',
                     footer: 'PostOrderStatus'
-            })
+                                    })
             IsError = false;
-        }
+                                }
 
-         if ($("#realTot").val() == 0 || $("#realTot").val() == '') {
-            Swal.fire({
-                    icon: 'error',
+                                if ($("#realTot").val() == 0 || $("#realTot").val() == '') {
+                                    Swal.fire({
+                                    icon: 'error',
                     title: 'خطأ',
                      text: 'يجب ادخال  المبلغ',
                     footer: 'PostOrderStatus'
-            })
+                                    })
             IsError = false;
-        }
+                                }
 
-          if ($("#realTot").val() == 0 || $("#realTot").val() == '') {
-            Swal.fire({
-                    icon: 'error',
+                                if ($("#realTot").val() == 0 || $("#realTot").val() == '') {
+                                    Swal.fire({
+                                    icon: 'error',
                     title: 'خطأ',
                      text: 'يجب ادخال  المبلغ',
                     footer: 'PostOrderStatus'
-            })
+                                    })
             IsError = false;
-        }
+                                }
 
-          if ($("#txtNote").val() == 0 || $("#txtNote").val() == '') {
-            Swal.fire({
-                    icon: 'error',
+                                if ($("#txtNote").val() == 0 || $("#txtNote").val() == '') {
+                                    Swal.fire({
+                                    icon: 'error',
                     title: 'خطأ',
                      text: 'يجب ادخال  الملاحظات العامه',
                     footer: 'PostOrder'
-            })
+                                    })
             IsError = false;
-        }
+                                }
 
 
-        return IsError
-    }
+                                return IsError
+                            }
 
-    function CheckData(val, msg) {
+                            function CheckData(val, msg) {
 
-        var IsError=true;
-         if (val == 0 || val == '' || val==undefined) {
-            Swal.fire({
-                    icon: 'error',
+                                var IsError=true;
+                                if (val == 0 || val == '' || val==undefined) {
+                                    Swal.fire({
+                                    icon: 'error',
                     title: 'خطأ',
                      text: msg,
                     footer: 'PostOrderStatus'
-            })
+                                    })
             IsError = false;
-        }
-         return IsError
-    }
+                                }
+                                return IsError
+                            }
 
-        function ShowMessage( msg) {
+                            function ShowMessage( msg) {
 
 
 
-            Swal.fire({
-                    icon: 'error',
+                                Swal.fire({
+                                icon: 'error',
                     title: 'خطأ',
                      text: msg,
                     footer: ''
-            })
+                                })
 
 
 
     }
-    // post order
+                            // post order
     function GetOrder(status) {// make the whole order
 
         debugger
@@ -622,12 +627,12 @@
         //check ExpectaionDate and dayes before
 
         if (CheckExpectedDate() == false) {
-           return;
+            return;
         }
-         if (CheckOrderDate() == false) {
-           return;
+        if (CheckOrderDate() == false) {
+            return;
         }
-       if (CheckForm() == false) {
+        if (CheckForm() == false) {
             return;
         }
 
@@ -635,13 +640,13 @@
         var OrderHeaderProjectCode = "0";
         var OrderHeaderBudgetLineCode = "0";
         var ProjectCode = document.getElementById('inputState2');
-         if (  ProjectCode.text!=undefined ) {
+        if (ProjectCode.text != undefined) {
 
-             OrderHeaderProjectCode = ProjectCode.text;
+            OrderHeaderProjectCode = ProjectCode.text;
 
         }
-        if (document.getElementById("inputState2").style.visibility  == "visible") {
-            if (CheckData(OrderHeaderProjectCode,"يجب ادخال المشروع") == false) { return;}
+        if (document.getElementById("inputState2").style.visibility == "visible") {
+            if (CheckData(OrderHeaderProjectCode, "يجب ادخال المشروع") == false) { return; }
         }
 
         var OrderTypeCode;
@@ -653,16 +658,16 @@
         }
 
         var BudgetLineCode = document.getElementById('cmbBudgetLine');
-       // BudgetLineCode != 'undefined' ||
+        // BudgetLineCode != 'undefined' ||
         if (BudgetLineCode != null) {
             debugger
             if (BudgetLineCode.value != undefined) {
-                     OrderHeaderBudgetLineCode = BudgetLineCode.value; //this get budgetline name
+                OrderHeaderBudgetLineCode = BudgetLineCode.value; //this get budgetline name
             }
-             if (document.getElementById("cmbBudgetLine").hidden == false && document.getElementById("inputState2").style.visibility  == "visible") {
+            if (document.getElementById("cmbBudgetLine").hidden == false && document.getElementById("inputState2").style.visibility == "visible") {
 
-            if (CheckData(OrderHeaderBudgetLineCode, "يجب ادخال بند الموازنه") == false) { return; }
-        }
+                if (CheckData(OrderHeaderBudgetLineCode, "يجب ادخال بند الموازنه") == false) { return; }
+            }
         }
 
         var currencey = document.getElementById('cmbCurrency');
@@ -673,7 +678,7 @@
         if (@Json.Serialize(ViewBag.Show_Order_Type) == true) {
             if (CheckData(OrderHeaderOrderTypeCode, "يجب ادخال نوع الطلبيه ") == false) { return; }
         }
-       //   if ( CheckData(OrderHeaderProjectCode, "يجب ادخال المشروع ") == false) { return;}
+        //   if ( CheckData(OrderHeaderProjectCode, "يجب ادخال المشروع ") == false) { return;}
 
 
 
@@ -682,7 +687,7 @@
         var HeaderList = new Array();
         var headerModel = {
 
-          //  OrderHeaderdepartmentCode: OrderHeaderdepartmentCode,
+            //  OrderHeaderdepartmentCode: OrderHeaderdepartmentCode,
             OrderHeaderProjectCode: OrderHeaderProjectCode,
             OrderHeaderdate: $('#date').val(),
             OrderHeaderBudgetLineCode: OrderHeaderBudgetLineCode,
@@ -766,7 +771,7 @@
                 if (response.data > 0) {
                     PostOrderStatus(response.data, status);
                     addPic(response.data);
-                     document.location = '/Home/Index';
+                    document.location = '/Home/Index';
                 }
             },
             error: function (response) {
@@ -787,18 +792,45 @@
 
 
     function PostOrderStatus(approvalHeaderCode, approvalIsApproved) {
+        var data = {
+            ApprovalHeaderCode: approvalHeaderCode,
+            ApprovalIsApproved: approvalIsApproved,
+            Notes: '',
+        }
 
-    //    debugger
+        if (@Json.Serialize(ViewBag.Show_ToEmployee) == true) {
+            data.ToEmployeeCode = document.getElementById("user_select_input").value;
+        }
+        //    debugger
         if (approvalIsApproved == 0) {
             $.ajax({
                 type: "POST",
                 dataType: "json",
                 url: "/Home/CreateOrderStatus",
+                data: data,
+                success: function (response) {
+                    // console.log("handle response :" + response.data);
+
+                },
+                error: function (response) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: ' خطأ في التخزين !',
+                        footer: 'PostOrderStatus'
+                    })
+                    loader.style.display = "none";
+                    console.log("error in PostOrderStatus function in create view" + "  " + response.data);
+                },
+            });
+        } else {
+
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: "/Home/CreateOrderStatusAsDocuments",
                 data: {
-                    ApprovalHeaderCode: approvalHeaderCode,
-                    ApprovalIsApproved: approvalIsApproved,
-                    Notes: '',
-                    ToEmployeeCode: document.getElementById("user_select_input").value
+                    ApprovalHeaderCode: approvalHeaderCode, ApprovalIsApproved: approvalIsApproved, Notes: ''
 
                 },
                 success: function (response) {
@@ -818,315 +850,288 @@
                     console.log("error in PostOrderStatus function in create view" + "  " + response.data);
                 },
             });
-        } else {
-
-              $.ajax({
-            type: "POST",
-            dataType: "json",
-            url: "/Home/CreateOrderStatusAsDocuments",
-            data: {
-                ApprovalHeaderCode: approvalHeaderCode, ApprovalIsApproved: approvalIsApproved, Notes: ''
-
-            },
-            success: function (response) {
-                // console.log("handle response :" + response.data);
-
-
-
-            },
-            error: function (response) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: ' خطأ في التخزين !',
-                    footer: 'PostOrderStatus'
-                })
-                loader.style.display = "none";
-                console.log("error in PostOrderStatus function in create view" + "  " + response.data);
-            },
-        });
 
         }
 
 
     }
 
-    function getshowhidefunder(id) {
+                    function getshowhidefunder(id) {
         $.ajax(
-            {
-                url: "../OrderView/getshowhidefunder",
+                            {
+                        url: "../OrderView/getshowhidefunder",
                 data: { ordertype: id },
                 dataType: "json",
                 type: "POST",
                 success: function (data) {
-                    document.getElementById("inputState2").style.visibility = data.data;
-                    document.getElementById("inputState2Lbl").style.visibility = data.data;
+                                document.getElementById("inputState2").style.visibility = data.data;
+                                document.getElementById("inputState2Lbl").style.visibility = data.data;
 
 
-                    console.log("success Visible  == " + data.data);
-                },
+                                console.log("success Visible  == " + data.data);
+                            },
                 error: function (message) {
-                    // console.log("Error In Uploading");
-                    console.log(message);
-                },
+                                // console.log("Error In Uploading");
+                                console.log(message);
+                            },
 
             });
-    }
+                    }
 
-    function getshowhidebudgetline(id) {
+                    function getshowhidebudgetline(id) {
         $.ajax(
-            {
-                url: "../OrderView/getshowhidebudgetline",
+                            {
+                        url: "../OrderView/getshowhidebudgetline",
                 data: { ordertype: id },
                 dataType: "json",
                 type: "POST",
                 success: function (data) {
-                    document.getElementById("inputState4").style.visibility = data.data;
-                    document.getElementById("inputState4Lbl").style.visibility = data.data;
-                    console.log("success Visible  == " + data.data);
-                },
+                                document.getElementById("inputState4").style.visibility = data.data;
+                                document.getElementById("inputState4Lbl").style.visibility = data.data;
+                                console.log("success Visible  == " + data.data);
+                            },
                 error: function (message) {
-                    // console.log("Error In Uploading");
-                    console.log(message);
-                },
+                                // console.log("Error In Uploading");
+                                console.log(message);
+                            },
 
             });
-    }
+                    }
 
-     function getshowhidebudgetline(id) {
+                    function getshowhidebudgetline(id) {
         $.ajax(
-            {
-                url: "../OrderView/getshowhideTransactionDate",
+                           {
+                        url: "../OrderView/getshowhideTransactionDate",
                 data: { ordertype: id },
                 dataType: "json",
                 type: "POST",
                 success: function (data) {
-                    document.getElementById("TransDate").style.visibility = data.data;
-                     document.getElementById("lblTransDate").style.visibility = data.data;
+                                document.getElementById("TransDate").style.visibility = data.data;
+                                document.getElementById("lblTransDate").style.visibility = data.data;
 
 
-                },
+                            },
                 error: function (message) {
-                    // console.log("Error In Uploading");
-                    console.log(message);
-                },
+                                // console.log("Error In Uploading");
+                                console.log(message);
+                            },
 
             });
-    }
+                    }
 
-    function getOrderType(id) {
+                    function getOrderType(id) {
        // debugger
         $.ajax(
-            {
-                url: "../OrderView/GetOrderType",
+                            {
+                        url: "../OrderView/GetOrderType",
                 data: { ordertype: id },
                 dataType: "json",
                 type: "POST",
                 success: function (data) {
 
-                    var NumberOfDayesBefore = document.getElementById("NumberOfDayesBefore");
-                    NumberOfDayesBefore.setAttribute('value', data.numberOfDayesBefore);
-                    var NumberOfDayesAfter = document.getElementById("NumberOfDayesAfter");
-                     NumberOfDayesAfter.setAttribute('value', data.numberOfDayesAfter);
+                                var NumberOfDayesBefore = document.getElementById("NumberOfDayesBefore");
+                                NumberOfDayesBefore.setAttribute('value', data.numberOfDayesBefore);
+                                var NumberOfDayesAfter = document.getElementById("NumberOfDayesAfter");
+                                NumberOfDayesAfter.setAttribute('value', data.numberOfDayesAfter);
 
 
-                },
+                            },
                 error: function (message) {
-                    // console.log("Error In Uploading");
-                    console.log(message);
-                },
+                                // console.log("Error In Uploading");
+                                console.log(message);
+                            },
 
             });
-    }
+                    }
 
-    function getRate(id) {//get rate for each currency
+                    function getRate(id) {//get rate for each currency
         $.ajax(
-            {
-                url: "../OrderView/getRate",
+                            {
+                        url: "../OrderView/getRate",
                 data: { rateId: id },
                 dataType: "json",
                 type: "POST",
                 success: function (data) {
-                    document.getElementById("rateText").value = data.data;
-                    console.log("success rate  == " + data.data);
-                },
+                                document.getElementById("rateText").value = data.data;
+                                console.log("success rate  == " + data.data);
+                            },
                 error: function (message) {
-                    console.log("Error In Uploading");
-                    console.log(message);
-                },
+                                console.log("Error In Uploading");
+                                console.log(message);
+                            },
 
             });
 
-    }
+                    }
 
-    function addPic(orderHeaderCode) {//add the file to its table using formdata
-        if (orderHeaderCode != 0) {
-            //debugger
-            // alert(orderHeaderCode)
-            var formData = new FormData();
-            formData.append('file', $('#ufile')[0].files[0]);
-            formData.append('OrderHeaderCode', orderHeaderCode);
+                    function addPic(orderHeaderCode) {//add the file to its table using formdata
+                        if (orderHeaderCode != 0) {
+                            //debugger
+                            // alert(orderHeaderCode)
+                            var formData = new FormData();
+                            formData.append('file', $('#ufile')[0].files[0]);
+                            formData.append('OrderHeaderCode', orderHeaderCode);
             $.ajax(
-                {
-                    url: "../OrderView/UploadFile",
+                                {
+                            url: "../OrderView/UploadFile",
                     data: formData,
                     processData: false,
                     contentType: false,
                     type: "POST",
                     enctype: "multipart/form-data",
                     success: function (data) {
-                        console.log("File Uploaded Successfully");
+                                    console.log("File Uploaded Successfully");
 
-                        Swal.fire('Good job!',
-                            'تم حفظ الطلبيه',
-                            'success'
-                        )
+                                    Swal.fire('Good job!',
+                                        'تم حفظ الطلبيه',
+                                        'success'
+                                    )
                       loader.style.display = "none";
 
-                    },
+                                },
                     error: function (message) {
-                        console.log("Error In Uploading");
-                        Swal.fire({
-                            icon: 'error',
+                                    console.log("Error In Uploading");
+                                    Swal.fire({
+                                    icon: 'error',
                             title: 'Oops...',
                             text: 'خطأ في التخزين !',
                             footer: 'PostOrderStatus'
-                        })
+                                    })
                         loader.style.display = "none";
-                        //document.location = '/Home/Index';
+                                    //document.location = '/Home/Index';
+                                }
+                            });
+                            // document.location = '/Home/Index';
+                        }
                     }
-                });
-            // document.location = '/Home/Index';
-        }
-    }
 
-    function handle_item_changed(id , name) {
+                    function handle_item_changed(id , name) {
 
-        console.log(id);
-        console.log(name);
-        alert('true')
-    }
-    //document.getElementById('itemName').addEventListener("change", function () {
-    //})
+                        console.log(id);
+                        console.log(name);
+                        alert('true')
+                    }
+                    //document.getElementById('itemName').addEventListener("change", function () {
+                    //})
 
-    var transArr = [];// store each transaction item
-    function getRows() { // display the transaction for the user when he clicks the (+)Button
-        //debugger
-        if (CheckData(document.getElementById('itemName').value, "يجب ادخال  الصنف") == false) { return; }
+                    var transArr = [];// store each transaction item
+                    function getRows() { // display the transaction for the user when he clicks the (+)Button
+                                         //debugger
+                        if (CheckData(document.getElementById('itemName').value, "يجب ادخال  الصنف") == false) { return; }
 
-        if (CheckData(document.getElementById('qty').value, "يجب ادخال الكميه") == false) { return; }
-        if (CheckData(document.getElementById('price').value, "يجب ادخال السعر") == false) { return; }
+                        if (CheckData(document.getElementById('qty').value, "يجب ادخال الكميه") == false) { return; }
+                        if (CheckData(document.getElementById('price').value, "يجب ادخال السعر") == false) { return; }
 
-        document.getElementById("itemRowTbl").style.visibility = "visible";
-        //var itemcode = document.getElementById('itemName').value;
-        //var itemName = $("#itemName option:selected").text();
+                        document.getElementById("itemRowTbl").style.visibility = "visible";
+                        //var itemcode = document.getElementById('itemName').value;
+                        //var itemName = $("#itemName option:selected").text();
 
-        //var y = $("#itemName").find('es-list').find("es-visible");
+                        //var y = $("#itemName").find('es-list').find("es-visible");
 
-        var itemcode = document.getElementById('itemName').text;
-        var itemName = document.getElementById('itemName').value;
-        debugger
-        if (@Json.Serialize(ViewBag.Show_Unit) == true) {
-            var UnitName = document.getElementById('Unit_input').value;
-        }
+                        var itemcode = document.getElementById('itemName').text;
+                        var itemName = document.getElementById('itemName').value;
+                        debugger
+                        if (@Json.Serialize(ViewBag.Show_Unit) == true) {
+                            var UnitName = document.getElementById('Unit_input').value;
+                        }
 
-        var qty = document.getElementById('qty').value;
-        var price = document.getElementById('price').value;
-        var note = document.getElementById('note').value;
-        var TransDate = document.getElementById('TransDate').value;
+                        var qty = document.getElementById('qty').value;
+                        var price = document.getElementById('price').value;
+                        var note = document.getElementById('note').value;
+                        var TransDate = document.getElementById('TransDate').value;
 
 
 
 
-        var table = document.getElementById("myTable");
-        var row = table.insertRow(0);
-        row.className = "row";
-        row.style.width = "100%";
-        row.style.margin = "0";
-        if (@Json.Serialize(ViewBag.Show_Unit) == true) {
-            var cell0 = row.insertCell(0); cell0.style.display = 'none';
-            var cell1 = row.insertCell(1); cell1.className = "col-md-2";
-            var cell22 = row.insertCell(2); cell22.className = "col-md-1";
-            var cell2 = row.insertCell(3); cell2.className = "col-md-1";
-            var cell3 = row.insertCell(4); cell3.className = "col-md-1";
-            var cell4 = row.insertCell(5); cell4.className = "col-md-1";
-            var cell5 = row.insertCell(6); cell5.className = "col-md-3";
-            var cell6 = row.insertCell(7); cell6.className = "col-md-2";
+                        var table = document.getElementById("myTable");
+                        var row = table.insertRow(0);
+                        row.className = "row";
+                        row.style.width = "100%";
+                        row.style.margin = "0";
+                        if (@Json.Serialize(ViewBag.Show_Unit) == true) {
+                            var cell0 = row.insertCell(0); cell0.style.display = 'none';
+                            var cell1 = row.insertCell(1); cell1.className = "col-md-2";
+                            var cell22 = row.insertCell(2); cell22.className = "col-md-1";
+                            var cell2 = row.insertCell(3); cell2.className = "col-md-1";
+                            var cell3 = row.insertCell(4); cell3.className = "col-md-1";
+                            var cell4 = row.insertCell(5); cell4.className = "col-md-1";
+                            var cell5 = row.insertCell(6); cell5.className = "col-md-3";
+                            var cell6 = row.insertCell(7); cell6.className = "col-md-2";
 
-            var cell7 = row.insertCell(8); cell7.className = "col-md-1";
-            cell0.innerHTML = itemcode;
-            cell1.innerHTML = itemName;
-            cell22.innerHTML = UnitName;
+                            var cell7 = row.insertCell(8); cell7.className = "col-md-1";
+                            cell0.innerHTML = itemcode;
+                            cell1.innerHTML = itemName;
+                            cell22.innerHTML = UnitName;
 
-            cell2.innerHTML = qty;
-            cell3.innerHTML = price;
-            cell4.innerHTML = qty * price;
-            cell5.innerHTML = note;
-            cell6.innerHTML = TransDate;
+                            cell2.innerHTML = qty;
+                            cell3.innerHTML = price;
+                            cell4.innerHTML = qty * price;
+                            cell5.innerHTML = note;
+                            cell6.innerHTML = TransDate;
 
-        } else {
-            var cell0 = row.insertCell(0); cell0.style.display = 'none';
-            var cell1 = row.insertCell(1); cell1.className = "col-md-2";
-            var cell2 = row.insertCell(2); cell2.className = "col-md-1";
-            var cell3 = row.insertCell(3); cell3.className = "col-md-1";
-            var cell4 = row.insertCell(4); cell4.className = "col-md-1";
-            var cell5 = row.insertCell(5); cell5.className = "col-md-3";
-            var cell6 = row.insertCell(6); cell6.className = "col-md-2";
+                        } else {
+                            var cell0 = row.insertCell(0); cell0.style.display = 'none';
+                            var cell1 = row.insertCell(1); cell1.className = "col-md-2";
+                            var cell2 = row.insertCell(2); cell2.className = "col-md-1";
+                            var cell3 = row.insertCell(3); cell3.className = "col-md-1";
+                            var cell4 = row.insertCell(4); cell4.className = "col-md-1";
+                            var cell5 = row.insertCell(5); cell5.className = "col-md-3";
+                            var cell6 = row.insertCell(6); cell6.className = "col-md-2";
 
-            var cell7 = row.insertCell(7); cell7.className = "col-md-2";
-            cell0.innerHTML = itemcode;
-            cell1.innerHTML = itemName;
+                            var cell7 = row.insertCell(7); cell7.className = "col-md-2";
+                            cell0.innerHTML = itemcode;
+                            cell1.innerHTML = itemName;
 
-            cell2.innerHTML = qty;
-            cell3.innerHTML = price;
-            cell4.innerHTML = qty * price;
-            cell5.innerHTML = note;
-            cell6.innerHTML = TransDate;
-        }
+                            cell2.innerHTML = qty;
+                            cell3.innerHTML = price;
+                            cell4.innerHTML = qty * price;
+                            cell5.innerHTML = note;
+                            cell6.innerHTML = TransDate;
+                        }
 
-        var x = qty * price;
-        cell7.innerHTML = '<button id="DeleteButton" type="button" class="close danger" aria-label="Close" onClick="Remove(this , ' + x + ')"><span aria-hidden="true">&times;</span></button>';
+                        var x = qty * price;
+                        cell7.innerHTML = '<button id="DeleteButton" type="button" class="close danger" aria-label="Close" onClick="Remove(this , ' + x + ')"><span aria-hidden="true">&times;</span></button>';
 
-        var TransactionClass = function (itemcode, itemName, Quantity, Price, Note, TransDate) {
-            this.TransactionItemCode = itemcode;
-            this.TransactionItemName = itemName;
-            this.TransactionQty = Quantity;
-            this.TransactionPrice = Price;
-            this.TransactionNote = Note;
-            this.TransDate = TransDate;
-        };
+                        var TransactionClass = function (itemcode, itemName, Quantity, Price, Note, TransDate) {
+                            this.TransactionItemCode = itemcode;
+                            this.TransactionItemName = itemName;
+                            this.TransactionQty = Quantity;
+                            this.TransactionPrice = Price;
+                            this.TransactionNote = Note;
+                            this.TransDate = TransDate;
+                        };
 
-        transArr.push((new TransactionClass(itemcode, itemName, qty, price, note, TransDate)));
+                        transArr.push((new TransactionClass(itemcode, itemName, qty, price, note, TransDate)));
 
-        document.getElementById('qty').innerHTML = "";
-        document.getElementById('price').innerHTML = "";
-        document.getElementById('note').innerHTML = "";
+                        document.getElementById('qty').innerHTML = "";
+                        document.getElementById('price').innerHTML = "";
+                        document.getElementById('note').innerHTML = "";
 
-        var realTotal = parseInt(document.getElementById("realTot").value) + (qty * price);
-        document.getElementById("realTot").value = realTotal;
+                        var realTotal = parseInt(document.getElementById("realTot").value) + (qty * price);
+                        document.getElementById("realTot").value = realTotal;
 
-        var realBasicTot = parseInt(document.getElementById("realBasicTot").value) + (qty * price * parseFloat(document.getElementById("rateText").value));
-        document.getElementById("realBasicTot").value = realBasicTot;
+                        var realBasicTot = parseInt(document.getElementById("realBasicTot").value) + (qty * price * parseFloat(document.getElementById("rateText").value));
+                        document.getElementById("realBasicTot").value = realBasicTot;
 
-    }
+                    }
 
 
-    function Remove(td, amount) {
-        row = td.parentElement.parentElement;
+                    function Remove(td, amount) {
+                        row = td.parentElement.parentElement;
 
-        document.getElementById("myTable").deleteRow(row.rowIndex - 1);
-        var realTotal = parseFloat(document.getElementById("realTot").value) - (amount);
-         var realBasicTotal = parseFloat(document.getElementById("realBasicTot").value) - (amount * parseFloat(document.getElementById("rateText").value));
+                        document.getElementById("myTable").deleteRow(row.rowIndex - 1);
+                        var realTotal = parseFloat(document.getElementById("realTot").value) - (amount);
+                        var realBasicTotal = parseFloat(document.getElementById("realBasicTot").value) - (amount * parseFloat(document.getElementById("rateText").value));
 
-        if (parseFloat(realTotal) < 0) {
-            document.getElementById("realTot").value = 0;
-             document.getElementById("realBasicTot").value = 0;
-        } else {
-            document.getElementById("realTot").value = realTotal;
-             document.getElementById("realBasicTot").value = realBasicTotal;
-        }
+                        if (parseFloat(realTotal) < 0) {
+                            document.getElementById("realTot").value = 0;
+                            document.getElementById("realBasicTot").value = 0;
+                        } else {
+                            document.getElementById("realTot").value = realTotal;
+                            document.getElementById("realBasicTot").value = realBasicTotal;
+                        }
 
-    }
+                    }
 
 
 
@@ -1143,93 +1148,93 @@
     $('#itemname')
         .editableSelect()
         .on('select.editable-select', function (e, li) {
-            alert(li.val())
+                        alert(li.val())
             //debugger
             var txt = document.getElementById('itemname');
-            txt.text = li.val();
+                        txt.text = li.val();
 
 
-        });
+                    });
     $('#itemName')
         .editableSelect()
         .on('select.editable-select', function (e, li) {
-            debugger
-            var selected_item_id = li.val();
+                        debugger
+                        var selected_item_id = li.val();
 
-            var items = @Json.Serialize(ViewBag.ItemName);
-            var units = @Json.Serialize(ViewBag.Units);
+                        var items = @Json.Serialize(ViewBag.ItemName);
+                        var units = @Json.Serialize(ViewBag.Units);
 
-            for (var i = 0; i < items.length; i++){
-                if (items[i].itemCode == selected_item_id) {
-                    var unit_id = items[i].unit_Id;
-                    var unit_name = "";
+                        for (var i = 0; i < items.length; i++){
+                            if (items[i].itemCode == selected_item_id) {
+                                var unit_id = items[i].unit_Id;
+                                var unit_name = "";
 
-                    for (var i = 0; i < units.length; i++) {
-                        if (units[i].id == unit_id) {
-                            unit_name = units[i].name;
-                            break;
+                                for (var i = 0; i < units.length; i++) {
+                                    if (units[i].id == unit_id) {
+                                        unit_name = units[i].name;
+                                        break;
+                                    }
+                                }
+                                //alert(unit_name)
+
+                                if (@Json.Serialize(ViewBag.Show_Unit) == true) {
+                                    document.getElementById("Unit_input").value = unit_name;
+                                }
+                                break;
+                            }
                         }
-                    }
-                    //alert(unit_name)
 
-                    if (@Json.Serialize(ViewBag.Show_Unit) == true) {
-                        document.getElementById("Unit_input").value = unit_name;
-                    }
-                    break;
-                }
-            }
-
-        });
+                    });
 
     $('#cmbCurrency')
         .editableSelect()
         .on('select.editable-select', function (e, li) {
-            // alert(li.val())
-            getRate(li.val());
+                        // alert(li.val())
+                        getRate(li.val());
 
-            var txt = document.getElementById('cmbCurrency');
-            txt.text = li.val();
+                        var txt = document.getElementById('cmbCurrency');
+                        txt.text = li.val();
 
 
-        });
+                    });
 
     $('#inputState1')
         .editableSelect()
         .on('select.editable-select', function (e, li) {
-            // alert(li.val())
+                        // alert(li.val())
 
-            var txt = document.getElementById('inputState1');
-            txt.text = li.val();
-            //     txt.vlaue = li.text();
-            //li.text()
+                        var txt = document.getElementById('inputState1');
+                        txt.text = li.val();
+                        //     txt.vlaue = li.text();
+                        //li.text()
 
-        });
+                    });
 
     $('#inputState2')
         .editableSelect()
         .on('select.editable-select', function (e, li) {
 
-            GetBudgetLineByFunder(li.val())
+                        GetBudgetLineByFunder(li.val())
             var txt = document.getElementById('inputState2');
-            txt.text = li.val();
-            // txt.vlaue = li.text();
+                        txt.text = li.val();
+                        // txt.vlaue = li.text();
 
-        });
+                    });
 
     $('#inputState3')
         .editableSelect()
         .on('select.editable-select', function (e, li) {
-            // alert(li.val())
-           // debugger
-            var txt = document.getElementById('inputState3');
-            txt.text = li.val();
+                        // alert(li.val())
+                        // debugger
+                        var txt = document.getElementById('inputState3');
+                        txt.text = li.val();
 
-            getshowhidefunder(li.val());
-            getshowhidebudgetline(li.val());
+                        getshowhidefunder(li.val());
+                        getshowhidebudgetline(li.val());
 
-             getOrderType(li.val());
+                        getOrderType(li.val());
 
-        });
+                    });
 
 
 
@@ -1238,13 +1243,13 @@
     function GetBudgetLineByFunder(id) {
         //debugger
         $.ajax({
-              url: '@Url.Action("GetBudgetLineByFunder")',
+                        url: '@Url.Action("GetBudgetLineByFunder")',
          //   url: "../OrderView/GetBudgetLineByFunder",
             type: 'POST',
             data: { "Fundercode": id }
-        }).done(function (data) {
+                        }).done(function (data) {
             $("#div1").html(data);
-        });
+                        });
 
-    }
+                    }
 </script>

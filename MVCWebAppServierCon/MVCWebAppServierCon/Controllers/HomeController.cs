@@ -308,11 +308,12 @@ namespace MVCWebAppServierCon.Controllers
                     foreach (var t in orders)
                     {
 
-                        if (t.OrderHeaderCode == 726)
+                        
+                        var approv = _sc.TblApproval.Where(s => s.ApprovalHeaderCode == t.OrderHeaderCode).OrderBy(a => a.ApprovalCode).ToList();
+                        if (approv.Count == 0)
                         {
                             var ss = 0;
                         }
-                        var approv = _sc.TblApproval.Where(s => s.ApprovalHeaderCode == t.OrderHeaderCode).OrderBy(a => a.ApprovalCode).ToList();
                         ApprovalClass lastApproval = approv.LastOrDefault();
                         if (lastApproval != null && (lastApproval.ApprovalIsApproved == (int)Enums.ApprovalStatus.Reject || lastApproval.ApprovalIsApproved == (int)Enums.ApprovalStatus.Excuted) || lastApproval.ApprovalIsApproved == (int)Enums.ApprovalStatus.Stuck)
                         {
@@ -1115,8 +1116,6 @@ namespace MVCWebAppServierCon.Controllers
             // save approval status in tblapprovals
             //ApprovalIsApproved means :Status
             // Enums enums = new Enums();
-
-            
 
             string nextRankUser = "";
             var user = _sc.TblUser.Where(u => u.userName.Equals(User.Identity.Name)).FirstOrDefault();

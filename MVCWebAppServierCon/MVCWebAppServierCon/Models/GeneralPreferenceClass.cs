@@ -81,5 +81,7 @@ namespace MVCWebAppServierCon.Models
         [Display(Name = "Show ToDate")]
         public bool Show_ToDate { get; set; }
 
+        [Display(Name = "Show To Employee")]
+        public bool Show_ToEmployee { get; set; }
     }
 }

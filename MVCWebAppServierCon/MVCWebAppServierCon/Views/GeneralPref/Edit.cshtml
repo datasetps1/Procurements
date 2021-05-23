@@ -60,7 +60,7 @@
 
                     <span asp-validation-for="Show_Doner2" class="text-danger"></span>
                 </div>
-                <div class="form-group col-sm-1">
+                <div class="form-group col-sm-2">
                     <label asp-for="Show_cost3"></label><br>
 
                     <input id="trueShow_cost3" type="radio" asp-for="Show_cost3" value="true">
@@ -71,7 +71,7 @@
 
                     <span asp-validation-for="Show_cost3" class="text-danger"></span>
                 </div>
-                <div class="form-group col-sm-1">
+                <div class="form-group col-sm-2">
                     <label asp-for="Show_cost4"></label><br>
 
                     <input id="trueShow_cost4" type="radio" asp-for="Show_cost4" value="true">
@@ -105,6 +105,18 @@
                     <label for="falseShow_ToDate">false</label><br>
 
                     <span asp-validation-for="Show_ToDate" class="text-danger"></span>
+                </div>
+
+                <div class="form-group col-sm-2">
+                    <label asp-for="Show_ToEmployee"></label><br>
+
+                    <input id="trueShow_ToEmployee" type="radio" asp-for="Show_ToEmployee" value="true">
+                    <label for="trueShow_ToEmployee">true</label><br>
+
+                    <input id="falseShow_ToEmployee" type="radio" asp-for="Show_ToEmployee" value="false">
+                    <label for="falseShow_ToEmployee">false</label><br>
+
+                    <span asp-validation-for="Show_ToEmployee" class="text-danger"></span>
                 </div>
 
             </div>

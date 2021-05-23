@@ -3,88 +3,68 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MVCWebAppServierCon.Migrations
 {
-    public partial class editcontractstable : Migration
+    public partial class handleamount : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            //migrationBuilder.AddColumn<double>(
-            //    name: "Amount",
-            //    table: "TblContracts",
-            //    nullable: false,
-            //    defaultValue: 0.0);
-
-            //migrationBuilder.AddColumn<string>(
-            //    name: "Note",
-            //    table: "TblContracts",
-            //    nullable: false,
-            //    defaultValue: "");
-
             migrationBuilder.UpdateData(
                 table: "SalesQouteHeader",
                 keyColumn: "Id",
                 keyValue: -4,
                 column: "CreationDate",
-                value: new DateTime(2021, 4, 26, 13, 54, 15, 340, DateTimeKind.Local).AddTicks(4816));
+                value: new DateTime(2021, 5, 23, 13, 56, 17, 939, DateTimeKind.Local).AddTicks(5215));
 
             migrationBuilder.UpdateData(
                 table: "SalesQouteHeader",
                 keyColumn: "Id",
                 keyValue: -3,
                 column: "CreationDate",
-                value: new DateTime(2021, 4, 26, 13, 54, 15, 343, DateTimeKind.Local).AddTicks(7086));
+                value: new DateTime(2021, 5, 23, 13, 56, 17, 942, DateTimeKind.Local).AddTicks(5897));
 
             migrationBuilder.UpdateData(
                 table: "SalesQouteHeader",
                 keyColumn: "Id",
                 keyValue: -2,
                 column: "CreationDate",
-                value: new DateTime(2021, 4, 26, 13, 54, 15, 343, DateTimeKind.Local).AddTicks(7126));
+                value: new DateTime(2021, 5, 23, 13, 56, 17, 942, DateTimeKind.Local).AddTicks(5933));
 
             migrationBuilder.UpdateData(
                 table: "SalesQouteHeader",
                 keyColumn: "Id",
                 keyValue: -1,
                 column: "CreationDate",
-                value: new DateTime(2021, 4, 26, 13, 54, 15, 343, DateTimeKind.Local).AddTicks(7158));
+                value: new DateTime(2021, 5, 23, 13, 56, 17, 942, DateTimeKind.Local).AddTicks(5940));
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "Amount",
-                table: "TblContracts");
-
-            migrationBuilder.DropColumn(
-                name: "Note",
-                table: "TblContracts");
-
             migrationBuilder.UpdateData(
                 table: "SalesQouteHeader",
                 keyColumn: "Id",
                 keyValue: -4,
                 column: "CreationDate",
-                value: new DateTime(2021, 4, 13, 13, 26, 7, 611, DateTimeKind.Local).AddTicks(3693));
+                value: new DateTime(2021, 5, 20, 16, 29, 2, 32, DateTimeKind.Local).AddTicks(2680));
 
             migrationBuilder.UpdateData(
                 table: "SalesQouteHeader",
                 keyColumn: "Id",
                 keyValue: -3,
                 column: "CreationDate",
-                value: new DateTime(2021, 4, 13, 13, 26, 7, 615, DateTimeKind.Local).AddTicks(2946));
+                value: new DateTime(2021, 5, 20, 16, 29, 2, 36, DateTimeKind.Local).AddTicks(5671));
 
             migrationBuilder.UpdateData(
                 table: "SalesQouteHeader",
                 keyColumn: "Id",
                 keyValue: -2,
                 column: "CreationDate",
-                value: new DateTime(2021, 4, 13, 13, 26, 7, 615, DateTimeKind.Local).AddTicks(3003));
+                value: new DateTime(2021, 5, 20, 16, 29, 2, 36, DateTimeKind.Local).AddTicks(5731));
 
             migrationBuilder.UpdateData(
                 table: "SalesQouteHeader",
                 keyColumn: "Id",
                 keyValue: -1,
                 column: "CreationDate",
-                value: new DateTime(2021, 4, 13, 13, 26, 7, 615, DateTimeKind.Local).AddTicks(3013));
+                value: new DateTime(2021, 5, 20, 16, 29, 2, 36, DateTimeKind.Local).AddTicks(5742));
         }
     }
 }

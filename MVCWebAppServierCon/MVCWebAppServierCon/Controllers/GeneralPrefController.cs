@@ -90,6 +90,7 @@ namespace MVCWebAppServierCon.Controllers
                 Gpref.Display_Name_Project = model.Display_Name_Project;
                 Gpref.Display_Name_Activityt = model.Display_Name_Activityt;
                 Gpref.Show_ToDate = model.Show_ToDate;
+                Gpref.Show_ToEmployee = model.Show_ToEmployee;
 
                 _context.SaveChanges();
             }
@@ -180,6 +181,7 @@ namespace MVCWebAppServierCon.Controllers
                 previous_model.Display_Name_Project = model.Display_Name_Project;
                 previous_model.Display_Name_Activityt = model.Display_Name_Activityt;
                 previous_model.Show_ToDate = model.Show_ToDate;
+                previous_model.Show_ToEmployee = model.Show_ToEmployee;
 
                 _context.TblGeneralPreference.Update(previous_model);
                 await _context.SaveChangesAsync();

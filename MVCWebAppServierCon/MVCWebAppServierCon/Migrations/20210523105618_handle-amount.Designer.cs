@@ -4,14 +4,16 @@ using MVCWebAppServierCon.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MVCWebAppServierCon.Migrations
 {
     [DbContext(typeof(SecondConnClass))]
-    partial class SecondConnClassModelSnapshot : ModelSnapshot
+    [Migration("20210523105618_handle-amount")]
+    partial class handleamount
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -329,8 +331,6 @@ namespace MVCWebAppServierCon.Migrations
 
                     b.Property<bool>("Show_ToDate");
 
-                    b.Property<bool>("Show_ToEmployee");
-
                     b.Property<bool>("Show_Unit");
 
                     b.Property<bool>("Show_cost3");
@@ -542,7 +542,7 @@ namespace MVCWebAppServierCon.Migrations
                         new
                         {
                             Id = -4,
-                            CreationDate = new DateTime(2021, 5, 23, 14, 54, 47, 732, DateTimeKind.Local).AddTicks(3339),
+                            CreationDate = new DateTime(2021, 5, 23, 13, 56, 17, 939, DateTimeKind.Local).AddTicks(5215),
                             ExpierDate = new DateTime(2022, 10, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             OfferDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             OfferName = "شراء قرطاسية",
@@ -551,7 +551,7 @@ namespace MVCWebAppServierCon.Migrations
                         new
                         {
                             Id = -3,
-                            CreationDate = new DateTime(2021, 5, 23, 14, 54, 47, 735, DateTimeKind.Local).AddTicks(2491),
+                            CreationDate = new DateTime(2021, 5, 23, 13, 56, 17, 942, DateTimeKind.Local).AddTicks(5897),
                             ExpierDate = new DateTime(2021, 1, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             OfferDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             OfferName = "شراء شي",
@@ -560,7 +560,7 @@ namespace MVCWebAppServierCon.Migrations
                         new
                         {
                             Id = -2,
-                            CreationDate = new DateTime(2021, 5, 23, 14, 54, 47, 735, DateTimeKind.Local).AddTicks(2528),
+                            CreationDate = new DateTime(2021, 5, 23, 13, 56, 17, 942, DateTimeKind.Local).AddTicks(5933),
                             ExpierDate = new DateTime(2022, 10, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             OfferDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             OfferName = "something",
@@ -569,7 +569,7 @@ namespace MVCWebAppServierCon.Migrations
                         new
                         {
                             Id = -1,
-                            CreationDate = new DateTime(2021, 5, 23, 14, 54, 47, 735, DateTimeKind.Local).AddTicks(2535),
+                            CreationDate = new DateTime(2021, 5, 23, 13, 56, 17, 942, DateTimeKind.Local).AddTicks(5940),
                             ExpierDate = new DateTime(2022, 10, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             OfferDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             OfferName = "another thing",
