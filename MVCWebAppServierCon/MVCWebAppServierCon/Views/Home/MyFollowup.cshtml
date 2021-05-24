@@ -181,77 +181,77 @@
         <tbody style="font-size:smaller ;">
             @foreach (OrderHeaderClass item in Model)
             {
-            <tr>
-                <td>
-                    <a asp-action="Edit" asp-controller="OrderView" asp-route-id="@item.OrderHeaderCode" asp-route-IsPreview="true"> @Html.DisplayFor(modelItem => item.OrderHeaderCode)</a>
+                <tr>
+                    <td>
+                        <a asp-action="Edit" asp-controller="OrderView" asp-route-id="@item.OrderHeaderCode" asp-route-IsPreview="true"> @Html.DisplayFor(modelItem => item.OrderHeaderCode)</a>
 
 
-                </td>
+                    </td>
 
-                <td>
-                    @Html.DisplayFor(modelItem => item.OrderHeaderdate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.UserName)
-                </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OrderHeaderdate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UserName)
+                    </td>
 
-                <td>
-                    @Html.DisplayFor(modelItem => item.Currency)
-                </td>
-                @*<td>
-            @Html.DisplayFor(modelItem => item.OrderHeaderRate)
-        </td>*@
-                <td>
-                    @Html.DisplayFor(modelItem => item.ActualTotalAmount)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TotalInbasic)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ProjectName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.BudgetLine)
-                </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Currency)
+                    </td>
+                    @*<td>
+                            @Html.DisplayFor(modelItem => item.OrderHeaderRate)
+                        </td>*@
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ActualTotalAmount)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TotalInbasic)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProjectName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.BudgetLine)
+                    </td>
 
-                <td>
-                    @Html.DisplayFor(modelItem => item.OrderTypeName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ExpectedDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.OrderHeaderNote)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.SupplierName)
-                </td>
-                <td style="color:#251fca ;">
-                    @Html.DisplayFor(modelItem => item.StatusName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.LastUserName)
-                </td>
-                <td style="color:#251fca ;">
-                    @Html.DisplayFor(modelItem => item.NotesFromLastAction)
-                </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OrderTypeName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ExpectedDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OrderHeaderNote)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SupplierName)
+                    </td>
+                    <td style="color:#251fca ;">
+                        @Html.DisplayFor(modelItem => item.StatusName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LastUserName)
+                    </td>
+                    <td style="color:#251fca ;">
+                        @Html.DisplayFor(modelItem => item.NotesFromLastAction)
+                    </td>
 
-                <td>
-                    @Html.DisplayFor(modelItem => item.waitingUser)
-                </td>
-              
-                @*<td>
-            @if (item.StatusName == "Return" || item.StatusName == "Document")
-            {
-                <a asp-action="Edit" asp-controller="OrderView" asp-route-id="@item.OrderHeaderCode"><span class="Editbtn fa fa-pen" title="Edit"></span></a>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.waitingUser)
+                    </td>
 
-            }
-        </td>*@
-                <td>
-                    <a style="color:dimgrey ;" onclick="Print(@item.OrderHeaderCode)">  <span class=" fa fa-print" title="Print"></span></a>
+                    @*<td>
+                            @if (item.StatusName == "Return" || item.StatusName == "Document")
+                            {
+                                <a asp-action="Edit" asp-controller="OrderView" asp-route-id="@item.OrderHeaderCode"><span class="Editbtn fa fa-pen" title="Edit"></span></a>
 
-                </td>
-            </tr>
+                            }
+                        </td>*@
+                    <td>
+                        <a style="color:dimgrey ;" onclick="Print(@item.OrderHeaderCode)">  <span class=" fa fa-print" title="Print"></span></a>
+
+                    </td>
+                </tr>
             }
         </tbody>
     </table>
@@ -300,3 +300,26 @@
 <div id="pnlOrder" style="display:block; font-size:small ;font-family: Arial">
 
 </div>
+
+
+<script>
+    function Print(orderId) {
+        var doc = new jsPDF('p', 'pt', 'a4');
+        doc.setFontSize(5);
+        var options = { background: 'red' };
+        var div = document.getElementById("pnlOrder");
+        div.innerHTML = '';
+
+
+        $.ajax({
+            url: "/Home/PrintOrder",
+            data: { OrderId: orderId },
+            success: function (data) {
+
+                div.innerHTML = data;
+
+                html2pdf().from(div).save();
+            }
+        });
+    }
+</script>

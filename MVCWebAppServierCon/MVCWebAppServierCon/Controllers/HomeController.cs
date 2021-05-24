@@ -907,7 +907,7 @@ namespace MVCWebAppServierCon.Controllers
 
                 t.Currency = getData.getTblCodeName(currency_table, t.OrderHeaderCurrencey.ToString(), connection);
 
-                t.Currency = getData.getTblCodeName("TblCurrency", t.OrderHeaderCurrencey.ToString(), connection);
+                t.Currency = getData.getTblCodeName(currency_table, t.OrderHeaderCurrencey.ToString(), connection);
 
                 t.UserName = _sc.TblUser.Where(u => u.userCode == t.OrderHeaderUserId).FirstOrDefault().userName;
                 t.StatusName = GetStatusName(a.ApprovalIsApproved);
