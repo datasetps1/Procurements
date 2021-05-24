@@ -529,77 +529,92 @@
                                 return true
 
     }
-                            function CheckForm() {
-                                var IsError=true;
-                                if($("#rateText").val() == 0 || $("#rateText").val() == '') {
-                                    Swal.fire({
-                                    icon: 'error',
-                    title: 'خطأ',
-                     text: 'يجب ادخال سعر الصرف',
-                    footer: 'PostOrderStatus'
-                                    })
+    function CheckForm() {
+        var IsError = true;
+        if ($("#rateText").val() == 0 || $("#rateText").val() == '') {
+            Swal.fire({
+                icon: 'error',
+                title: 'خطأ',
+                text: 'يجب ادخال سعر الصرف',
+                footer: 'PostOrderStatus'
+            })
             IsError = false;
-                                }
+        }
 
-                                if ($("#realTot").val() == 0 || $("#realTot").val() == '') {
-                                    Swal.fire({
-                                    icon: 'error',
-                    title: 'خطأ',
-                     text: 'يجب ادخال  المبلغ',
-                    footer: 'PostOrderStatus'
-                                    })
+        if ($("#realTot").val() == 0 || $("#realTot").val() == '') {
+            Swal.fire({
+                icon: 'error',
+                title: 'خطأ',
+                text: 'يجب ادخال  المبلغ',
+                footer: 'PostOrderStatus'
+            })
             IsError = false;
-                                }
+        }
 
-                                if ($("#realTot").val() == 0 || $("#realTot").val() == '') {
-                                    Swal.fire({
-                                    icon: 'error',
-                    title: 'خطأ',
-                     text: 'يجب ادخال  المبلغ',
-                    footer: 'PostOrderStatus'
-                                    })
+        if ($("#realTot").val() == 0 || $("#realTot").val() == '') {
+            Swal.fire({
+                icon: 'error',
+                title: 'خطأ',
+                text: 'يجب ادخال  المبلغ',
+                footer: 'PostOrderStatus'
+            })
             IsError = false;
-                                }
+        }
 
-                                if ($("#txtNote").val() == 0 || $("#txtNote").val() == '') {
-                                    Swal.fire({
-                                    icon: 'error',
-                    title: 'خطأ',
-                     text: 'يجب ادخال  الملاحظات العامه',
-                    footer: 'PostOrder'
-                                    })
+        if ($("#txtNote").val() == 0 || $("#txtNote").val() == '') {
+            Swal.fire({
+                icon: 'error',
+                title: 'خطأ',
+                text: 'يجب ادخال  الملاحظات العامه',
+                footer: 'PostOrder'
+            })
             IsError = false;
-                                }
+        }
 
 
-                                return IsError
-                            }
+        return IsError
+    }
 
-                            function CheckData(val, msg) {
+    function CheckData(val, msg) {
 
-                                var IsError=true;
-                                if (val == 0 || val == '' || val==undefined) {
-                                    Swal.fire({
-                                    icon: 'error',
-                    title: 'خطأ',
-                     text: msg,
-                    footer: 'PostOrderStatus'
-                                    })
+        var IsError = true;
+        if (val == 0 || val == '' || val == undefined) {
+            Swal.fire({
+                icon: 'error',
+                title: 'خطأ',
+                text: msg,
+                footer: 'PostOrderStatus'
+            })
             IsError = false;
-                                }
-                                return IsError
-                            }
+        }
+        return IsError
+    }
 
-                            function ShowMessage( msg) {
+    function CheckDataCurrency(val, msg) {
+
+        var IsError = true;
+        if (val == '' || val == undefined) {
+            Swal.fire({
+                icon: 'error',
+                title: 'خطأ',
+                text: msg,
+                footer: 'PostOrderStatus'
+            })
+            IsError = false;
+        }
+        return IsError
+    }
+
+    function ShowMessage(msg) {
 
 
 
-                                Swal.fire({
-                                icon: 'error',
-                    title: 'خطأ',
-                     text: msg,
-                    footer: ''
-                                })
+        Swal.fire({
+            icon: 'error',
+            title: 'خطأ',
+            text: msg,
+            footer: ''
+        })
 
 
 
@@ -673,7 +688,7 @@
         var currencey = document.getElementById('cmbCurrency');
         var OrderHeaderCurrencey = currencey.text;
 
-        if (CheckData(OrderHeaderCurrencey, "يجب ادخال العمله") == false) { return; }
+        if (CheckDataCurrency(OrderHeaderCurrencey, "يجب ادخال العمله") == false) { return; }
 
         if (@Json.Serialize(ViewBag.Show_Order_Type) == true) {
             if (CheckData(OrderHeaderOrderTypeCode, "يجب ادخال نوع الطلبيه ") == false) { return; }

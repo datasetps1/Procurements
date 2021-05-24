@@ -102,24 +102,26 @@
                         </div>
                     }
 
-                    <div class="form-group  @(ViewBag.Show_Order_Type ? "col-md-3" : "col-md-3")" style="padding:0 5px;">
-                        <label style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["To Employee"]</label>
-                        <select id="user_select_input" class="form-control" disabled>
-                            <option></option>
-                            @foreach (UserClass itm in ViewBag.users)
-                            {
-                                if (@viewModel.headerClass.ToEmployeeCode == itm.userCode)
+                    @if (ViewBag.Show_ToEmployee)
+                    {
+                        <div class="form-group  @(ViewBag.Show_Order_Type ? "col-md-3" : "col-md-3")" style="padding:0 5px;">
+                            <label style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["To Employee"]</label>
+                            <select id="user_select_input" class="form-control" disabled>
+                                <option></option>
+                                @foreach (UserClass itm in ViewBag.users)
                                 {
-                                    <option value="@itm.userCode" selected>@itm.userName</option>
+                                    if (@viewModel.headerClass.ToEmployeeCode == itm.userCode)
+                                    {
+                                        <option value="@itm.userCode" selected>@itm.userName</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@itm.userCode">@itm.userName</option>
+                                    }
                                 }
-                                else
-                                {
-                                    <option value="@itm.userCode">@itm.userName</option>
-                                }
-                            }
-                        </select>
-                    </div>
-
+                            </select>
+                        </div>
+                    }
 
                     <div class="form-group @(ViewBag.Show_Order_Type ? "col-md-2" : "col-md-3")" style="padding:0 5px;">
                         <label class="control-label">Department Name</label>
@@ -390,22 +392,19 @@
                                                 {
                                                     @item.TransactionDate.ToString("yyyy-MM-dd")
                                                 }
-                                        }
-                                    </td>
-                                    <td class="@(ViewBag.Show_Unit ? "col-md-1":"col-md-2")">
-                                        <a class="Editbtn" href="#" onclick="handle_edit_trans(@item.TransactionItemCode,'@item.ItemName' ,@item.TransactionQty , @item.TransactionPrice, @x, '@item.TransactionNote','@item.TransactionDate.ToString("yyyy-MM-dd")')">
-                                            <span class="Editbtn fa fa-pen"></span>
-                                        </a>
-                                        <a href="#" onclick="Remove(this ,  @x )">
-                                            <span class=" fa fa-trash"></span>
-                                        </a>
+                                            }
+                                        </td>
+                                        <td class="@(ViewBag.Show_Unit ? "col-md-1":"col-md-2")">
+                                            <a class="Editbtn" href="#" onclick="handle_edit_trans(this,@item.TransactionItemCode,'@item.ItemName' ,@item.TransactionQty , @item.TransactionPrice, @x, '@item.TransactionNote','@item.TransactionDate.ToString("yyyy-MM-dd")')">
+                                                <span class="Editbtn fa fa-pen"></span>
+                                            </a>
+                                            <a href="#" onclick="Remove(this ,  @x )">
+                                                <span class=" fa fa-trash"></span>
+                                            </a>
+                                        </td>
 
-
-
-                                    </td>
-
-                                </tr>
-                            }
+                                    </tr>
+                                }
 
                             </tbody>
                         </table>
@@ -465,29 +464,31 @@
                 @section Scripts{
                     <script>
 
+                        
+                        if (@Json.Serialize(ViewBag.Show_ToEmployee)) {
+                            document.getElementById("user_select_input").addEventListener("change", () => {
+                                console.log(document.getElementById("user_select_input").value);
+                                var user_code = document.getElementById("user_select_input").value;
+                                var dep_id = -1;
+                                var users_array = @Json.Serialize(ViewBag.users)
+                                    console.log(users_array)
+                                users_array.map(user => {
+                                    if (user.userCode == user_code) {
+                                        dep_id = user.userDepartmentCode
+                                    }
+                                });
 
-                        document.getElementById("user_select_input").addEventListener("change", () => {
-                            console.log(document.getElementById("user_select_input").value);
-                            var user_code = document.getElementById("user_select_input").value;
-                            var dep_id = -1;
-                            var users_array = @Json.Serialize(ViewBag.users)
-                                console.log(users_array)
-                            users_array.map(user => {
-                                if (user.userCode == user_code) {
-                                    dep_id = user.userDepartmentCode
-                                }
+                                console.log(dep_id)
+                                $.ajax({
+                                    url: '@Url.Action("GetDepartmentName")',
+                                    data: { dep_Code: dep_id },
+                                    success: (result) => {
+                                        console.log(result.code)
+                                        document.getElementById("department_select_input").value = result.code
+                                    }
+                                })
                             });
-
-                            console.log(dep_id)
-                            $.ajax({
-                                url: '@Url.Action("GetDepartmentName")',
-                                data: { dep_Code: dep_id },
-                                success: (result) => {
-                                    console.log(result.code)
-                                    document.getElementById("department_select_input").value = result.code
-                                }
-                            })
-                        });
+                        }
                                     //if there is to employee then fill the department input
                                     var to_emp_code = @Json.Serialize(@viewModel.headerClass.ToEmployeeCode)
                         if (to_emp_code != null) {
@@ -568,11 +569,12 @@
 
 
                             //});
-                            $(this).parent().parent().remove();
+                            debugger
+                            //$(this).parent().parent().remove();
 
                         });
 
-                        function handle_edit_trans(TransactionItemCode, item_name, quntity, price, total, item_note, date) {
+                        function handle_edit_trans(element,TransactionItemCode, item_name, quntity, price, total, item_note, date) {
                             debugger
                             $('#itemName').val(item_name);
                             //fill the unit if it is exist
@@ -620,6 +622,9 @@
                                 document.getElementById("realTot").value = realTotal;
                                 document.getElementById("realBasicTot").value = realTotal * parseFloat(document.getElementById("rateText").value);
                             }
+
+                            
+                            $(element).parent().parent().remove();
                         }
                     </script>
                 }
@@ -847,7 +852,7 @@
         var currencey = document.getElementById('cmbCurrency');
         var OrderHeaderCurrencey = currencey.value;
 
-        if (CheckData(OrderHeaderCurrencey, "يجب ادخال العمله") == false) { return; }
+        if (CheckDataCurrency(OrderHeaderCurrencey, "يجب ادخال العمله") == false) { return; }
 
         if (@Json.Serialize(ViewBag.Show_Order_Type) == true) {
             if (CheckData(OrderHeaderOrderTypeCode, "يجب ادخال نوع الطلبيه ") == false) { return; }
@@ -864,7 +869,6 @@
             OrderHeaderNote: $("#txtNote").val(),
             OrderHeaderRealTotal: $('#realTot').val(),
             ExpectedDate: $('#txtExpectedDate').val(),
-            ToEmployeeCode: document.getElementById("user_select_input").value,
         };
 
         if (@Json.Serialize(ViewBag.Show_Order_Type) == true) {
@@ -883,6 +887,11 @@
         }
         if (@Json.Serialize(ViewBag.Show_cost4) == true) {
             headerModel.Cost4 = document.getElementById('cost4_input').value;
+        }
+
+        
+        if (@Json.Serialize(ViewBag.Show_ToEmployee) == true) {
+            headerModel.ToEmployeeCode = document.getElementById("user_select_input").value;
         }
 
         debugger
@@ -951,6 +960,22 @@
         });
         // addPic();
         // transArr = [];
+    }
+    
+
+    function CheckDataCurrency(val, msg) {
+
+        var IsError = true;
+        if (val == '' || val == undefined) {
+            Swal.fire({
+                icon: 'error',
+                title: 'خطأ',
+                text: msg,
+                footer: 'PostOrderStatus'
+            })
+            IsError = false;
+        }
+        return IsError
     }
 
     function addPic(orderHeaderCode) {//add the file to its table using formdata
@@ -1194,8 +1219,9 @@ for (var i = 0; i < rows; i++) {
         /**/
         // cell6.innerHTML = '<a class="Editbtn" href="#" ><span class="Editbtn fa fa-pen" ></span> </a>   ';
         /**/
-
-        cell7.innerHTML = ' <a href="#"><span class=" fa fa-pen" onclick="Edit(this , ' + x + ' )"></span> </a> <a href="#"> <span class=" fa fa-trash" onclick="Remove2(this , ' + x + ' )"></span></a>';
+        cell7.innerHTML = ` <a href="#" onclick="handle_edit_trans(this,`+itemcode+` ,'`+itemName+`' ,`+qty+` ,`+price+` ,`+x+` ,'`+note+`' ,'`+TransDate+`' )"><span class=" fa fa-pen"></span> </a> <a href="#"> <span class=" fa fa-trash" onclick="Remove2(this , ` + x + ` )"></span></a>`;
+        //cell7.innerHTML = ' <a href="#"><span class=" fa fa-pen" onclick="Edit(this , ' + x + ' )"></span> </a> <a href="#"> <span class=" fa fa-trash" onclick="Remove2(this , ' + x + ' )"></span></a>';
+        //cell7.innerHTmL = `<a href="#"><span class="fa fa-pen" onclick="` + edit_call_back + `"></span> </a> <a href="#"> <span class=" fa fa-trash" onclick="Remove2(this , ` + x + ` )"></span></a>`;
         /**/
         var TransactionClass = function (itemcode, itemName, Quantity, Price, Note, TransDate) {
             this.TransactionItemCode = itemcode;

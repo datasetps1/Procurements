@@ -568,6 +568,7 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
             ViewBag.Show_ToDate = general_prefernce.Show_ToDate;
             ViewBag.Display_Name_Project = general_prefernce.Display_Name_Project;
             ViewBag.Display_Name_Activityt = general_prefernce.Display_Name_Activityt;
+            ViewBag.Show_ToEmployee = general_prefernce.Show_ToEmployee;
 
             if (ViewBag.Show_Doner2)
             {
