@@ -135,6 +135,7 @@ namespace MVCWebAppServierCon.Controllers
 
             ViewBag.uType = stru;
             ViewBag.DepName = _sc.TblDepartment.ToList();
+
             //ViewBag.uType = stru.Where(s => s.structureRank.Equals(1)).Select(us => us.structureName).ToList();
             //ViewBag.uDepMan = stru.Where(s => s.structureRank.Equals(2)).ToList(); // remove select name from these rank for Dep. Man. = 2
             //ViewBag.uMngAss = stru.Where(s => s.structureRank.Equals(3)).ToList();
@@ -485,6 +486,15 @@ namespace MVCWebAppServierCon.Controllers
                 res.userCreationDate = DateTime.Now;
                 res.userNote = uvc.userNote;
                 res.Excutable = uvc.Excutable == "true" ? true : false;
+
+
+                var user = userManager.FindByIdAsync(id);
+                //user.Email = uvc.userEmail;
+                userManager.SetEmailAsync(user.Result, uvc.userEmail);
+                userManager.SetUserNameAsync(user.Result, uvc.userName);
+
+                userManager.UpdateAsync(user.Result);
+
                 _sc.SaveChanges();
                 return RedirectToAction(nameof(Create));
             }

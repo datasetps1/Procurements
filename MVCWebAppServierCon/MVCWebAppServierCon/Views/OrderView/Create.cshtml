@@ -593,7 +593,7 @@
     function CheckDataCurrency(val, msg) {
 
         var IsError = true;
-        if (val == '' || val == undefined) {
+        if ((val == '' || val == undefined) && val != 0) {
             Swal.fire({
                 icon: 'error',
                 title: 'خطأ',
@@ -658,8 +658,8 @@
         if (ProjectCode.text != undefined) {
 
             OrderHeaderProjectCode = ProjectCode.text;
-
         }
+
         if (document.getElementById("inputState2").style.visibility == "visible") {
             if (CheckData(OrderHeaderProjectCode, "يجب ادخال المشروع") == false) { return; }
         }

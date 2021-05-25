@@ -232,7 +232,14 @@
                                 @* asp-items="" *@
                                 @foreach (CostsViewModel costs in ViewBag.Doner_List)
                                 {
-                                    <option value="@costs.costCode">@costs.costName</option>
+                                    if (costs.costCode == viewModel.headerClass.Doner)
+                                    {
+                                        <option value="@costs.costCode" selected>@costs.costName</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@costs.costCode">@costs.costName</option>
+                                    }
                                 }
                             </select>
                             <span class="text-danger"></span>
@@ -248,7 +255,14 @@
                                 @* asp-items="" *@
                                 @foreach (CostsViewModel costs in ViewBag.cost3_List)
                                 {
-                                    <option value="@costs.costCode">@costs.costName</option>
+                                    if (costs.costCode == viewModel.headerClass.Cost3)
+                                    {
+                                        <option value="@costs.costCode" selected>@costs.costName</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@costs.costCode">@costs.costName</option>
+                                    }
                                 }
                             </select>
                             <span class="text-danger"></span>
@@ -264,7 +278,14 @@
                                 @* asp-items="" *@
                                 @foreach (CostsViewModel costs in ViewBag.cost4_List)
                                 {
-                                    <option value="@costs.costCode">@costs.costName</option>
+                                    if (costs.costCode == viewModel.headerClass.Cost4)
+                                    {
+                                        <option value="@costs.costCode" selected>@costs.costName</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@costs.costCode">@costs.costName</option>
+                                    }
                                 }
                             </select>
                             <span class="text-danger"></span>
@@ -464,7 +485,7 @@
                 @section Scripts{
                     <script>
 
-                        
+
                         if (@Json.Serialize(ViewBag.Show_ToEmployee)) {
                             document.getElementById("user_select_input").addEventListener("change", () => {
                                 console.log(document.getElementById("user_select_input").value);
@@ -623,7 +644,7 @@
                                 document.getElementById("realBasicTot").value = realTotal * parseFloat(document.getElementById("rateText").value);
                             }
 
-                            
+
                             $(element).parent().parent().remove();
                         }
                     </script>
@@ -889,7 +910,7 @@
             headerModel.Cost4 = document.getElementById('cost4_input').value;
         }
 
-        
+
         if (@Json.Serialize(ViewBag.Show_ToEmployee) == true) {
             headerModel.ToEmployeeCode = document.getElementById("user_select_input").value;
         }
@@ -961,12 +982,12 @@
         // addPic();
         // transArr = [];
     }
-    
+
 
     function CheckDataCurrency(val, msg) {
 
         var IsError = true;
-        if (val == '' || val == undefined) {
+        if ((val == '' || val == undefined) && val != 0) {
             Swal.fire({
                 icon: 'error',
                 title: 'خطأ',

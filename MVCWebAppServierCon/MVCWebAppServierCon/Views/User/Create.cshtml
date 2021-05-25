@@ -11,7 +11,7 @@
 }
 <div class="container">
     <h1>@Localizer["Create"]</h1>
-    
+
 
     <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
     <div>
@@ -63,7 +63,7 @@
                         <span asp-validation-for="userActive" class="text-danger"></span>
                     </div>
                     @*<div class="form-group col-md-1">
-            </div>*@
+                        </div>*@
                     <div class="form-group col-md-3">
                         <label asp-for="userType" class="control-label">@Localizer["User Type"]</label>
                         <br />
@@ -105,59 +105,59 @@
 
 
                     @*<div class="form-group col-md-4">
-                <label asp-for="userDepartment" class="control-label"></label>
-                <br />
-                <select asp-for="userDepartment">
-                    <option>Please select department Name</option>
-                    @foreach (DepartmentClass item in ViewBag.DepName)
-                    {
-                        <option value="@item.departmentCode"> @Html.DisplayFor(modelItem => item.departmentName)</option>
-                    }
-                </select>
-            </div>*@
+                            <label asp-for="userDepartment" class="control-label"></label>
+                            <br />
+                            <select asp-for="userDepartment">
+                                <option>Please select department Name</option>
+                                @foreach (DepartmentClass item in ViewBag.DepName)
+                                {
+                                    <option value="@item.departmentCode"> @Html.DisplayFor(modelItem => item.departmentName)</option>
+                                }
+                            </select>
+                        </div>*@
 
                 </div>
                 @*<div class="row">
-            <div class="form-group col-md-4">
-                <label asp-for="managmentAccesstance" class="control-label"></label>
-                <br />
-                <select asp-for="managmentAccesstance">
-                     asp-items=""
-                    <option>Please select managment Accesstance</option>
-                    @foreach (String item in ViewBag.uMngAss)
-                    {
-                        <option> @Html.DisplayFor(modelItem => item)</option>
-                    }
-                </select>
-            </div>
-            <div class="form-group col-md-4">
-                <label asp-for="sectionManager" class="control-label"></label>
-                <br />
-                <select asp-for="sectionManager">
-                     asp-items=""
-                    <option>Please select section Manager</option>
-                    @foreach (String item in ViewBag.uSecMan)
-                    {
-                        <option> @Html.DisplayFor(modelItem => item)</option>
-                    }
-                    <option value="1">Shyju</option>
-                    <option value="2">Sean</option>
-                </select>
-            </div>
-            <div class="form-group col-md-4">
-                <label asp-for="finacnceDepartment" class="control-label"></label>
-                <br />
-                <select asp-for="finacnceDepartment">
-                     asp-items="ViewBag.uFinDep"
-                    <option>Please select finacnce Department</option>
-                    @foreach (String item in ViewBag.uFinDep)
-                    {
-                        <option value=""> @Html.DisplayFor(modelItem => item)</option>
-                    }
-                </select>
-            </div>
+                        <div class="form-group col-md-4">
+                            <label asp-for="managmentAccesstance" class="control-label"></label>
+                            <br />
+                            <select asp-for="managmentAccesstance">
+                                 asp-items=""
+                                <option>Please select managment Accesstance</option>
+                                @foreach (String item in ViewBag.uMngAss)
+                                {
+                                    <option> @Html.DisplayFor(modelItem => item)</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label asp-for="sectionManager" class="control-label"></label>
+                            <br />
+                            <select asp-for="sectionManager">
+                                 asp-items=""
+                                <option>Please select section Manager</option>
+                                @foreach (String item in ViewBag.uSecMan)
+                                {
+                                    <option> @Html.DisplayFor(modelItem => item)</option>
+                                }
+                                <option value="1">Shyju</option>
+                                <option value="2">Sean</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label asp-for="finacnceDepartment" class="control-label"></label>
+                            <br />
+                            <select asp-for="finacnceDepartment">
+                                 asp-items="ViewBag.uFinDep"
+                                <option>Please select finacnce Department</option>
+                                @foreach (String item in ViewBag.uFinDep)
+                                {
+                                    <option value=""> @Html.DisplayFor(modelItem => item)</option>
+                                }
+                            </select>
+                        </div>
 
-        </div>*@
+                    </div>*@
                 <div class="row">
                     <div class="form-group col-md-12">
                         <label asp-for="userNote" class="control-label">@Localizer["User Note"]</label>
@@ -232,7 +232,7 @@
                     </th>
                     <th>
                         @Localizer["User Note"]
-                    </th> 
+                    </th>
                     <th>
                         @Localizer["Executable"]
                     </th>
@@ -255,12 +255,30 @@
                             <td>
                                 @Html.DisplayFor(modelItem => item.userConfirmPassword)
                             </td>*@
-                        <td>
-                            @Html.DisplayFor(modelItem => item.userTypeCode)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.userDepartmentCode)
-                        </td>
+
+                        @foreach (StructureClass type in ViewBag.uType)
+                        {
+                            if (item.userTypeCode == type.structureRank)
+                            {
+                                <td>(@type.structureRank) @type.structureName</td>
+                            }
+                        }
+
+                        @{
+                            var dep_found = false;
+                        }
+                        @foreach (DepartmentClass department in ViewBag.DepName)
+                        {
+                            if (department.departmentCode == item.userDepartmentCode)
+                            {
+                                dep_found = true;
+                                <td>(@department.departmentCode) @department.departmentName</td>
+                            }
+                        }
+                        @if (!dep_found)
+                        {
+                            <td>(@item.userDepartmentCode)</td>
+                        }
                         @*<td>
                                 @Html.DisplayFor(modelItem => item.managmentAccesstanceCode)
                             </td>
@@ -271,7 +289,7 @@
                                 @Html.DisplayFor(modelItem => item.finacnceDepartmentCode)
                             </td>*@
                         <td>
-                            @Html.DisplayFor(modelItem => item.userActive)
+                            <input type="checkbox" checked="@(item.userActive == 1 ? true : false)" disabled />
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.userNote)
@@ -326,7 +344,7 @@
                             <input type="checkbox" checked=" ${current_order.excutable}" disabled />
                         </td>
                         <td>
-                            <a href="/user/Edit/${current_order.userCode}">Edit</a> \ 
+                            <a href="/user/Edit/${current_order.userCode}">Edit</a> \
                             <a href="/user/EditUsersView/${current_order.userCode}">Permissions</a>
                         </td>
                     </tr>`);

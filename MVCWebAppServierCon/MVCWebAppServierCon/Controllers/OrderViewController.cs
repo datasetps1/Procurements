@@ -454,6 +454,9 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
                 ohc.OrderHeaderUserId = user.userCode;
                 ohc.OrderHeaderCreationDate = DateTime.Now;
                 ohc.OrderHeaderDeviceIp = 1;
+
+
+
                 ohc.ExpectedDate = headerlst.ExpectedDate != null ? headerlst.ExpectedDate : new DateTime(int.Parse(ExpectedDate.Split('-')[0]), int.Parse(ExpectedDate.Split('-')[1]), int.Parse(ExpectedDate.Split('-')[2]));
                 if (_sc.TblGeneralPreference.FirstOrDefault().Show_ToDate)
                 {
@@ -461,6 +464,9 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
                 }
 
                 ohc.OrderHeaderdate = new DateTime(int.Parse(OrderHeaderdate.Split('-')[0]), int.Parse(OrderHeaderdate.Split('-')[1]), int.Parse(OrderHeaderdate.Split('-')[2]));
+                ohc.Cost3 = headerlst.Cost3;
+                ohc.Cost4 = headerlst.Cost4;
+                ohc.Doner = headerlst.Doner;
 
                 _sc.Add(ohc);
                 _sc.SaveChanges();
@@ -810,6 +816,9 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
                     res1.ActualTotalAmount = headerlst.OrderHeaderRealTotal;
                     // res1.OrderHeaderCreationDate = DateTime.Now;
                     res1.OrderHeaderNote = headerlst.OrderHeaderNote;
+                    res1.Doner = headerlst.Doner;
+                    res1.Cost3 = headerlst.Cost3;
+                    res1.Cost4 = headerlst.Cost4;
                     // res1.OrderHeaderDeviceIp = Int32.Parse(headerlst[8]);
                     //  res1.OrderHeaderUserId = usr;
                     _sc.SaveChanges();
