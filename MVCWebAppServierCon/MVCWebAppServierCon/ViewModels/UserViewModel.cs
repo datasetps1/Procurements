@@ -22,7 +22,8 @@ namespace MVCWebAppServierCon.ViewModels
         public String userConfirmPassword { get; set; }
         [Required]
         public int userType { get; set; }
-        public int userDepartment { get; set; }
+
+        public int? userDepartment { get; set; }
         [Required]
         public int userActive { get; set; }
         public String userNote { get; set; }

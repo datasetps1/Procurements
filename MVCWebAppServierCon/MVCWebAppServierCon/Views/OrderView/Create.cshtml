@@ -54,7 +54,7 @@
             <input type="hidden" id="NumberOfDayesBefore" />
             <input type="hidden" id="NumberOfDayesAfter" />
 
-            <div class="container card" style=" box-shadow: 0 0 10px 0 rgba(0, 0, 0, .1);padding: 30px;padding-top: 19px;">
+            <div class="container-fluid" style=" box-shadow: 0 0 10px 0 rgba(0, 0, 0, .1);padding: 30px;padding-top: 19px;">
                 <div class="form-row" style="margin-top:15px ; ">
                     <h4 style="">@Localizer["Create OrderView"]</h4>
 
@@ -267,7 +267,6 @@
                 </div>
                 <div class="" style="    border-radius: 6px;    border: 2px solid #46688a;     margin-top: 9px;">
                     <div class="row " style="margin: 0 1px -2px 1px;  padding: 12px 0 0 0;">
-
                         <div class="form-group col-md-2">
 
                             <label style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Item"]</label>
@@ -292,25 +291,41 @@
                         }
 
 
-                        <div class="form-group @(ViewBag.Show_Unit ? "col-md-1" : "col-md-2")">
+                        <div class="form-group @(ViewBag.Show_Unit ? "col-md-1" : "col-md-1")">
                             <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Quantity"]</label>
                             <input type="number" step="any" class="form-control" name="transLst" id="qty" />
                             <span class="text-danger"></span>
                         </div>
-                        <div class="form-group col-md-2">
+                        <div class="form-group @(ViewBag.Show_Unit ? "col-md-1" : "col-md-2")">
                             <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Price"]</label>
                             <input type="number" step="any" class="form-control" name="transLst" id="price" />
                             <span class="text-danger"></span>
                         </div>
+                        <script>
+                            console.log(@Json.Serialize(ViewBag.Currency))
+                        </script>
+                        <div class="form-group col-md-1">
+                            <input type="hidden" id="item_currency_rate_input" />
+                            <label for="inputState" style="@Localizer["text-align: left  ;direction: ltr"]">Currency</label>
+                            <select id="item_currency_input" class="form-control" name="transLst">
+                                <option value="-1" selected></option>
+                                @foreach (CurrencyViewModel item in ViewBag.Currency)
+                                {
+                                    <option value="@item.currencyCode">@item.currencyName</option>
+                                }
+                            </select>
+                            <span class="text-danger"></span>
+                        </div>
+
                         <div class="form-group col-md-3">
-                            <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Item Note"]</label>
+                            <label class="control-label" c>@Localizer["Item Note"]</label>
                             <input type="text" class="form-control" name="transLst" id="note" />
                             <span class="text-danger"></span>
                         </div>
                         <div class="form-group col-md-2">
 
                             <label id="lblTransDate" class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["date"]</label>
-                            <input id="TransDate" type="date" class="form-control" name="headerLst" style="width:162px ;" value="" />
+                            <input id="TransDate" type="date" class="form-control" name="headerLst" value="" />
                             <span class="text-danger"></span>
 
 
@@ -328,16 +343,24 @@
                             <thead style="background-color:#46688a;">
                                 <tr class="row" style="width: 100%; margin: 0;">
                                     <th scope="col" style="color:#fff; display:none ;">@Localizer["Item code"]</th>
-                                    <th class="col-md-2" style="color:#fff;">@Localizer["Item Name"]</th>
+                                    <th class="@(ViewBag.Show_Currency_with_item ? "col-md-1" : "col-md-2")" style="color:#fff;">@Localizer["Item Name"]</th>
                                     @if (ViewBag.Show_Unit)
                                     {
                                         <th class="col-md-1" style="color:#fff;">@Localizer["Unit"]</th>
                                     }
                                     <th class="col-md-1" style="color:#fff;">@Localizer["Quantity"]</th>
                                     <th class="col-md-1" style="color:#fff;">@Localizer["Price"]</th>
+                                    @if (ViewBag.Show_Currency_with_item)
+                                    {
+                                        <th class="col-md-1" style="color:#fff;">@Localizer["Currency"]</th>
+                                    }
                                     <th class="col-md-1" style="color:#fff;">@Localizer["Total"]</th>
-                                    <th class="col-md-3" style="color:#fff;">@Localizer["Item Note"]</th>
-                                    <th class="col-md-2" style="color:#fff;">@Localizer["Date"]</th>
+                                    @if (ViewBag.Show_Currency_with_item)
+                                    {
+                                        <th class="col-md-1" style="color:#fff;">@Localizer["Basic Total"]</th>
+                                    }
+                                    <th class="col-md-2" style="color:#fff;">@Localizer["Item Note"]</th>
+                                    <th class="@(ViewBag.Show_Currency_with_item ? "col-md-2" : "col-md-3")" style="color:#fff;">@Localizer["Date"]</th>
                                     <th class="@(ViewBag.Show_Unit ? "col-md-1" : "col-md-2")" style="color:#fff;">@Localizer["Remove"]</th>
                                 </tr>
                             </thead>
@@ -468,65 +491,65 @@
 
 
     function CheckExpectedDate() {
-                                debugger
+        debugger
         if ($('#txtExpectedDate').val() == '') {
-                                    Swal.fire({
-                                    icon: 'error',
-                    title: 'خطأ',
-                     text: ' يجب ادخال التاريخ المتوقع للنشاط   '  ,
-                    footer: 'PostOrder'
-                                        })
+            Swal.fire({
+                icon: 'error',
+                title: 'خطأ',
+                text: ' يجب ادخال التاريخ المتوقع للنشاط   ',
+                footer: 'PostOrder'
+            })
             return false
         }
-                                if ($('#NumberOfDayesAfter').val() == '0' || $('#NumberOfDayesAfter').val() == '') {
-                                    return true
-                                }
-                                var excepteddate = new Date($('#txtExpectedDate').val());
-                                var now =new Date(Date.now());
-                                var diffTime = Math.abs(excepteddate - now);
-                                var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        if ($('#NumberOfDayesAfter').val() == '0' || $('#NumberOfDayesAfter').val() == '') {
+            return true
+        }
+        var excepteddate = new Date($('#txtExpectedDate').val());
+        var now = new Date(Date.now());
+        var diffTime = Math.abs(excepteddate - now);
+        var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-                                if (diffDays < $('#NumberOfDayesAfter').val()) {
-                                    var now3 = new Date();
-                                    now3.setDate(now3.getDate() - 4);
+        if (diffDays < $('#NumberOfDayesAfter').val()) {
+            var now3 = new Date();
+            now3.setDate(now3.getDate() - 4);
 
-                                    Swal.fire({
-                                    icon: 'error',
-                    title: 'خطأ',
-                     text: ' يجب ان يكون التاريخ المتوقع للنشاط بعد  '  + $('#NumberOfDayesAfter').val() + ' ايام ' ,
-                    footer: 'PostOrderStatus'
-                                    })
+            Swal.fire({
+                icon: 'error',
+                title: 'خطأ',
+                text: ' يجب ان يكون التاريخ المتوقع للنشاط بعد  ' + $('#NumberOfDayesAfter').val() + ' ايام ',
+                footer: 'PostOrderStatus'
+            })
             return false
-                                }
-                                return true
+        }
+        return true
 
     }
 
 
 
-                            function CheckOrderDate() {
-                                debugger
-                                if ($('#NumberOfDayesBefore').val() == '0' || $('#NumberOfDayesBefore').val() == '') {
-                                    return true
+    function CheckOrderDate() {
+        debugger
+        if ($('#NumberOfDayesBefore').val() == '0' || $('#NumberOfDayesBefore').val() == '') {
+            return true
         }
-                                var orderddate = new Date($('#date').val());
-                                var now = new Date(Date.now());
-                                var diffTime = Math.abs(now - orderddate);
-                                var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        var orderddate = new Date($('#date').val());
+        var now = new Date(Date.now());
+        var diffTime = Math.abs(now - orderddate);
+        var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-                                if (diffDays > $('#NumberOfDayesBefore').val()) {
-                                    var now3 = new Date();
-                                    now3.setDate(now3.getDate() - 4);
+        if (diffDays > $('#NumberOfDayesBefore').val()) {
+            var now3 = new Date();
+            now3.setDate(now3.getDate() - 4);
 
-                                    Swal.fire({
-                                    icon: 'error',
+            Swal.fire({
+                icon: 'error',
                 title: 'خطأ',
                 text: ' يجب ان يكون تاريخ الطلبيه اقل من ' + $('#NumberOfDayesBefore').val() + ' ايام ',
                 footer: 'PostOrderStatus'
-                                    })
+            })
             return false
-                                }
-                                return true
+        }
+        return true
 
     }
     function CheckForm() {
@@ -591,7 +614,7 @@
     }
 
     function CheckDataCurrency(val, msg) {
-
+        debugger
         var IsError = true;
         if ((val == '' || val == undefined) && val != 0) {
             Swal.fire({
@@ -871,282 +894,337 @@
 
     }
 
-                    function getshowhidefunder(id) {
+    function getshowhidefunder(id) {
         $.ajax(
-                            {
-                        url: "../OrderView/getshowhidefunder",
+            {
+                url: "../OrderView/getshowhidefunder",
                 data: { ordertype: id },
                 dataType: "json",
                 type: "POST",
                 success: function (data) {
-                                document.getElementById("inputState2").style.visibility = data.data;
-                                document.getElementById("inputState2Lbl").style.visibility = data.data;
+                    document.getElementById("inputState2").style.visibility = data.data;
+                    document.getElementById("inputState2Lbl").style.visibility = data.data;
 
 
-                                console.log("success Visible  == " + data.data);
-                            },
+                    console.log("success Visible  == " + data.data);
+                },
                 error: function (message) {
-                                // console.log("Error In Uploading");
-                                console.log(message);
-                            },
+                    // console.log("Error In Uploading");
+                    console.log(message);
+                },
 
             });
-                    }
+    }
 
-                    function getshowhidebudgetline(id) {
+    function getshowhidebudgetline(id) {
         $.ajax(
-                            {
-                        url: "../OrderView/getshowhidebudgetline",
+            {
+                url: "../OrderView/getshowhidebudgetline",
                 data: { ordertype: id },
                 dataType: "json",
                 type: "POST",
                 success: function (data) {
-                                document.getElementById("inputState4").style.visibility = data.data;
-                                document.getElementById("inputState4Lbl").style.visibility = data.data;
-                                console.log("success Visible  == " + data.data);
-                            },
+                    document.getElementById("inputState4").style.visibility = data.data;
+                    document.getElementById("inputState4Lbl").style.visibility = data.data;
+                    console.log("success Visible  == " + data.data);
+                },
                 error: function (message) {
-                                // console.log("Error In Uploading");
-                                console.log(message);
-                            },
+                    // console.log("Error In Uploading");
+                    console.log(message);
+                },
 
             });
-                    }
+    }
 
-                    function getshowhidebudgetline(id) {
+    function getshowhidebudgetline(id) {
         $.ajax(
-                           {
-                        url: "../OrderView/getshowhideTransactionDate",
+            {
+                url: "../OrderView/getshowhideTransactionDate",
                 data: { ordertype: id },
                 dataType: "json",
                 type: "POST",
                 success: function (data) {
-                                document.getElementById("TransDate").style.visibility = data.data;
-                                document.getElementById("lblTransDate").style.visibility = data.data;
+                    document.getElementById("TransDate").style.visibility = data.data;
+                    document.getElementById("lblTransDate").style.visibility = data.data;
 
 
-                            },
+                },
                 error: function (message) {
-                                // console.log("Error In Uploading");
-                                console.log(message);
-                            },
+                    // console.log("Error In Uploading");
+                    console.log(message);
+                },
 
             });
-                    }
+    }
 
-                    function getOrderType(id) {
-       // debugger
+    function getOrderType(id) {
+        // debugger
         $.ajax(
-                            {
-                        url: "../OrderView/GetOrderType",
+            {
+                url: "../OrderView/GetOrderType",
                 data: { ordertype: id },
                 dataType: "json",
                 type: "POST",
                 success: function (data) {
 
-                                var NumberOfDayesBefore = document.getElementById("NumberOfDayesBefore");
-                                NumberOfDayesBefore.setAttribute('value', data.numberOfDayesBefore);
-                                var NumberOfDayesAfter = document.getElementById("NumberOfDayesAfter");
-                                NumberOfDayesAfter.setAttribute('value', data.numberOfDayesAfter);
+                    var NumberOfDayesBefore = document.getElementById("NumberOfDayesBefore");
+                    NumberOfDayesBefore.setAttribute('value', data.numberOfDayesBefore);
+                    var NumberOfDayesAfter = document.getElementById("NumberOfDayesAfter");
+                    NumberOfDayesAfter.setAttribute('value', data.numberOfDayesAfter);
 
 
-                            },
+                },
                 error: function (message) {
-                                // console.log("Error In Uploading");
-                                console.log(message);
-                            },
+                    // console.log("Error In Uploading");
+                    console.log(message);
+                },
 
             });
-                    }
+    }
 
-                    function getRate(id) {//get rate for each currency
+    function getRate(id) {//get rate for each currency
         $.ajax(
-                            {
-                        url: "../OrderView/getRate",
+            {
+                url: "../OrderView/getRate",
                 data: { rateId: id },
                 dataType: "json",
                 type: "POST",
                 success: function (data) {
-                                document.getElementById("rateText").value = data.data;
-                                console.log("success rate  == " + data.data);
-                            },
+                    document.getElementById("rateText").value = data.data;
+                    console.log("success rate  == " + data.data);
+                },
                 error: function (message) {
-                                console.log("Error In Uploading");
-                                console.log(message);
-                            },
+                    console.log("Error In Uploading");
+                    console.log(message);
+                },
 
             });
+    }
 
-                    }
-
-                    function addPic(orderHeaderCode) {//add the file to its table using formdata
-                        if (orderHeaderCode != 0) {
-                            //debugger
-                            // alert(orderHeaderCode)
-                            var formData = new FormData();
-                            formData.append('file', $('#ufile')[0].files[0]);
-                            formData.append('OrderHeaderCode', orderHeaderCode);
+    function addPic(orderHeaderCode) {//add the file to its table using formdata
+        if (orderHeaderCode != 0) {
+            //debugger
+            // alert(orderHeaderCode)
+            var formData = new FormData();
+            formData.append('file', $('#ufile')[0].files[0]);
+            formData.append('OrderHeaderCode', orderHeaderCode);
             $.ajax(
-                                {
-                            url: "../OrderView/UploadFile",
+                {
+                    url: "../OrderView/UploadFile",
                     data: formData,
                     processData: false,
                     contentType: false,
                     type: "POST",
                     enctype: "multipart/form-data",
                     success: function (data) {
-                                    console.log("File Uploaded Successfully");
+                        console.log("File Uploaded Successfully");
 
-                                    Swal.fire('Good job!',
-                                        'تم حفظ الطلبيه',
-                                        'success'
-                                    )
-                      loader.style.display = "none";
+                        Swal.fire('Good job!',
+                            'تم حفظ الطلبيه',
+                            'success'
+                        )
+                        loader.style.display = "none";
 
-                                },
+                    },
                     error: function (message) {
-                                    console.log("Error In Uploading");
-                                    Swal.fire({
-                                    icon: 'error',
+                        console.log("Error In Uploading");
+                        Swal.fire({
+                            icon: 'error',
                             title: 'Oops...',
                             text: 'خطأ في التخزين !',
                             footer: 'PostOrderStatus'
-                                    })
+                        })
                         loader.style.display = "none";
-                                    //document.location = '/Home/Index';
-                                }
-                            });
-                            // document.location = '/Home/Index';
-                        }
+                        //document.location = '/Home/Index';
                     }
+                });
+            // document.location = '/Home/Index';
+        }
+    }
 
-                    function handle_item_changed(id , name) {
+    function handle_item_changed(id, name) {
 
-                        console.log(id);
-                        console.log(name);
-                        alert('true')
-                    }
+        console.log(id);
+        console.log(name);
+        alert('true')
+    }
                     //document.getElementById('itemName').addEventListener("change", function () {
                     //})
 
-                    var transArr = [];// store each transaction item
-                    function getRows() { // display the transaction for the user when he clicks the (+)Button
-                                         //debugger
-                        if (CheckData(document.getElementById('itemName').value, "يجب ادخال  الصنف") == false) { return; }
+    var transArr = [];// store each transaction item
+    function getRows() { // display the transaction for the user when he clicks the (+)Button
+        //debugger
+        if (CheckData(document.getElementById('itemName').value, "يجب ادخال  الصنف") == false) { return; }
 
-                        if (CheckData(document.getElementById('qty').value, "يجب ادخال الكميه") == false) { return; }
-                        if (CheckData(document.getElementById('price').value, "يجب ادخال السعر") == false) { return; }
+        if (CheckData(document.getElementById('qty').value, "يجب ادخال الكميه") == false) { return; }
+        if (CheckData(document.getElementById('price').value, "يجب ادخال السعر") == false) { return; }
+        //check item currency
+        debugger
+        var item_currency_input = document.getElementById('item_currency_input');
+        var item_currency_code = item_currency_input.value;
 
-                        document.getElementById("itemRowTbl").style.visibility = "visible";
-                        //var itemcode = document.getElementById('itemName').value;
-                        //var itemName = $("#itemName option:selected").text();
+        if (item_currency_code == -1) {
+            Swal.fire({
+                icon: 'error',
+                title: 'خطأ',
+                text: "يجب ادخال العمله لهذا العنصر",
+                footer: 'PostOrderStatus'
+            })
+            return;
+        }
 
-                        //var y = $("#itemName").find('es-list').find("es-visible");
+        document.getElementById("itemRowTbl").style.visibility = "visible";
+        //var itemcode = document.getElementById('itemName').value;
+        //var itemName = $("#itemName option:selected").text();
 
-                        var itemcode = document.getElementById('itemName').text;
-                        var itemName = document.getElementById('itemName').value;
-                        debugger
-                        if (@Json.Serialize(ViewBag.Show_Unit) == true) {
-                            var UnitName = document.getElementById('Unit_input').value;
-                        }
+        //var y = $("#itemName").find('es-list').find("es-visible");
 
-                        var qty = document.getElementById('qty').value;
-                        var price = document.getElementById('price').value;
-                        var note = document.getElementById('note').value;
-                        var TransDate = document.getElementById('TransDate').value;
+        var itemcode = document.getElementById('itemName').text;
+        var itemName = document.getElementById('itemName').value;
+        debugger
+        if (@Json.Serialize(ViewBag.Show_Unit) == true) {
+            var UnitName = document.getElementById('Unit_input').value;
+        }
 
-
-
-
-                        var table = document.getElementById("myTable");
-                        var row = table.insertRow(0);
-                        row.className = "row";
-                        row.style.width = "100%";
-                        row.style.margin = "0";
-                        if (@Json.Serialize(ViewBag.Show_Unit) == true) {
-                            var cell0 = row.insertCell(0); cell0.style.display = 'none';
-                            var cell1 = row.insertCell(1); cell1.className = "col-md-2";
-                            var cell22 = row.insertCell(2); cell22.className = "col-md-1";
-                            var cell2 = row.insertCell(3); cell2.className = "col-md-1";
-                            var cell3 = row.insertCell(4); cell3.className = "col-md-1";
-                            var cell4 = row.insertCell(5); cell4.className = "col-md-1";
-                            var cell5 = row.insertCell(6); cell5.className = "col-md-3";
-                            var cell6 = row.insertCell(7); cell6.className = "col-md-2";
-
-                            var cell7 = row.insertCell(8); cell7.className = "col-md-1";
-                            cell0.innerHTML = itemcode;
-                            cell1.innerHTML = itemName;
-                            cell22.innerHTML = UnitName;
-
-                            cell2.innerHTML = qty;
-                            cell3.innerHTML = price;
-                            cell4.innerHTML = qty * price;
-                            cell5.innerHTML = note;
-                            cell6.innerHTML = TransDate;
-
-                        } else {
-                            var cell0 = row.insertCell(0); cell0.style.display = 'none';
-                            var cell1 = row.insertCell(1); cell1.className = "col-md-2";
-                            var cell2 = row.insertCell(2); cell2.className = "col-md-1";
-                            var cell3 = row.insertCell(3); cell3.className = "col-md-1";
-                            var cell4 = row.insertCell(4); cell4.className = "col-md-1";
-                            var cell5 = row.insertCell(5); cell5.className = "col-md-3";
-                            var cell6 = row.insertCell(6); cell6.className = "col-md-2";
-
-                            var cell7 = row.insertCell(7); cell7.className = "col-md-2";
-                            cell0.innerHTML = itemcode;
-                            cell1.innerHTML = itemName;
-
-                            cell2.innerHTML = qty;
-                            cell3.innerHTML = price;
-                            cell4.innerHTML = qty * price;
-                            cell5.innerHTML = note;
-                            cell6.innerHTML = TransDate;
-                        }
-
-                        var x = qty * price;
-                        cell7.innerHTML = '<button id="DeleteButton" type="button" class="close danger" aria-label="Close" onClick="Remove(this , ' + x + ')"><span aria-hidden="true">&times;</span></button>';
-
-                        var TransactionClass = function (itemcode, itemName, Quantity, Price, Note, TransDate) {
-                            this.TransactionItemCode = itemcode;
-                            this.TransactionItemName = itemName;
-                            this.TransactionQty = Quantity;
-                            this.TransactionPrice = Price;
-                            this.TransactionNote = Note;
-                            this.TransDate = TransDate;
-                        };
-
-                        transArr.push((new TransactionClass(itemcode, itemName, qty, price, note, TransDate)));
-
-                        document.getElementById('qty').innerHTML = "";
-                        document.getElementById('price').innerHTML = "";
-                        document.getElementById('note').innerHTML = "";
-
-                        var realTotal = parseInt(document.getElementById("realTot").value) + (qty * price);
-                        document.getElementById("realTot").value = realTotal;
-
-                        var realBasicTot = parseInt(document.getElementById("realBasicTot").value) + (qty * price * parseFloat(document.getElementById("rateText").value));
-                        document.getElementById("realBasicTot").value = realBasicTot;
-
-                    }
+        var qty = document.getElementById('qty').value;
+        var price = document.getElementById('price').value;
+        var note = document.getElementById('note').value;
+        var TransDate = document.getElementById('TransDate').value;
 
 
-                    function Remove(td, amount) {
-                        row = td.parentElement.parentElement;
 
-                        document.getElementById("myTable").deleteRow(row.rowIndex - 1);
-                        var realTotal = parseFloat(document.getElementById("realTot").value) - (amount);
-                        var realBasicTotal = parseFloat(document.getElementById("realBasicTot").value) - (amount * parseFloat(document.getElementById("rateText").value));
 
-                        if (parseFloat(realTotal) < 0) {
-                            document.getElementById("realTot").value = 0;
-                            document.getElementById("realBasicTot").value = 0;
-                        } else {
-                            document.getElementById("realTot").value = realTotal;
-                            document.getElementById("realBasicTot").value = realBasicTotal;
-                        }
+        var table = document.getElementById("myTable");
+        var row = table.insertRow(0);
+        row.className = "row";
+        row.style.width = "100%";
+        row.style.margin = "0";
+        if (@Json.Serialize(ViewBag.Show_Unit) == true) {
+            if (@Json.Serialize(ViewBag.Show_Currency_with_item) == true) {
+                var cell0 = row.insertCell(0); cell0.style.display = 'none';
+                var cell1 = row.insertCell(1); cell1.className = "col-md-1";
+                var cell22 = row.insertCell(2); cell22.className = "col-md-1";
+                var cell2 = row.insertCell(3); cell2.className = "col-md-1";
+                var cell3 = row.insertCell(4); cell3.className = "col-md-1";
+                var cell8 = row.insertCell(5); cell8.className = "col-md-1";
+                var cell4 = row.insertCell(6); cell4.className = "col-md-1";
+                var cell9 = row.insertCell(7); cell9.className = "col-md-1";
+                var cell5 = row.insertCell(8); cell5.className = "col-md-2";
+                var cell6 = row.insertCell(9); cell6.className = "col-md-2";
 
-                    }
+                var cell7 = row.insertCell(10); cell7.className = "col-md-1";
+                var cell10 = row.insertCell(11); cell10.style.display = 'none';
+                cell0.innerHTML = itemcode;
+                cell1.innerHTML = itemName;
+                cell22.innerHTML = UnitName;
+
+                cell10.innerHTML = item_currency_code;
+
+                cell2.innerHTML = qty;
+                cell3.innerHTML = price;
+                cell8.innerHTML = getCurrencyName(document.getElementById('item_currency_input').value);
+                cell4.innerHTML = qty * price;
+                cell9.innerHTML = qty * price * parseFloat(document.getElementById('item_currency_rate_input').value);
+                cell5.innerHTML = note;
+                cell6.innerHTML = TransDate;
+
+                var TransactionClass = function (itemcode, itemName, Quantity, Price, Note, TransDate, CurrencyCode) {
+                    this.TransactionItemCode = itemcode;
+                    this.TransactionItemName = itemName;
+                    this.TransactionQty = Quantity;
+                    this.TransactionPrice = Price;
+                    this.TransactionNote = Note;
+                    this.TransDate = TransDate;
+                    this.CurrencyCode = CurrencyCode;
+                };
+
+                debugger
+                transArr.push((new TransactionClass(itemcode, itemName, qty, price, note, TransDate,item_currency_code)));
+
+            } else {
+                var cell0 = row.insertCell(0); cell0.style.display = 'none';
+                var cell1 = row.insertCell(1); cell1.className = "col-md-2";
+                var cell22 = row.insertCell(2); cell22.className = "col-md-1";
+                var cell2 = row.insertCell(3); cell2.className = "col-md-1";
+                var cell3 = row.insertCell(4); cell3.className = "col-md-1";
+                var cell4 = row.insertCell(5); cell4.className = "col-md-1";
+                var cell5 = row.insertCell(6); cell5.className = "col-md-3";
+                var cell6 = row.insertCell(7); cell6.className = "col-md-2";
+
+                var cell7 = row.insertCell(8); cell7.className = "col-md-1";
+
+                cell0.innerHTML = itemcode;
+                cell1.innerHTML = itemName;
+                cell22.innerHTML = UnitName;
+
+                cell2.innerHTML = qty;
+                cell3.innerHTML = price;
+                cell4.innerHTML = qty * price;
+                cell5.innerHTML = note;
+                cell6.innerHTML = TransDate;
+            }
+
+        } else {
+            var cell0 = row.insertCell(0); cell0.style.display = 'none';
+            var cell1 = row.insertCell(1); cell1.className = "col-md-2";
+            var cell2 = row.insertCell(2); cell2.className = "col-md-1";
+            var cell3 = row.insertCell(3); cell3.className = "col-md-1";
+            var cell4 = row.insertCell(4); cell4.className = "col-md-1";
+            var cell5 = row.insertCell(5); cell5.className = "col-md-3";
+            var cell6 = row.insertCell(6); cell6.className = "col-md-2";
+
+            var cell7 = row.insertCell(7); cell7.className = "col-md-2";
+            cell0.innerHTML = itemcode;
+            cell1.innerHTML = itemName;
+
+            cell2.innerHTML = qty;
+            cell3.innerHTML = price;
+            cell4.innerHTML = qty * price;
+            cell5.innerHTML = note;
+            cell6.innerHTML = TransDate;
+        }
+
+        var x = qty * price;
+        cell7.innerHTML = '<button style="width: 100%;" id="DeleteButton" type="button" class="close danger" aria-label="Close" onClick="Remove(this , ' + x + ')"><span aria-hidden="true">&times;</span></button>';
+
+        document.getElementById('qty').innerHTML = "";
+        document.getElementById('price').innerHTML = "";
+        document.getElementById('note').innerHTML = "";
+
+        var realTotal = parseInt(document.getElementById("realTot").value) + (qty * price);
+        document.getElementById("realTot").value = realTotal;
+
+        var realBasicTot = parseInt(document.getElementById("realBasicTot").value) + (qty * price * parseFloat(document.getElementById("rateText").value));
+        document.getElementById("realBasicTot").value = realBasicTot;
+
+    }
+
+    function getCurrencyName(id) {
+        var list = @Json.Serialize(ViewBag.Currency);
+        console.log(list);
+        for (var i = 0; i < list.length; i++) {
+            if (list[i].currencyCode == id) {
+                return list[i].currencyName;
+            }
+        }
+    }
+
+    function Remove(td, amount) {
+        row = td.parentElement.parentElement;
+
+        document.getElementById("myTable").deleteRow(row.rowIndex - 1);
+        var realTotal = parseFloat(document.getElementById("realTot").value) - (amount);
+        var realBasicTotal = parseFloat(document.getElementById("realBasicTot").value) - (amount * parseFloat(document.getElementById("rateText").value));
+
+        if (parseFloat(realTotal) < 0) {
+            document.getElementById("realTot").value = 0;
+            document.getElementById("realBasicTot").value = 0;
+        } else {
+            document.getElementById("realTot").value = realTotal;
+            document.getElementById("realBasicTot").value = realBasicTotal;
+        }
+
+    }
 
 
 
@@ -1158,98 +1236,118 @@
     $('#inputState3').editableSelect();
     // $('#inputState4').editableSelect();
     $('#cmbCurrency').editableSelect();
+    //$('#item_currency_input').editableSelect();
     $('#itemName').editableSelect();
 
     $('#itemname')
         .editableSelect()
         .on('select.editable-select', function (e, li) {
-                        alert(li.val())
+            alert(li.val())
             //debugger
             var txt = document.getElementById('itemname');
-                        txt.text = li.val();
+            txt.text = li.val();
 
 
-                    });
+        });
+
     $('#itemName')
         .editableSelect()
         .on('select.editable-select', function (e, li) {
-                        debugger
-                        var selected_item_id = li.val();
+            debugger
+            var selected_item_id = li.val();
 
-                        var items = @Json.Serialize(ViewBag.ItemName);
-                        var units = @Json.Serialize(ViewBag.Units);
+            var items = @Json.Serialize(ViewBag.ItemName);
+            var units = @Json.Serialize(ViewBag.Units);
 
-                        for (var i = 0; i < items.length; i++){
-                            if (items[i].itemCode == selected_item_id) {
-                                var unit_id = items[i].unit_Id;
-                                var unit_name = "";
+            for (var i = 0; i < items.length; i++) {
+                if (items[i].itemCode == selected_item_id) {
+                    var unit_id = items[i].unit_Id;
+                    var unit_name = "";
 
-                                for (var i = 0; i < units.length; i++) {
-                                    if (units[i].id == unit_id) {
-                                        unit_name = units[i].name;
-                                        break;
-                                    }
-                                }
-                                //alert(unit_name)
-
-                                if (@Json.Serialize(ViewBag.Show_Unit) == true) {
-                                    document.getElementById("Unit_input").value = unit_name;
-                                }
-                                break;
-                            }
+                    for (var i = 0; i < units.length; i++) {
+                        if (units[i].id == unit_id) {
+                            unit_name = units[i].name;
+                            break;
                         }
+                    }
+                    //alert(unit_name)
 
-                    });
+                    if (@Json.Serialize(ViewBag.Show_Unit) == true) {
+                        document.getElementById("Unit_input").value = unit_name;
+                    }
+                    break;
+                }
+            }
+
+        });
 
     $('#cmbCurrency')
         .editableSelect()
         .on('select.editable-select', function (e, li) {
-                        // alert(li.val())
-                        getRate(li.val());
+            // alert(li.val())
+            getRate(li.val());
+            debugger
+            var txt = document.getElementById('cmbCurrency');
+            txt.text = li.val();
+        });
 
-                        var txt = document.getElementById('cmbCurrency');
-                        txt.text = li.val();
-
-
-                    });
+    document.getElementById('item_currency_input').addEventListener('change', function (e) {
+        debugger
+        var id = e.target.value;
+        $.ajax(
+            {
+                url: "../OrderView/getRate",
+                data: { rateId: id },
+                dataType: "json",
+                type: "POST",
+                success: function (data) {
+                    document.getElementById("item_currency_rate_input").value = data.data;
+                    console.log("success rate  == " + data.data);
+                },
+                error: function (message) {
+                    console.log("Error In Uploading");
+                    console.log(message);
+                },
+            });
+    });
 
     $('#inputState1')
         .editableSelect()
         .on('select.editable-select', function (e, li) {
-                        // alert(li.val())
+            // alert(li.val())
 
-                        var txt = document.getElementById('inputState1');
-                        txt.text = li.val();
-                        //     txt.vlaue = li.text();
-                        //li.text()
+            var txt = document.getElementById('inputState1');
+            txt.text = li.val();
+            //     txt.vlaue = li.text();
+            //li.text()
 
-                    });
+        });
 
     $('#inputState2')
         .editableSelect()
         .on('select.editable-select', function (e, li) {
 
-                        GetBudgetLineByFunder(li.val())
+            GetBudgetLineByFunder(li.val())
             var txt = document.getElementById('inputState2');
-                        txt.text = li.val();
-                        // txt.vlaue = li.text();
+            txt.text = li.val();
+            // txt.vlaue = li.text();
 
-                    });
+        });
 
     $('#inputState3')
         .editableSelect()
         .on('select.editable-select', function (e, li) {
-                        // alert(li.val())
-                        // debugger
-                        var txt = document.getElementById('inputState3');
-                        txt.text = li.val();
+            // alert(li.val())
+            // debugger
+            var txt = document.getElementById('inputState3');
+            txt.text = li.val();
 
-                        getshowhidefunder(li.val());
-                        getshowhidebudgetline(li.val());
+            getshowhidefunder(li.val());
+            getshowhidebudgetline(li.val());
 
-                        getOrderType(li.val());
+            getOrderType(li.val());
 
-                    });
+        });
 
 
 
@@ -1258,13 +1356,13 @@
     function GetBudgetLineByFunder(id) {
         //debugger
         $.ajax({
-                        url: '@Url.Action("GetBudgetLineByFunder")',
-         //   url: "../OrderView/GetBudgetLineByFunder",
+            url: '@Url.Action("GetBudgetLineByFunder")',
+            //   url: "../OrderView/GetBudgetLineByFunder",
             type: 'POST',
             data: { "Fundercode": id }
-                        }).done(function (data) {
+        }).done(function (data) {
             $("#div1").html(data);
-                        });
+        });
 
-                    }
+    }
 </script>

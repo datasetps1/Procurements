@@ -197,7 +197,7 @@ namespace MVCWebAppServierCon.Controllers
                     uc.userCode = uId;
                     uc.userUserId = uId;
                     uc.userCreationDate = DateTime.Now;
-                    uc.userDepartmentCode = uvc.userDepartment;
+                    uc.userDepartmentCode = uvc.userDepartment.Value;
                     uc.userName = uvc.userName;
                     uc.Excutable = uvc.Excutable == "true" ? true : false;
 
@@ -480,7 +480,7 @@ namespace MVCWebAppServierCon.Controllers
                 res.userEmail = uvc.userEmail;
                 //res.userPassword = uc.userPassword;
                 res.userTypeCode = uvc.userType;
-                res.userDepartmentCode = uvc.userDepartment;
+                res.userDepartmentCode = uvc.userDepartment.Value;
                 res.userActive = uvc.userActive;
                 res.userCode = res.userCode;
                 res.userCreationDate = DateTime.Now;
@@ -495,7 +495,7 @@ namespace MVCWebAppServierCon.Controllers
 
                 userManager.UpdateAsync(user.Result);
 
-                _sc.SaveChanges();
+                _sc.SaveChanges();          
                 return RedirectToAction(nameof(Create));
             }
             catch
@@ -530,4 +530,4 @@ namespace MVCWebAppServierCon.Controllers
             }
         }
     }
-}
+} 

@@ -83,5 +83,12 @@ namespace MVCWebAppServierCon.Models
 
         [Display(Name = "Show To Employee")]
         public bool Show_ToEmployee { get; set; }
+
+        [Display(Name = "Show Currency with item")]
+        public bool Show_Currency_with_item { get; set; }
+
+        [Required]
+        [Display(Name = "Basic Currency")]
+        public int Basic_Currency { get; set; }
     }
 }

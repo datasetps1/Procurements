@@ -368,6 +368,8 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
             ViewBag.Show_ToDate = general_prefernce.Show_ToDate;
             ViewBag.Display_Name_Project = general_prefernce.Display_Name_Project;
             ViewBag.Show_ToEmployee = general_prefernce.Show_ToEmployee;
+            ViewBag.Show_Currency_with_item = general_prefernce.Show_Currency_with_item;
+            ViewBag.Basic_Currency = general_prefernce.Basic_Currency;
 
             if (ViewBag.Show_Doner2)
             {
@@ -487,6 +489,7 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
                     tc.TransactionPrice = tcc.TransactionPrice;
                     tc.TransactionNote = tcc.TransactionNote;
                     tc.TransactionUserId = user.userCode;
+                    tc.CurrencyCode = tcc.CurrencyCode;
                     tc.TransactionCreationDate = DateTime.Now;
                     tc.TransactionDeviceIp = 1;
                     _sc.Add(tc);

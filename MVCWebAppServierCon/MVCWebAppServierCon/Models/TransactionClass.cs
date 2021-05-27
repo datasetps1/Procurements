@@ -32,5 +32,10 @@ namespace MVCWebAppServierCon.Models
         [NotMapped]
         public String TransactionItemName { get; set; }
 
+
+        public int? CurrencyCode { get; set; }
+
+        public double? ItemRate { get; set; }
+
     }
 }

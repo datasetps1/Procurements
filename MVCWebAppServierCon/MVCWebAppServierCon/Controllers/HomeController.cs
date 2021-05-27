@@ -308,7 +308,7 @@ namespace MVCWebAppServierCon.Controllers
                     foreach (var t in orders)
                     {
 
-                        
+
                         var approv = _sc.TblApproval.Where(s => s.ApprovalHeaderCode == t.OrderHeaderCode).OrderBy(a => a.ApprovalCode).ToList();
                         if (approv.Count == 0)
                         {
@@ -556,7 +556,7 @@ namespace MVCWebAppServierCon.Controllers
 
             foreach (var t in orders)
             {
-                if(t.OrderHeaderCode == 726)
+                if (t.OrderHeaderCode == 726)
                 {
                     var ss = 0;
                 }
@@ -1222,7 +1222,7 @@ namespace MVCWebAppServierCon.Controllers
         {
             // get amonts which are in the range of order total ,and get ranks amounts that less than user ranks 
             int nextRank = 0;
-            string nextRankUser =   "";
+            string nextRankUser = "";
             List<AmountSittingClass> amountsRanks = new List<AmountSittingClass>();
 
 
@@ -1671,283 +1671,299 @@ namespace MVCWebAppServierCon.Controllers
         [HttpGet]
         public async Task<ContentResult> PrintOrder(int OrderId)
         {
-            var getData = new getAuditData();
-            var order = _sc.TblOrderHeader.Where(x => x.OrderHeaderCode == OrderId).FirstOrDefault();
-            var LstTrans = _sc.TblTransaction.Where(x => x.TransactionOrderHeaderCode == OrderId).ToList();
-            var DepartmentName = _sc.TblDepartment.Where(x => x.departmentCode == order.OrderHeaderdepartmentCode).Select(x => x.departmentName).FirstOrDefault();
-            var OrderTypeName = _sc.TblOrderType.Where(x => x.orderTypeCode == order.OrderHeaderOrderTypeCode).Select(x => x.orderTypeName).FirstOrDefault();
-            var ProjectName = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ProjectTable).FirstOrDefaultAsync(), order.OrderHeaderProjectCode.ToString(), connection);
-            var BudgetLine = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ActivitiyTable).FirstOrDefaultAsync(), order.OrderHeaderBudgetLineCode.ToString(), connection);
-            var Currency = getData.getTblCodeName(currency_table, order.OrderHeaderCurrencey.ToString(), connection);
-            var UserName = _sc.TblUser.Where(u => u.userCode == order.OrderHeaderUserId).FirstOrDefault().userName;
-            var SupplierName = order.SupplierName;
-            order.TotalInbasic = order.ActualTotalAmount * order.OrderHeaderRate;
-            var table = "";
-            var Approvalstable = "";
-            var approv = _sc.TblApproval.Where(s => s.ApprovalHeaderCode == order.OrderHeaderCode && s.ApprovalIsApproved != -1).OrderBy(a => a.ApprovalCode).ToList().Distinct().ToList();
-            approv = approv.GroupBy(o => new { o.ApprovalUserId , o.ApprovalIsApproved })
-                              .Select(o => o.LastOrDefault()).ToList();
-            approv = approv.OrderBy(a => a.ApprovalCode).ToList();
-            //var approv2 = _sc.TblApproval.Where(s => s.ApprovalHeaderCode == order.OrderHeaderCode).OrderBy(a => a.ApprovalCode).ToList();
-            //var approv3 = _sc.TblApproval.Where(s => s.ApprovalHeaderCode == order.OrderHeaderCode).OrderBy(a => a.ApprovalCode).Distinct().ToList();
-            ApprovalClass lastApproval = approv.LastOrDefault();
-            var StatusName = GetStatusName(lastApproval.ApprovalIsApproved);
-            var LastStatusUser = _sc.TblUser.Where(x => x.userCode == lastApproval.ApprovalUserId).FirstOrDefault();
-
-            var LstApprovals = _sc.TblApproval.Where(s => s.ApprovalHeaderCode == order.OrderHeaderCode && s.ApprovalIsApproved == 1).OrderBy(a => a.ApprovalCode).ToList();
-            foreach (var item in LstTrans)
+            try
             {
-                var orderdate = "";
-                if (item.TransactionDate.Year > 2009)
+                var getData = new getAuditData();
+                var order = _sc.TblOrderHeader.Where(x => x.OrderHeaderCode == OrderId).FirstOrDefault();
+                var LstTrans = _sc.TblTransaction.Where(x => x.TransactionOrderHeaderCode == OrderId).ToList();
+                var DepartmentName = _sc.TblDepartment.Where(x => x.departmentCode == order.OrderHeaderdepartmentCode).Select(x => x.departmentName).FirstOrDefault();
+                var OrderTypeName = _sc.TblOrderType.Where(x => x.orderTypeCode == order.OrderHeaderOrderTypeCode).Select(x => x.orderTypeName).FirstOrDefault();
+                var ProjectName = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ProjectTable).FirstOrDefaultAsync(), order.OrderHeaderProjectCode.ToString(), connection);
+                var BudgetLine = getData.getTblCodeName(await _sc.TblGeneralPreference.Select(gp => gp.ActivitiyTable).FirstOrDefaultAsync(), order.OrderHeaderBudgetLineCode.ToString(), connection);
+                var Currency = getData.getTblCodeName(currency_table, order.OrderHeaderCurrencey.ToString(), connection);
+                var UserName = _sc.TblUser.Where(u => u.userCode == order.OrderHeaderUserId).FirstOrDefault().userName;
+                var SupplierName = order.SupplierName;
+                order.TotalInbasic = order.ActualTotalAmount * order.OrderHeaderRate;
+                var table = "";
+                var Approvalstable = "";
+                var approv = _sc.TblApproval.Where(s => s.ApprovalHeaderCode == order.OrderHeaderCode && s.ApprovalIsApproved != -1).OrderBy(a => a.ApprovalCode).ToList().Distinct().ToList();
+                approv = approv.GroupBy(o => new { o.ApprovalUserId, o.ApprovalIsApproved })
+                                  .Select(o => o.LastOrDefault()).ToList();
+                approv = approv.OrderBy(a => a.ApprovalCode).ToList();
+                //var approv2 = _sc.TblApproval.Where(s => s.ApprovalHeaderCode == order.OrderHeaderCode).OrderBy(a => a.ApprovalCode).ToList();
+                //var approv3 = _sc.TblApproval.Where(s => s.ApprovalHeaderCode == order.OrderHeaderCode).OrderBy(a => a.ApprovalCode).Distinct().ToList();
+                ApprovalClass lastApproval = approv.LastOrDefault();
+                var StatusName = GetStatusName(lastApproval.ApprovalIsApproved);
+                var LastStatusUser = _sc.TblUser.Where(x => x.userCode == lastApproval.ApprovalUserId).FirstOrDefault();
+
+                var LstApprovals = _sc.TblApproval.Where(s => s.ApprovalHeaderCode == order.OrderHeaderCode && s.ApprovalIsApproved == 1).OrderBy(a => a.ApprovalCode).ToList();
+                foreach (var item in LstTrans)
                 {
-                    orderdate = item.TransactionDate.ToString("dd/MM/yyyy");
+                    var orderdate = "";
+                    if (item.TransactionDate.Year > 2009)
+                    {
+                        orderdate = item.TransactionDate.ToString("dd/MM/yyyy");
+                    }
+                    table = table + "<tr>" +
+                "<td>" + item.TransactionItemCode + "</td>" +
+                "<td>" + _sc.TblItem.Where(x => x.itemCode == item.TransactionItemCode).Select(x => x.itemName).FirstOrDefault() + "</td>" +
+                "<td>" + item.TransactionQty + "</td>" +
+                "<td>" + item.TransactionPrice + "</td>" +
+                "<td>" + item.TransactionQty * item.TransactionPrice + "</td>" +
+                "<td>" + item.TransactionNote + "</td>" +
+                "<td>" + orderdate + "</td>" +
+                "</tr>";
                 }
-                table = table + "<tr>" +
-            "<td>" + item.TransactionItemCode + "</td>" +
-            "<td>" + _sc.TblItem.Where(x => x.itemCode == item.TransactionItemCode).Select(x => x.itemName).FirstOrDefault() + "</td>" +
-            "<td>" + item.TransactionQty + "</td>" +
-            "<td>" + item.TransactionPrice + "</td>" +
-            "<td>" + item.TransactionQty * item.TransactionPrice + "</td>" +
-            "<td>" + item.TransactionNote + "</td>" +
-            "<td>" + orderdate + "</td>" +
-            "</tr>";
-            }
-            //var Approvals = "Approvals :";
-            //    foreach (var item in LstApprovals)
-            //{
-            //    var approUser = _sc.TblUser.Where(x => x.userCode == item.ApprovalUserId).FirstOrDefault();
-            //    Approvals = Approvals +
+                //var Approvals = "Approvals :";
+                //    foreach (var item in LstApprovals)
+                //{
+                //    var approUser = _sc.TblUser.Where(x => x.userCode == item.ApprovalUserId).FirstOrDefault();
+                //    Approvals = Approvals +
 
-            //   "<td>" + _sc.TblStructure.Where(x => x.structureRank == approUser.userTypeCode).Select(x => x.structureName).FirstOrDefault() + " : " +  approUser.userName+ "</td>";
+                //   "<td>" + _sc.TblStructure.Where(x => x.structureRank == approUser.userTypeCode).Select(x => x.structureName).FirstOrDefault() + " : " +  approUser.userName+ "</td>";
 
 
-            //}
+                //}
 
-            var Approvals = "Approvals :";
-            for (int i = 0; i < approv.Count(); i++)
-            {
-                if (approv[i].ApprovalIsApproved == 3)
+                var Approvals = "Approvals :";
+                for (int i = 0; i < approv.Count(); i++)
                 {
-                    continue;
-                }
-                var approUser = _sc.TblUser.Where(x => x.userCode == approv[i].ApprovalUserId).FirstOrDefault();
-                // Approvals = Approvals +
+                    if (approv[i].ApprovalIsApproved == 3)
+                    {
+                        continue;
+                    }
+                    var approUser = _sc.TblUser.Where(x => x.userCode == approv[i].ApprovalUserId).FirstOrDefault();
+                    // Approvals = Approvals +
 
-                if (i == 0)
-                {
-                    Approvalstable = Approvalstable + "<tr>" +
-                    "<td>" + "Prepared by" + "</td>" +
-                        "<td>" + _sc.TblStructure.Where(x => x.structureRank == approUser.userTypeCode).Select(x => x.structureName).FirstOrDefault() + "</td>" +
-                         "<td>" + approUser.userName + "</td>" +
-                         "<td>" + approv[i].ApprovalCreationDate.ToString("dd/MM/yyyy") + "</td>" +
-                        "</tr>";
-                }
-                else
-                {
-                    if (approv[i].ApprovalIsApproved == 9)
+                    if (i == 0)
                     {
                         Approvalstable = Approvalstable + "<tr>" +
-                       "<td>" + "Executed by" + "</td>" +
-                       "<td>" + _sc.TblStructure.Where(x => x.structureRank == approUser.userTypeCode).Select(x => x.structureName).FirstOrDefault() + "</td>" +
-                       "<td>" + approUser.userName + "</td>" +
-                        "<td>" + approv[i].ApprovalCreationDate.ToString("dd/MM/yyyy") + "</td>" +
-                  "</tr>";
+                        "<td>" + "Prepared by" + "</td>" +
+                            "<td>" + _sc.TblStructure.Where(x => x.structureRank == approUser.userTypeCode).Select(x => x.structureName).FirstOrDefault() + "</td>" +
+                             "<td>" + approUser.userName + "</td>" +
+                             "<td>" + approv[i].ApprovalCreationDate.ToString("dd/MM/yyyy") + "</td>" +
+                            "</tr>";
                     }
-                    else if (approv[i].ApprovalIsApproved == 8)
-                    {
-                        Approvalstable = Approvalstable + "<tr>" +
-                       "<td>" + "Under Execution" + "</td>" +
-                       "<td>" + _sc.TblStructure.Where(x => x.structureRank == approUser.userTypeCode).Select(x => x.structureName).FirstOrDefault() + "</td>" +
-                       "<td>" + approUser.userName + "</td>" +
-                        "<td>" + approv[i].ApprovalCreationDate.ToString("dd/MM/yyyy") + "</td>" +
-                  "</tr>";
-                    }
-                    else if (approv[i].ApprovalIsApproved == 2)
-                    {
-                        Approvalstable = Approvalstable + "<tr>" +
-                           "<td>" + "returned by" + "</td>" +
-                           "<td>" + _sc.TblStructure.Where(x => x.structureRank == approUser.userTypeCode).Select(x => x.structureName).FirstOrDefault() + "</td>" +
-                           "<td>" + approUser.userName + "</td>" +
-                            "<td>" + approv[i].ApprovalCreationDate.ToString("dd/MM/yyyy") + "</td>" +
-                        "</tr>";
-                    }
-                    else if (approv[i].ApprovalIsApproved == 7)
-                    {
-                        Approvalstable = Approvalstable + "<tr>" +
-                           "<td>" + "Stuck " + "</td>" +
-                           "<td>" + _sc.TblStructure.Where(x => x.structureRank == approUser.userTypeCode).Select(x => x.structureName).FirstOrDefault() + "</td>" +
-                           "<td>" + approUser.userName + "</td>" +
-                            "<td>" + approv[i].ApprovalCreationDate.ToString("dd/MM/yyyy") + "</td>" +
-                        "</tr>";
-                    }
-
-
                     else
                     {
-                        Approvalstable = Approvalstable + "<tr>" +
-                            "<td>" + "Approved by" + "</td>" +
-                            "<td>" + _sc.TblStructure.Where(x => x.structureRank == approUser.userTypeCode).Select(x => x.structureName).FirstOrDefault() + "</td>" +
-                            "<td>" + approUser.userName + "</td>" +
-                             "<td>" + approv[i].ApprovalCreationDate.ToString("dd/MM/yyyy") + "</td>" +
-                       "</tr>";
+                        if (approv[i].ApprovalIsApproved == 9)
+                        {
+                            Approvalstable = Approvalstable + "<tr>" +
+                           "<td>" + "Executed by" + "</td>" +
+                           "<td>" + _sc.TblStructure.Where(x => x.structureRank == approUser.userTypeCode).Select(x => x.structureName).FirstOrDefault() + "</td>" +
+                           "<td>" + approUser.userName + "</td>" +
+                            "<td>" + approv[i].ApprovalCreationDate.ToString("dd/MM/yyyy") + "</td>" +
+                      "</tr>";
+                        }
+                        else if (approv[i].ApprovalIsApproved == 8)
+                        {
+                            Approvalstable = Approvalstable + "<tr>" +
+                           "<td>" + "Under Execution" + "</td>" +
+                           "<td>" + _sc.TblStructure.Where(x => x.structureRank == approUser.userTypeCode).Select(x => x.structureName).FirstOrDefault() + "</td>" +
+                           "<td>" + approUser.userName + "</td>" +
+                            "<td>" + approv[i].ApprovalCreationDate.ToString("dd/MM/yyyy") + "</td>" +
+                      "</tr>";
+                        }
+                        else if (approv[i].ApprovalIsApproved == 2)
+                        {
+                            Approvalstable = Approvalstable + "<tr>" +
+                               "<td>" + "returned by" + "</td>" +
+                               "<td>" + _sc.TblStructure.Where(x => x.structureRank == approUser.userTypeCode).Select(x => x.structureName).FirstOrDefault() + "</td>" +
+                               "<td>" + approUser.userName + "</td>" +
+                                "<td>" + approv[i].ApprovalCreationDate.ToString("dd/MM/yyyy") + "</td>" +
+                            "</tr>";
+                        }
+                        else if (approv[i].ApprovalIsApproved == 7)
+                        {
+                            Approvalstable = Approvalstable + "<tr>" +
+                               "<td>" + "Stuck " + "</td>" +
+                               "<td>" + _sc.TblStructure.Where(x => x.structureRank == approUser.userTypeCode).Select(x => x.structureName).FirstOrDefault() + "</td>" +
+                               "<td>" + approUser.userName + "</td>" +
+                                "<td>" + approv[i].ApprovalCreationDate.ToString("dd/MM/yyyy") + "</td>" +
+                            "</tr>";
+                        }
+
+
+                        else
+                        {
+                            Approvalstable = Approvalstable + "<tr>" +
+                                "<td>" + "Approved by" + "</td>" +
+                                "<td>" + _sc.TblStructure.Where(x => x.structureRank == approUser.userTypeCode).Select(x => x.structureName).FirstOrDefault() + "</td>" +
+                                "<td>" + approUser.userName + "</td>" +
+                                 "<td>" + approv[i].ApprovalCreationDate.ToString("dd/MM/yyyy") + "</td>" +
+                           "</tr>";
+                        }
                     }
+
+
+
                 }
 
+                // order.ExpectedDate != null ? order.ExpectedDate.Value.ToString("dd/MM/yyyy") : "-"
+                return new ContentResult
+                {
+                    ContentType = "text/html",
+                    StatusCode = (int)HttpStatusCode.OK,
+                    Content = "<html>" +
 
-
-            }
-
-            // order.ExpectedDate != null ? order.ExpectedDate.Value.ToString("dd/MM/yyyy") : "-"
-            return new ContentResult
-            {
-                ContentType = "text/html",
-                StatusCode = (int)HttpStatusCode.OK,
-                Content = "<html>" +
-
-                  "<style type = 'text/css'>" +
-            ".div{" +
-                    "display:inline-flex; color: green;" +
-            "}" +
-            ".fnt{" +
-                    " font-size:small ;" +
-            "}" +
-            ".p{" +
-                    " width:max-content ;" +
-                   "padding:2px;" +
-            "}" +
-            ".th{" +
-                    "font-size:small ;height:5px ;background-color:#dfdfdf ;" +
-            "}" +
-           " </style> " +
+                      "<style type = 'text/css'>" +
+                ".div{" +
+                        "display:inline-flex; color: green;" +
+                "}" +
+                ".fnt{" +
+                        " font-size:small ;" +
+                "}" +
+                ".p{" +
+                        " width:max-content ;" +
+                       "padding:2px;" +
+                "}" +
+                ".th{" +
+                        "font-size:small ;height:5px ;background-color:#dfdfdf ;" +
+                "}" +
+               " </style> " +
 
 
 
-                "<body>" +
+                    "<body>" +
 
-                "<br />" +
+                    "<br />" +
 
-             //"Order  " + OrderId +
-             "<div class='container' id='invoice' style='padding:2px;'>" +
-            "<div class='row'>" +
-             "<div class='col-md-1'></div>" +
-              "<div class='col-md-10 border'>" +
+                 //"Order  " + OrderId +
+                 "<div class='container' id='invoice' style='padding:2px;'>" +
+                "<div class='row'>" +
+                 "<div class='col-md-1'></div>" +
+                  "<div class='col-md-10 border'>" +
 
 
-             " <div class='row'>" +
-               "<div class='col-md-12  text-center text-primary'>" +
-                 "  <h2>Order " + OrderId + "</h2>" +
-                "</div>" +
+                 " <div class='row'>" +
+                   "<div class='col-md-12  text-center text-primary'>" +
+                     "  <h2>Order " + OrderId + "</h2>" +
+                    "</div>" +
+                 "</div>" +
+
+
+                "<div class='row'>" +
+                "<div class='col-md-8'>" +
+                  "<div class='row'><p class='p'><strong>Employee: </strong><strong> " + UserName + "</strong> </p></div>" +
+                 "<div class='row'><p class='p'><strong>Department Name: </strong> <strong>" + DepartmentName + " </strong></p></div>" +
+               " </div>" +
+
+
+                "<div class='col-md-4 text-right'>" +
+                   "<div class='row'><p class='p'><strong>Order date: </strong> <strong>" + order.OrderHeaderdate.ToString("dd/MM/yyyy") + " </strong></p> </div > " +
+                  "<div class='row'><p class='p'> <strong>Expected Date : </strong> <strong>" + order.OrderHeaderdate.ToString("dd/MM/yyyy") + "</strong></p></div>" +
+
+               " </div>" +
+              "</div>" + //row1
+
+              "<div class='row'>" +
+                "<div class='col-md-7'>" +
+                   "<div class='row'><p class='p'><strong>Project Name: </strong> <strong>" + ProjectName + "</strong> </p></div> " +
+                  "<div class='row'><p class='p'><strong>Budget Line: </strong> <strong>" + BudgetLine + "</strong></p></div> " +
+               " </div>" +
+
+
+                "<div class='col-md-5 text-right '>" +
+                  "<div class='row'><p class='p'><strong>Order Type: </strong> <strong>" + OrderTypeName + "</strong></p></div> " +
+                   "<div class='row'><p class='p'><strong>Supplier: </strong> <strong>" + SupplierName + "</strong></p></div> " +
+               " </div>" +
+              "</div>" + //row2
+
+                "<div class='row'>" +
+                "<div class='col-md-7'>" +
+                   "<div class='row'><p class='p'><strong>General Notes: </strong> <strong>" + order.OrderHeaderNote + " </strong></p></div> " +
+
+               " </div>" +
+                "</div>" + //row3
+
+               "<div class='row>" +
+                "<div class='col-md-12 well invoice-body'>" +
+                  "<table class='table table-bordered'>" +
+                   //" <table id='tbl2' class='table table-striped responsive-table text-center table-hover table-bordered'>"+
+                   "<thead style = 'background-color:#46688a;font-size:smaller ;' >" +
+                   " <tr> " +
+                    "<th class='th'>" + "Item" + "</th>" +
+                    "<th class='th'>" + "Name" + "</th>" +
+                    "<th class='th'>" + "Qty" + "</th>" +
+                    "<th class='th' >" + "Price" + "</th>" +
+                    "<th class='th'>" + "Total" + "</th>" +
+                    "<th class='th'>" + "Notes" + "</th>" +
+                    "<th class='th'>" + "Date" + "</th>" +
+                    " </tr ></thead>" +
+                    table +
+
+                   "</table>" +
+                " </div>" +
+
+
+
+                "<div class='row'>" +
+                 "<div class='col-md-1 text-left'>status</div>" +
+
+
+                   "<div class='col-md-1 text-left'>" + StatusName + "</div>" +
+
+                        "<div class='col-md-2 text-left'>" + "By : " + LastStatusUser.userName + "</div>" +
+
+
+                 "<div class='col-md-5 text-right'>Total</div>" +
+
+                   "<div class='col-md-2 text-right'>" + order.ActualTotalAmount + "</div>" +
+                   "<div class='col-md-1 text-right'>" + Currency + "</div>" +
+
+               "</div>" +
+                      "</br>" +
+
+
+                 "<div class='row'>" +
+                 "<div class='col-md-1 text-left'> </div>" +
+
+
+                   "<div class='col-md-1 text-left'></div>" +
+
+
+                 "<div class='col-md-7 text-right'>Total In Basic Currency</div>" +
+
+                   "<div class='col-md-2 text-right'>" + order.TotalInbasic + "</div>" +
+                   "<div class='col-md-1 text-right'>" + "NIS" + "</div>" +
+
+               "</div>" +
+               "</br>" +
+                 "<div class='row>" +
+                "<div class='col-md-12 well invoice-body'>" +
+                  "<table class='table table-bordered'>" +
+                    //" <table id='tbl2' class='table table-striped responsive-table text-center table-hover table-bordered'>"+
+
+                    Approvalstable +
+
+                   "</table>" +
+                " </div>" +
+
              "</div>" +
 
 
-            "<div class='row'>" +
-            "<div class='col-md-8'>" +
-              "<div class='row'><p class='p'><strong>Employee: </strong><strong> " + UserName + "</strong> </p></div>" +
-             "<div class='row'><p class='p'><strong>Department Name: </strong> <strong>" + DepartmentName + " </strong></p></div>" +
-           " </div>" +
-
-
-            "<div class='col-md-4 text-right'>" +
-               "<div class='row'><p class='p'><strong>Order date: </strong> <strong>" + order.OrderHeaderdate.ToString("dd/MM/yyyy") + " </strong></p> </div > " +
-              "<div class='row'><p class='p'> <strong>Expected Date : </strong> <strong>" + order.OrderHeaderdate.ToString("dd/MM/yyyy") + "</strong></p></div>" +
-
-           " </div>" +
-          "</div>" + //row1
-
-          "<div class='row'>" +
-            "<div class='col-md-7'>" +
-               "<div class='row'><p class='p'><strong>Project Name: </strong> <strong>" + ProjectName + "</strong> </p></div> " +
-              "<div class='row'><p class='p'><strong>Budget Line: </strong> <strong>" + BudgetLine + "</strong></p></div> " +
-           " </div>" +
-
-
-            "<div class='col-md-5 text-right '>" +
-              "<div class='row'><p class='p'><strong>Order Type: </strong> <strong>" + OrderTypeName + "</strong></p></div> " +
-               "<div class='row'><p class='p'><strong>Supplier: </strong> <strong>" + SupplierName + "</strong></p></div> " +
-           " </div>" +
-          "</div>" + //row2
-
-            "<div class='row'>" +
-            "<div class='col-md-7'>" +
-               "<div class='row'><p class='p'><strong>General Notes: </strong> <strong>" + order.OrderHeaderNote + " </strong></p></div> " +
-
-           " </div>" +
-            "</div>" + //row3
-
-           "<div class='row>" +
-            "<div class='col-md-12 well invoice-body'>" +
-              "<table class='table table-bordered'>" +
-               //" <table id='tbl2' class='table table-striped responsive-table text-center table-hover table-bordered'>"+
-               "<thead style = 'background-color:#46688a;font-size:smaller ;' >" +
-               " <tr> " +
-                "<th class='th'>" + "Item" + "</th>" +
-                "<th class='th'>" + "Name" + "</th>" +
-                "<th class='th'>" + "Qty" + "</th>" +
-                "<th class='th' >" + "Price" + "</th>" +
-                "<th class='th'>" + "Total" + "</th>" +
-                "<th class='th'>" + "Notes" + "</th>" +
-                "<th class='th'>" + "Date" + "</th>" +
-                " </tr ></thead>" +
-                table +
-
-               "</table>" +
-            " </div>" +
+               "</div>" +
 
 
 
-            "<div class='row'>" +
-             "<div class='col-md-1 text-left'>status</div>" +
+            "</div>" +
 
+                    "</body ></html > "
+                };
 
-               "<div class='col-md-1 text-left'>" + StatusName + "</div>" +
-
-                    "<div class='col-md-2 text-left'>" + "By : " + LastStatusUser.userName + "</div>" +
-
-
-             "<div class='col-md-5 text-right'>Total</div>" +
-
-               "<div class='col-md-2 text-right'>" + order.ActualTotalAmount + "</div>" +
-               "<div class='col-md-1 text-right'>" + Currency + "</div>" +
-
-           "</div>" +
-                  "</br>" +
-
-
-             "<div class='row'>" +
-             "<div class='col-md-1 text-left'> </div>" +
-
-
-               "<div class='col-md-1 text-left'></div>" +
-
-
-             "<div class='col-md-7 text-right'>Total In Basic Currency</div>" +
-
-               "<div class='col-md-2 text-right'>" + order.TotalInbasic + "</div>" +
-               "<div class='col-md-1 text-right'>" + "NIS" + "</div>" +
-
-           "</div>" +
-           "</br>" +
-             "<div class='row>" +
-            "<div class='col-md-12 well invoice-body'>" +
-              "<table class='table table-bordered'>" +
-                //" <table id='tbl2' class='table table-striped responsive-table text-center table-hover table-bordered'>"+
-
-                Approvalstable +
-
-               "</table>" +
-            " </div>" +
-
-         "</div>" +
-
-
-           "</div>" +
-
-
-
-        "</div>" +
-
-                "</body ></html > "
-            };
+            }
+            catch (Exception ex)
+            {
+                // Get stack trace for the exception with source file information
+                //var x = ex.
+                var st = new StackTrace(ex, true);
+                // Get the top stack frame
+                var frame = st.GetFrame(0);
+                // Get the line number from the stack frame
+                var line = frame.GetFileLineNumber();
+                ViewBag.Error = ex.Message + " / in line = " + line;
+                return null;
+            }
         }
 
     }

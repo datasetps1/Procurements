@@ -81,6 +81,12 @@
             <th>
                 @Html.DisplayNameFor(model => model.Show_ToEmployee)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Show_Currency_with_item)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Basic_Currency)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -155,6 +161,12 @@
             </th>
             <th>
                 @Html.DisplayFor(model => item.Show_ToEmployee)
+            </th>
+            <th>
+                @Html.DisplayFor(model => item.Show_Currency_with_item)
+            </th>
+            <th>
+                @Html.DisplayFor(model => item.Basic_Currency)
             </th>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.code">Edit</a>

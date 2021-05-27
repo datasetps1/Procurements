@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -8,8 +9,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using MVCWebAppServierCon.Helpers;
 using MVCWebAppServierCon.Models;
+using MVCWebAppServierCon.ViewModels;
 
 namespace MVCWebAppServierCon.Controllers
 {
@@ -18,10 +21,32 @@ namespace MVCWebAppServierCon.Controllers
 
         private IHostingEnvironment hostingEnviroment { get; }
         private readonly SecondConnClass _context;
-        public GeneralPrefController(SecondConnClass sc, IHostingEnvironment hostingEnviroment)
+        private readonly IConfiguration configuration;
+
+
+        private string currency_table = "";
+        private string connect_with = "";
+        SqlConnection connection;
+
+        public GeneralPrefController(SecondConnClass sc, IConfiguration config, IHostingEnvironment hostingEnviroment)
         {
             this.hostingEnviroment = hostingEnviroment;
             _context = sc;
+            configuration = config;
+
+            string conString = configuration.GetConnectionString("Myconnection");
+
+            connection = new SqlConnection(conString);
+
+            connect_with = _context.TblGeneralPreference.Select(g => g.ConnecWith).FirstOrDefault();
+            if (connect_with == Constants.audit)
+            {
+                currency_table = Constants_Audit.TBLCurrency;
+            }
+            else
+            {
+                currency_table = Constants_Finpack.Curr;
+            }
         }
 
         public override void OnActionExecuting(ActionExecutingContext filterContext)
@@ -42,6 +67,7 @@ namespace MVCWebAppServierCon.Controllers
 
         public IActionResult Create()
         {
+            ViewBag.Currency = getCurrency(currency_table);
             return View();
         }
 
@@ -91,6 +117,8 @@ namespace MVCWebAppServierCon.Controllers
                 Gpref.Display_Name_Activityt = model.Display_Name_Activityt;
                 Gpref.Show_ToDate = model.Show_ToDate;
                 Gpref.Show_ToEmployee = model.Show_ToEmployee;
+                Gpref.Show_Currency_with_item = model.Show_Currency_with_item;
+                Gpref.Basic_Currency = model.Basic_Currency;
 
                 _context.SaveChanges();
             }
@@ -124,7 +152,28 @@ namespace MVCWebAppServierCon.Controllers
                 return NotFound();
             }
 
+
+            ViewBag.Currency = getCurrency(currency_table);
+
             return View(model_to_edit);
+        }
+
+        public List<CurrencyViewModel> getCurrency(String tblName)
+        {
+            connection.Open();
+            SqlCommand command = new SqlCommand("SELECT Code,Name FROM " + tblName + ";", connection);
+            var reader = command.ExecuteReader();
+            List<CurrencyViewModel> currencies = new List<CurrencyViewModel>();
+            while (reader.Read())
+            {
+                CurrencyViewModel currency = new CurrencyViewModel();
+                currency.currencyCode = Int32.Parse(reader.GetValue(0).ToString());
+                currency.currencyName = reader.GetValue(1).ToString();
+
+                currencies.Add(currency);
+            }
+            connection.Close();
+            return currencies;
         }
 
         [HttpPost]
@@ -182,6 +231,8 @@ namespace MVCWebAppServierCon.Controllers
                 previous_model.Display_Name_Activityt = model.Display_Name_Activityt;
                 previous_model.Show_ToDate = model.Show_ToDate;
                 previous_model.Show_ToEmployee = model.Show_ToEmployee;
+                previous_model.Show_Currency_with_item = model.Show_Currency_with_item;
+                previous_model.Basic_Currency = model.Basic_Currency;
 
                 _context.TblGeneralPreference.Update(previous_model);
                 await _context.SaveChangesAsync();

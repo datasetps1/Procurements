@@ -722,10 +722,14 @@
             url: "/Home/PrintOrder",
             data: { OrderId: orderId },
             success: function (data) {
-
+                debugger
                 div.innerHTML = data;
 
                 html2pdf().from(div).save();
+            },
+            error: error => {
+                debugger
+                console.log('@ViewBag.Error');
             }
         });
 
