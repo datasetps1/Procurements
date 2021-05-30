@@ -17,5 +17,8 @@ namespace MVCWebAppServierCon.ViewModels
 
         public String TransactionNote { get; set; }
         public DateTime TransactionDate { get; set; }
+        public int? CurrencyCode { get; set; }
+
+        public double? ItemRate { get; set; }
     }
 }

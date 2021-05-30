@@ -371,6 +371,7 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
             ViewBag.Show_Currency_with_item = general_prefernce.Show_Currency_with_item;
             ViewBag.Basic_Currency = general_prefernce.Basic_Currency;
 
+
             if (ViewBag.Show_Doner2)
             {
                 ViewBag.Display_Name_Doner2 = general_prefernce.Display_Name_Doner2;
@@ -490,6 +491,7 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
                     tc.TransactionNote = tcc.TransactionNote;
                     tc.TransactionUserId = user.userCode;
                     tc.CurrencyCode = tcc.CurrencyCode;
+                    tc.ItemRate = tcc.ItemRate;
                     tc.TransactionCreationDate = DateTime.Now;
                     tc.TransactionDeviceIp = 1;
                     _sc.Add(tc);
@@ -578,6 +580,8 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
             ViewBag.Display_Name_Project = general_prefernce.Display_Name_Project;
             ViewBag.Display_Name_Activityt = general_prefernce.Display_Name_Activityt;
             ViewBag.Show_ToEmployee = general_prefernce.Show_ToEmployee;
+            ViewBag.Show_Currency_with_item = general_prefernce.Show_Currency_with_item;
+            ViewBag.Basic_Currency = general_prefernce.Basic_Currency;
 
             if (ViewBag.Show_Doner2)
             {
@@ -621,6 +625,8 @@ HAVING      (SUM(dbo.TblApproval.ApprovalIsApproved) > 1)").ToList();
                 tvm.TransactionPrice = tc.TransactionPrice;
                 tvm.TransactionNote = tc.TransactionNote;
                 tvm.TransactionDate = tc.TransactionDate;
+                tvm.CurrencyCode = tc.CurrencyCode;
+                tvm.ItemRate = tc.ItemRate;
                 transactions.Add(tvm);
             }
             model.transViewModel = transactions;

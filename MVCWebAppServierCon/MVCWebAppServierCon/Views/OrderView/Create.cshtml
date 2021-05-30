@@ -128,27 +128,30 @@
                         <input value="@ViewBag.UserDepartmentName" type="text" class="form-control" id="txtdep" disabled />
                         <span class="text-danger"></span>
                     </div>
+                    @if (!ViewBag.Show_Currency_with_item)
+                    {
+                        <div class="form-group @(ViewBag.Show_Order_Type ? "col-md-1" : "col-md-2")">
+                            <br />
+                            <label for="inputState" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Currency"]</label>
+                            <select id="cmbCurrency" class="form-control" name="headerLst">
+                                <option selected></option>
+                                @foreach (CurrencyViewModel item in ViewBag.Currency)
+                                {
+                                    <option value="@item.currencyCode">@item.currencyName</option>
+                                }
+                            </select>
 
-                    <div class="form-group @(ViewBag.Show_Order_Type ? "col-md-1" : "col-md-2")">
-                        <br />
-                        <label for="inputState" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Currency"]</label>
-                        <select id="cmbCurrency" class="form-control" name="headerLst">
-                            <option selected></option>
-                            @foreach (CurrencyViewModel item in ViewBag.Currency)
-                            {
-                                <option value="@item.currencyCode">@item.currencyName</option>
-                            }
-                        </select>
+                            <span class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-1">
+                            <br />
+                            <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Rate"]</label>
+                            @* value="@ViewBag.Rate" *@
+                            <input type="number" step="any" class="form-control" name="headerLst" id="rateText" />
+                            <span class="text-danger"></span>
+                        </div>
+                    }
 
-                        <span class="text-danger"></span>
-                    </div>
-                    <div class="form-group col-md-1">
-                        <br />
-                        <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["Rate"]</label>
-                        @* value="@ViewBag.Rate" *@
-                        <input type="number" step="any" class="form-control" name="headerLst" id="rateText" />
-                        <span class="text-danger"></span>
-                    </div>
                     <div class="form-group @(ViewBag.Show_Order_Type ? "col-md-2" : "col-md-3")">
                         <br />
                         <label class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["order date"]</label>
@@ -304,18 +307,23 @@
                         <script>
                             console.log(@Json.Serialize(ViewBag.Currency))
                         </script>
-                        <div class="form-group col-md-1">
-                            <input type="hidden" id="item_currency_rate_input" />
-                            <label for="inputState" style="@Localizer["text-align: left  ;direction: ltr"]">Currency</label>
-                            <select id="item_currency_input" class="form-control" name="transLst">
-                                <option value="-1" selected></option>
-                                @foreach (CurrencyViewModel item in ViewBag.Currency)
-                                {
-                                    <option value="@item.currencyCode">@item.currencyName</option>
-                                }
-                            </select>
-                            <span class="text-danger"></span>
-                        </div>
+
+                        @if (ViewBag.Show_Currency_with_item)
+                        {
+                            <div class="form-group col-md-1">
+                                <input type="hidden" id="item_currency_rate_input" />
+                                <label for="inputState" style="@Localizer["text-align: left  ;direction: ltr"]">Currency</label>
+                                <select id="item_currency_input" class="form-control" name="transLst">
+                                    <option value="-1" selected></option>
+                                    @foreach (CurrencyViewModel item in ViewBag.Currency)
+                                    {
+                                        <option value="@item.currencyCode">@item.currencyName</option>
+                                    }
+                                </select>
+                                <span class="text-danger"></span>
+                            </div>
+                        }
+
 
                         <div class="form-group col-md-3">
                             <label class="control-label" c>@Localizer["Item Note"]</label>
@@ -323,12 +331,9 @@
                             <span class="text-danger"></span>
                         </div>
                         <div class="form-group col-md-2">
-
                             <label id="lblTransDate" class="control-label" style="@Localizer["text-align: left  ;direction: ltr"]">@Localizer["date"]</label>
                             <input id="TransDate" type="date" class="form-control" name="headerLst" value="" />
                             <span class="text-danger"></span>
-
-
                         </div>
                         <div class="form-group col-md-1">
                             <br />
@@ -360,7 +365,7 @@
                                         <th class="col-md-1" style="color:#fff;">@Localizer["Basic Total"]</th>
                                     }
                                     <th class="col-md-2" style="color:#fff;">@Localizer["Item Note"]</th>
-                                    <th class="@(ViewBag.Show_Currency_with_item ? "col-md-2" : "col-md-3")" style="color:#fff;">@Localizer["Date"]</th>
+                                    <th class="col-md-2" style="color:#fff;">@Localizer["Date"]</th>
                                     <th class="@(ViewBag.Show_Unit ? "col-md-1" : "col-md-2")" style="color:#fff;">@Localizer["Remove"]</th>
                                 </tr>
                             </thead>
@@ -642,8 +647,18 @@
 
 
     }
+
+    function check_if_items_currencies_is_defferent() {
+        var current_curency = transArr[0].CurrencyCode;
+        for (var i = 1; i < transArr.length; i++) {
+            if (current_curency != transArr[i].CurrencyCode) {
+                return true;
+            }
+        }
+        return false;
+    }
                             // post order
-    function GetOrder(status) {// make the whole order
+    async function GetOrder(status) {// make the whole order
 
         debugger
 
@@ -709,9 +724,11 @@
         }
 
         var currencey = document.getElementById('cmbCurrency');
-        var OrderHeaderCurrencey = currencey.text;
-
-        if (CheckDataCurrency(OrderHeaderCurrencey, "يجب ادخال العمله") == false) { return; }
+        var OrderHeaderCurrencey;
+        if (@Json.Serialize(ViewBag.Show_Currency_with_item) == false) {
+            OrderHeaderCurrencey = currencey.text;
+            if (CheckDataCurrency(OrderHeaderCurrencey, "يجب ادخال العمله") == false) { return; }
+        }
 
         if (@Json.Serialize(ViewBag.Show_Order_Type) == true) {
             if (CheckData(OrderHeaderOrderTypeCode, "يجب ادخال نوع الطلبيه ") == false) { return; }
@@ -729,14 +746,60 @@
             OrderHeaderProjectCode: OrderHeaderProjectCode,
             OrderHeaderdate: $('#date').val(),
             OrderHeaderBudgetLineCode: OrderHeaderBudgetLineCode,
-            OrderHeaderCurrencey: OrderHeaderCurrencey,
-            OrderHeaderRate: $("#rateText").val(),
             OrderHeaderNote: $("#txtNote").val(),
             OrderHeaderRealTotal: $('#realTot').val(),
             ExpectedDate: $('#txtExpectedDate').val(),
             ToEmployeeCode: "",
             OrderHeaderdepartmentCode: document.getElementById("department_code_input").value,
         };
+        debugger
+        if (@Json.Serialize(ViewBag.Show_Currency_with_item) == false) {
+            headerModel.OrderHeaderCurrencey = OrderHeaderCurrencey;
+            headerModel.OrderHeaderRate = $("#rateText").val();
+
+        } else { //if order header currency not shown
+            //if currency for all items is the same => give it to the order header currency
+            if (check_if_items_currencies_is_defferent() == true) {
+                //store the basic currency code
+                headerModel.OrderHeaderCurrencey = @ViewBag.Basic_Currency;
+                await $.ajax(
+                    {
+                        url: "../OrderView/getRate",
+                        data: { rateId: @ViewBag.Basic_Currency },
+                        dataType: "json",
+                        type: "POST",
+                        success: function (data) {
+                            headerModel.OrderHeaderRate = data.data;
+                        },
+                        error: function (message) {
+                            console.log("Error In Uploading");
+                            console.log(message);
+                        },
+                    });
+            } else {
+                //store the currency code for the first element
+                if (transArr.length != 0) {
+
+                    var current_curency = transArr[0].CurrencyCode;
+                    headerModel.OrderHeaderCurrencey = parseInt(current_curency);
+                    await $.ajax(
+                        {
+                            url: "../OrderView/getRate",
+                            data: { rateId: parseInt(current_curency) },
+                            dataType: "json",
+                            type: "POST",
+                            success: function (data) {
+                                headerModel.OrderHeaderRate = data.data;
+                            },
+                            error: function (message) {
+                                console.log("Error In Uploading");
+                                console.log(message);
+                            },
+                        });
+                }
+            }
+
+        }
 
         if (@Json.Serialize(ViewBag.Show_Order_Type) == true) {
             headerModel.OrderHeaderOrderTypeCode = OrderHeaderOrderTypeCode;
@@ -756,31 +819,21 @@
         if (@Json.Serialize(ViewBag.Show_cost4) == true) {
             headerModel.Cost4 = document.getElementById('cost4_input').value;
         }
-        console.log(headerModel)
-        debugger
+
         var TableData = new Array();
 
-        if (@Json.Serialize(ViewBag.Show_Unit)) {
-            $('#myTable tr').each(function (row, tr) {
-                TableData[row] = {
-                    "TransactionItemName": $(tr).find('td:eq(1)').text()
-                    , "TransactionQty": $(tr).find('td:eq(3)').text()
-                    , "TransactionPrice": $(tr).find('td:eq(4)').text()
-                    , "TransactionNote": $(tr).find('td:eq(6)').text()
-                    , "TransactionDate": $(tr).find('td:eq(7)').text()
-                }
+        transArr.map(current => {
+            TableData.push({
+                TransactionItemName: current.TransactionItemName,
+                TransactionQty: current.TransactionQty,
+                TransactionPrice: current.TransactionPrice,
+                TransactionNote: current.TransactionNote,
+                TransactionDate: current.TransactionDate,
+                CurrencyCode: current.CurrencyCode,
+                ItemRate: current.ItemRate,
             });
-        } else {
-            $('#myTable tr').each(function (row, tr) {
-                TableData[row] = {
-                    "TransactionItemName": $(tr).find('td:eq(1)').text()
-                    , "TransactionQty": $(tr).find('td:eq(2)').text()
-                    , "TransactionPrice": $(tr).find('td:eq(3)').text()
-                    , "TransactionNote": $(tr).find('td:eq(5)').text()
-                    , "TransactionDate": $(tr).find('td:eq(6)').text()
-                }
-            });
-        }
+        });
+        debugger
 
         if (TableData.length == 0) {
             ShowMessage("يجب ادخال اصناف ")
@@ -1060,17 +1113,19 @@
         if (CheckData(document.getElementById('price').value, "يجب ادخال السعر") == false) { return; }
         //check item currency
         debugger
-        var item_currency_input = document.getElementById('item_currency_input');
-        var item_currency_code = item_currency_input.value;
+        if (@Json.Serialize(ViewBag.Show_Currency_with_item) == true) {
+            var item_currency_input = document.getElementById('item_currency_input');
+            var item_currency_code = item_currency_input.value;
 
-        if (item_currency_code == -1) {
-            Swal.fire({
-                icon: 'error',
-                title: 'خطأ',
-                text: "يجب ادخال العمله لهذا العنصر",
-                footer: 'PostOrderStatus'
-            })
-            return;
+            if (item_currency_code == -1) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: "يجب ادخال العمله لهذا العنصر",
+                    footer: 'PostOrderStatus'
+                })
+                return;
+            }
         }
 
         document.getElementById("itemRowTbl").style.visibility = "visible";
@@ -1091,7 +1146,16 @@
         var note = document.getElementById('note').value;
         var TransDate = document.getElementById('TransDate').value;
 
-
+        var TransactionClass = function (itemcode, itemName, Quantity, Price, Note, TransDate, CurrencyCode, ItemRate) {
+            this.TransactionItemCode = itemcode;
+            this.TransactionItemName = itemName;
+            this.TransactionQty = Quantity;
+            this.TransactionPrice = Price;
+            this.TransactionNote = Note;
+            this.TransDate = TransDate;
+            this.CurrencyCode = CurrencyCode;
+            this.ItemRate = ItemRate;
+        };
 
 
         var table = document.getElementById("myTable");
@@ -1124,22 +1188,14 @@
                 cell3.innerHTML = price;
                 cell8.innerHTML = getCurrencyName(document.getElementById('item_currency_input').value);
                 cell4.innerHTML = qty * price;
-                cell9.innerHTML = qty * price * parseFloat(document.getElementById('item_currency_rate_input').value);
+                var ItemRate = parseFloat(document.getElementById('item_currency_rate_input').value);
+                cell9.innerHTML = qty * price * ItemRate;
                 cell5.innerHTML = note;
                 cell6.innerHTML = TransDate;
 
-                var TransactionClass = function (itemcode, itemName, Quantity, Price, Note, TransDate, CurrencyCode) {
-                    this.TransactionItemCode = itemcode;
-                    this.TransactionItemName = itemName;
-                    this.TransactionQty = Quantity;
-                    this.TransactionPrice = Price;
-                    this.TransactionNote = Note;
-                    this.TransDate = TransDate;
-                    this.CurrencyCode = CurrencyCode;
-                };
 
                 debugger
-                transArr.push((new TransactionClass(itemcode, itemName, qty, price, note, TransDate,item_currency_code)));
+                transArr.push((new TransactionClass(itemcode, itemName, qty, price, note, TransDate, item_currency_code, ItemRate)));
 
             } else {
                 var cell0 = row.insertCell(0); cell0.style.display = 'none';
@@ -1162,26 +1218,64 @@
                 cell4.innerHTML = qty * price;
                 cell5.innerHTML = note;
                 cell6.innerHTML = TransDate;
+
+                transArr.push((new TransactionClass(itemcode, itemName, qty, price, note, TransDate, null, null)));
             }
 
         } else {
-            var cell0 = row.insertCell(0); cell0.style.display = 'none';
-            var cell1 = row.insertCell(1); cell1.className = "col-md-2";
-            var cell2 = row.insertCell(2); cell2.className = "col-md-1";
-            var cell3 = row.insertCell(3); cell3.className = "col-md-1";
-            var cell4 = row.insertCell(4); cell4.className = "col-md-1";
-            var cell5 = row.insertCell(5); cell5.className = "col-md-3";
-            var cell6 = row.insertCell(6); cell6.className = "col-md-2";
+            if (@Json.Serialize(ViewBag.Show_Currency_with_item) == true) {
+                var cell0 = row.insertCell(0); cell0.style.display = 'none';
+                var cell1 = row.insertCell(1); cell1.className = "col-md-1";
+                var cell2 = row.insertCell(2); cell2.className = "col-md-1";
+                var cell3 = row.insertCell(3); cell3.className = "col-md-1";
+                var cell8 = row.insertCell(4); cell8.className = "col-md-1";
+                var cell4 = row.insertCell(5); cell4.className = "col-md-1";
+                var cell9 = row.insertCell(6); cell9.className = "col-md-1";
+                var cell5 = row.insertCell(7); cell5.className = "col-md-2";
+                var cell6 = row.insertCell(8); cell6.className = "col-md-2";
 
-            var cell7 = row.insertCell(7); cell7.className = "col-md-2";
-            cell0.innerHTML = itemcode;
-            cell1.innerHTML = itemName;
+                var cell7 = row.insertCell(9); cell7.className = "col-md-2";
+                var cell10 = row.insertCell(10); cell10.style.display = 'none';
+                cell0.innerHTML = itemcode;
+                cell1.innerHTML = itemName;
 
-            cell2.innerHTML = qty;
-            cell3.innerHTML = price;
-            cell4.innerHTML = qty * price;
-            cell5.innerHTML = note;
-            cell6.innerHTML = TransDate;
+                cell10.innerHTML = item_currency_code;
+
+                cell2.innerHTML = qty;
+                cell3.innerHTML = price;
+                cell8.innerHTML = getCurrencyName(document.getElementById('item_currency_input').value);
+                cell4.innerHTML = qty * price;
+                var ItemRate = parseFloat(document.getElementById('item_currency_rate_input').value);
+                cell9.innerHTML = qty * price * ItemRate;
+                cell5.innerHTML = note;
+                cell6.innerHTML = TransDate;
+
+
+                debugger
+                transArr.push((new TransactionClass(itemcode, itemName, qty, price, note, TransDate, item_currency_code, ItemRate)));
+
+            } else {
+
+                var cell0 = row.insertCell(0); cell0.style.display = 'none';
+                var cell1 = row.insertCell(1); cell1.className = "col-md-2";
+                var cell2 = row.insertCell(2); cell2.className = "col-md-1";
+                var cell3 = row.insertCell(3); cell3.className = "col-md-1";
+                var cell4 = row.insertCell(4); cell4.className = "col-md-1";
+                var cell5 = row.insertCell(5); cell5.className = "col-md-3";
+                var cell6 = row.insertCell(6); cell6.className = "col-md-2";
+
+                var cell7 = row.insertCell(7); cell7.className = "col-md-2";
+                cell0.innerHTML = itemcode;
+                cell1.innerHTML = itemName;
+
+                cell2.innerHTML = qty;
+                cell3.innerHTML = price;
+                cell4.innerHTML = qty * price;
+                cell5.innerHTML = note;
+                cell6.innerHTML = TransDate;
+
+                transArr.push((new TransactionClass(itemcode, itemName, qty, price, note, TransDate, null, null)));
+            }
         }
 
         var x = qty * price;
@@ -1236,7 +1330,6 @@
     $('#inputState3').editableSelect();
     // $('#inputState4').editableSelect();
     $('#cmbCurrency').editableSelect();
-    //$('#item_currency_input').editableSelect();
     $('#itemName').editableSelect();
 
     $('#itemname')
@@ -1291,25 +1384,28 @@
             txt.text = li.val();
         });
 
-    document.getElementById('item_currency_input').addEventListener('change', function (e) {
-        debugger
-        var id = e.target.value;
-        $.ajax(
-            {
-                url: "../OrderView/getRate",
-                data: { rateId: id },
-                dataType: "json",
-                type: "POST",
-                success: function (data) {
-                    document.getElementById("item_currency_rate_input").value = data.data;
-                    console.log("success rate  == " + data.data);
-                },
-                error: function (message) {
-                    console.log("Error In Uploading");
-                    console.log(message);
-                },
-            });
-    });
+    if (@Json.Serialize(ViewBag.Show_Currency_with_item) == true) {
+        document.getElementById('item_currency_input').addEventListener('change', function (e) {
+            debugger
+            var id = e.target.value;
+            $.ajax(
+                {
+                    url: "@Url.Action("getRate")",
+                    data: { rateId: id },
+                    dataType: "json",
+                    type: "POST",
+                    success: function (data) {
+                        document.getElementById("item_currency_rate_input").value = data.data;
+                        console.log("success rate  == " + data.data);
+                    },
+                    error: function (message) {
+                        console.log("Error In Uploading");
+                        console.log(message);
+                    },
+                });
+        });
+    }
+
 
     $('#inputState1')
         .editableSelect()
@@ -1326,7 +1422,7 @@
     $('#inputState2')
         .editableSelect()
         .on('select.editable-select', function (e, li) {
-
+            debugger
             GetBudgetLineByFunder(li.val())
             var txt = document.getElementById('inputState2');
             txt.text = li.val();
